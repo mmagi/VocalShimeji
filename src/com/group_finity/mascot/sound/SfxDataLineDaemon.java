@@ -46,7 +46,7 @@ public final class SfxDataLineDaemon implements Runnable {
                 for (final sfxLine line : lines) {
                     if (SoundFactory.sfxOn && line.busy) {
                         int len;
-                        if (null != line.curSound && (len = line.line.available()) > SoundFactory.bufferWriteThreshold) {
+                        if (null != line.curSound && (len = line.line.available()) >= SoundFactory.bufferWriteThreshold) {
                             final int left = line.curSound.bytes.length - line.curPos;
                             len = len > left ? left : len;
                             line.line.write(line.curSound.bytes, line.curPos, len);

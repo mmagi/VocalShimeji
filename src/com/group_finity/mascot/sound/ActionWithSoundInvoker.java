@@ -12,20 +12,20 @@ import java.util.logging.Level;
  * Time: 下午2:27
  */
 final class ActionWithSoundInvoker extends Thread {
-    final String resPath;
+    final Sound sound;
     final Runnable cmd;
 
-    ActionWithSoundInvoker(String resPath, Runnable cmd) {
+    ActionWithSoundInvoker(Sound sound, Runnable cmd) {
         super();
         this.cmd = cmd;
-        this.resPath = resPath;//在自己的线程中再加载音频
+        this.sound = sound;//在自己的线程中再加载音频
     }
 
     @Override
     public void run() {
         try {
             voice:
-            if (SoundFactory.voiceOn) {
+            if (SoundFactory.voiceOn && null!=sound) {
                 final SourceDataLine line;
                 try {
                     line = AudioSystem.getSourceDataLine(SoundFactory.appAudioFormat);
@@ -34,19 +34,17 @@ final class ActionWithSoundInvoker extends Thread {
                     SoundFactory.log.log(Level.WARNING, "系统混音资源不足。", e);
                     break voice;
                 }
-                final Sound curSound = SoundFactory.getSound(resPath);
-
                 int curPos = 0;
                 play:
                 while (SoundFactory.voiceOn) {
                     final int len = line.available();
-                    if (null != curSound && len > SoundFactory.bufferWriteThreshold) {
-                        final int left = curSound.bytes.length - curPos;
+                    if (len >= SoundFactory.bufferWriteThreshold) {
+                        final int left = sound.bytes.length - curPos;
                         final int size = len > left ? left : len;
-                        line.write(curSound.bytes, curPos, size);
+                        line.write(sound.bytes, curPos, size);
                         curPos += size;
                         line.start();
-                        if (curPos >= curSound.bytes.length) {
+                        if (curPos >= sound.bytes.length) {
                             break play;
                         }
                     }

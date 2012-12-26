@@ -42,8 +42,8 @@ public final class SoundFactory {
         return sound;
     }
 
-    public static void invokeAfterSound(String resPath, Runnable cmd) {
-        new ActionWithSoundInvoker(resPath, cmd).start();
+    public static void invokeAfterSound(Sound sound, Runnable cmd) {
+        new ActionWithSoundInvoker(sound, cmd).start();
     }
 
     public static VoiceDataLineDaemon startVoiceDataLineDaemon(Mascot mascot) {
