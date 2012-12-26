@@ -94,7 +94,7 @@ public class LogHandler extends java.util.logging.Handler {
             // However the cost is 14% higher, so we cheaply check for
             // 1 of the first 4 parameters
             if (format.indexOf("{0") >= 0 || format.indexOf("{1") >= 0 ||
-                        format.indexOf("{2") >= 0 || format.indexOf("{3") >= 0) {
+                    format.indexOf("{2") >= 0 || format.indexOf("{3") >= 0) {
                 return java.text.MessageFormat.format(format, parameters);
             }
             return format;

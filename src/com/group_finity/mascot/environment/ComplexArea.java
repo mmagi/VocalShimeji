@@ -24,9 +24,9 @@ public class ComplexArea {
 
         for (Area area : areas.values()) {
             if (area.getLeft() == value.x &&
-                        area.getTop() == value.y &&
-                        area.getWidth() == value.width &&
-                        area.getHeight() == value.height) {
+                    area.getTop() == value.y &&
+                    area.getWidth() == value.width &&
+                    area.getHeight() == value.height) {
                 return;
             }
         }

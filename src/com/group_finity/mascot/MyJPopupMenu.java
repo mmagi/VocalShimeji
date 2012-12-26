@@ -1,15 +1,10 @@
 package com.group_finity.mascot;
 
+import com.group_finity.mascot.sound.SoundFactory;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
+import java.awt.event.*;
 
 // 不用设置托盘图标的popmenu以免弹出菜单时阻塞窗口线程，
 // 绑定一个1x1的dialog窗口用来绑定菜单失去焦点事件，解决JPopupMenu无法获取焦点事件
@@ -62,14 +57,14 @@ class MyJPopupMenu extends JPopupMenu {
         restoreMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SoundManager.invokeAfterSound("/cmd_iechange.wav", new Runnable() {
+                SoundFactory.invokeAfterSound("/cmd_iechange.wav", new Runnable() {
 
                     @Override
                     public void run() {
                         if (NativeFactory.getInstance().getEnvironment().restoreIE()) {
-                            SoundManager.invokeAfterSound("/response-resetIE.wav", null);
+                            SoundFactory.invokeAfterSound("/response-resetIE.wav", null);
                         } else {
-                            SoundManager.invokeAfterSound("/response-noIE.wav", null);
+                            SoundFactory.invokeAfterSound("/response-noIE.wav", null);
                         }
                     }
                 });
@@ -78,7 +73,7 @@ class MyJPopupMenu extends JPopupMenu {
         increaseMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SoundManager.invokeAfterSound("/cmd_onemore14.wav", new Runnable() {
+                SoundFactory.invokeAfterSound("/cmd_onemore14.wav", new Runnable() {
 
                     @Override
                     public void run() {
@@ -91,7 +86,7 @@ class MyJPopupMenu extends JPopupMenu {
         gatherMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SoundManager.invokeAfterSound("/cmd_gether.wav", new Runnable() {
+                SoundFactory.invokeAfterSound("/cmd_gether.wav", new Runnable() {
 
                     @Override
                     public void run() {
@@ -103,7 +98,7 @@ class MyJPopupMenu extends JPopupMenu {
         oneMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SoundManager.invokeAfterSound("/cmd_onlyone14.wav", new Runnable() {
+                SoundFactory.invokeAfterSound("/cmd_onlyone14.wav", new Runnable() {
 
                     @Override
                     public void run() {
@@ -115,13 +110,13 @@ class MyJPopupMenu extends JPopupMenu {
         voiceMenu.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                SoundManager.voiceOn = voiceMenu.getState();
+                SoundFactory.voiceOn = voiceMenu.getState();
             }
         });
         sfxMenu.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                SoundManager.sfxOn = sfxMenu.getState();
+                SoundFactory.sfxOn = sfxMenu.getState();
             }
         });
         aboutMenu.addActionListener(new ActionListener() {
@@ -133,7 +128,7 @@ class MyJPopupMenu extends JPopupMenu {
         closeMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SoundManager.invokeAfterSound("/cmd_bye.wav", new Runnable() {
+                SoundFactory.invokeAfterSound("/cmd_bye.wav", new Runnable() {
                     @Override
                     public void run() {
                         Main.getInstance().exit();
@@ -148,7 +143,7 @@ class MyJPopupMenu extends JPopupMenu {
         disposeMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SoundManager.invokeAfterSound("/cmd_hide.wav", new Runnable() {
+                SoundFactory.invokeAfterSound("/cmd_hide.wav", new Runnable() {
                     @Override
                     public void run() {
                         mascot.dispose();
@@ -164,7 +159,7 @@ class MyJPopupMenu extends JPopupMenu {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
-                    SoundManager.invokeAfterSound("/cmd_onemore14.wav", new Runnable() {
+                    SoundFactory.invokeAfterSound("/cmd_onemore14.wav", new Runnable() {
 
                         @Override
                         public void run() {

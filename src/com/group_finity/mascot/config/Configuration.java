@@ -8,6 +8,7 @@ import com.group_finity.mascot.exception.BehaviorInstantiationException;
 import com.group_finity.mascot.exception.ConfigurationException;
 import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.VariableMap;
+import com.group_finity.mascot.sound.Sound;
 
 import java.awt.*;
 import java.io.IOException;
@@ -77,13 +78,17 @@ public class Configuration {
     }
 
     public Action buildAction(final String name, final Map<String, String> params) throws ActionInstantiationException {
+        return buildAction(name, params, null, null);
+    }
+
+    public Action buildAction(final String name, final Map<String, String> params, Sound voice, Integer voicePriority) throws ActionInstantiationException {
 
         final ActionBuilder factory = this.actionBuilders.get(name);
         if (factory == null) {
             throw new ActionInstantiationException("対応する動作が見つかりません: " + name);
         }
 
-        return factory.buildAction(params);
+        return factory.buildAction(params, voice, voicePriority);
     }
 
     public void validate() throws ConfigurationException {

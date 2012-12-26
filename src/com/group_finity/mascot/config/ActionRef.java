@@ -3,6 +3,8 @@ package com.group_finity.mascot.config;
 import com.group_finity.mascot.action.Action;
 import com.group_finity.mascot.exception.ActionInstantiationException;
 import com.group_finity.mascot.exception.ConfigurationException;
+import com.group_finity.mascot.sound.Sound;
+import com.group_finity.mascot.sound.SoundFactory;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -19,11 +21,29 @@ public class ActionRef implements IActionBuilder {
 
     private final Map<String, String> params = new LinkedHashMap<String, String>();
 
+    private final Integer voicePriority;
+
+    private final Sound voice;
+
     public ActionRef(final Configuration configuration, final Entry refNode) {
         this.configuration = configuration;
 
         this.name = refNode.getAttribute("名前");
         this.getParams().putAll(refNode.getAttributes());
+
+        Object voice = refNode.getAttribute("voice");
+        if (null != voice && voice.toString().length() > 0) {
+            this.voice = SoundFactory.getSound(voice.toString());
+        } else {
+            this.voice = null;
+        }
+        Object priority = refNode.getAttribute("priority");
+        if ((priority != null && priority.toString().length() > 0)) {
+            this.voicePriority = new Integer(priority.toString());
+        } else {
+            this.voicePriority = null;
+        }
+
 
         log.log(Level.INFO, "動作参照読み込み({0})", this);
     }
@@ -55,6 +75,6 @@ public class ActionRef implements IActionBuilder {
     public Action buildAction(final Map<String, String> params) throws ActionInstantiationException {
         final Map<String, String> newParams = new LinkedHashMap<String, String>(params);
         newParams.putAll(getParams());
-        return this.getConfiguration().buildAction(getName(), newParams);
+        return this.getConfiguration().buildAction(getName(), newParams, voice, voicePriority);
     }
 }

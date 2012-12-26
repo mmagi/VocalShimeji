@@ -1,11 +1,6 @@
 package com.group_finity.mascot.config;
 
-import com.group_finity.mascot.action.Action;
-import com.group_finity.mascot.action.Animate;
-import com.group_finity.mascot.action.Move;
-import com.group_finity.mascot.action.Select;
-import com.group_finity.mascot.action.Sequence;
-import com.group_finity.mascot.action.Stay;
+import com.group_finity.mascot.action.*;
 import com.group_finity.mascot.animation.Animation;
 import com.group_finity.mascot.exception.ActionInstantiationException;
 import com.group_finity.mascot.exception.AnimationInstantiationException;
@@ -13,13 +8,11 @@ import com.group_finity.mascot.exception.ConfigurationException;
 import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.Variable;
 import com.group_finity.mascot.script.VariableMap;
+import com.group_finity.mascot.sound.Sound;
+import com.group_finity.mascot.sound.SoundFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,6 +26,10 @@ public class ActionBuilder implements IActionBuilder {
 
     private final String className;
 
+    private final Integer voicePriority;
+
+    private final Sound voice;
+
     private final Map<String, String> params = new LinkedHashMap<String, String>();
 
     private final List<AnimationBuilder> animationBuilders = new ArrayList<AnimationBuilder>();
@@ -43,6 +40,21 @@ public class ActionBuilder implements IActionBuilder {
         this.name = actionNode.getAttribute("名前");
         this.type = actionNode.getAttribute("種類");
         this.className = actionNode.getAttribute("クラス");
+
+
+        Object voice = actionNode.getAttribute("voice");
+        if (null != voice && voice.toString().length() > 0) {
+            this.voice = SoundFactory.getSound(voice.toString());
+        } else {
+            this.voice = null;
+        }
+        Object priority = actionNode.getAttribute("priority");
+        if ((priority instanceof Double)) {
+            this.voicePriority = ((Double) priority).intValue();
+        } else {
+            this.voicePriority = null;
+        }
+
 
         log.log(Level.INFO, "動作読み込み開始({0})", this);
 
@@ -67,12 +79,18 @@ public class ActionBuilder implements IActionBuilder {
         return "動作(" + getName() + "," + getType() + "," + getClassName() + ")";
     }
 
-    @SuppressWarnings("unchecked")
     public Action buildAction(final Map<String, String> params) throws ActionInstantiationException {
+        return buildAction(params, null, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Action buildAction(final Map<String, String> params, Sound voice, Integer voicePriority) throws ActionInstantiationException {
 
         try {
             // 変数マップを生成
             final VariableMap variables = createVariables(params);
+            variables.put("voiceI", null == voice ? this.voice : voice);
+            variables.put("voiceP", null == voicePriority ? this.voicePriority : voicePriority);
 
             // アニメーションを生成
             final List<Animation> animations = createAnimations();

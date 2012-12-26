@@ -1,6 +1,5 @@
 package com.group_finity.mascot.config;
 
-import com.group_finity.mascot.SoundManager;
 import com.group_finity.mascot.animation.Animation;
 import com.group_finity.mascot.animation.Pose;
 import com.group_finity.mascot.exception.AnimationInstantiationException;
@@ -8,6 +7,8 @@ import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.image.ImagePair;
 import com.group_finity.mascot.image.ImagePairLoader;
 import com.group_finity.mascot.script.Variable;
+import com.group_finity.mascot.sound.Sound;
+import com.group_finity.mascot.sound.SoundFactory;
 
 import java.awt.*;
 import java.io.IOException;
@@ -23,13 +24,14 @@ public class AnimationBuilder {
     private final String condition;
 
     private final List<Pose> poses = new ArrayList<Pose>();
-    private final String voice;
+    private final Sound voice;
     private final int voicePriority;
 
     public AnimationBuilder(final Entry animationNode) throws IOException {
         this.condition = animationNode.getAttribute("条件") == null ? "true" : animationNode.getAttribute("条件");
-        this.voice = animationNode.getAttribute("voice");
-        int vp = SoundManager.defaultVoicePriority;
+        String voice = animationNode.getAttribute("voice");
+        this.voice = SoundFactory.getSound(voice);
+        int vp = SoundFactory.defaultVoicePriority;
         String priority = animationNode.getAttribute("priority");
         if (null != priority && priority.length() > 0)
             try {
@@ -54,8 +56,7 @@ public class AnimationBuilder {
         final String anchorText = frameNode.getAttribute("基準座標");
         final String moveText = frameNode.getAttribute("移動速度");
         final String durationText = frameNode.getAttribute("長さ");
-        final String sfx = frameNode.getAttribute("sfx");
-
+        final Sound sfx = SoundFactory.getSound(frameNode.getAttribute("sfx"));
         final String[] anchorCoordinates = anchorText.split(",");
         final Point anchor = new Point(Integer.parseInt(anchorCoordinates[0]), Integer.parseInt(anchorCoordinates[1]));
 
@@ -89,7 +90,7 @@ public class AnimationBuilder {
         return this.condition;
     }
 
-    public String getVoice() {
+    public Sound getVoice() {
         return this.voice;
     }
 

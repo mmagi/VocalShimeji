@@ -2,13 +2,14 @@
 package com.group_finity.mascot.action;
 
 import com.group_finity.mascot.Mascot;
-import com.group_finity.mascot.SoundManager;
 import com.group_finity.mascot.animation.Animation;
 import com.group_finity.mascot.environment.MascotEnvironment;
 import com.group_finity.mascot.exception.LostGroundException;
 import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.Variable;
 import com.group_finity.mascot.script.VariableMap;
+import com.group_finity.mascot.sound.Sound;
+import com.group_finity.mascot.sound.SoundFactory;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -44,16 +45,16 @@ public abstract class ActionBase implements Action {
         log.log(Level.INFO, "動作開始({0},{1})", new Object[]{getMascot(), this});
         getVariables().put("mascot", mascot);
         getVariables().put("action", this);
-        if (SoundManager.voiceOn) {
-            Object sound = getVariables().get("voice");
-            if (null != sound && sound.toString().length() > 0) {
-                String soundFile = sound.toString();
-                int pri = -10;
-                Object priority = getVariables().get("priority");
-                if ((priority instanceof Double)) {
-                    pri = ((Double) priority).intValue();
+        if (SoundFactory.voiceOn) {
+            Object voiceI = getVariables().get("voiceI");
+            if (null != voiceI && voiceI instanceof Sound) {
+                Sound voice = (Sound) voiceI;
+                int priority = -10;
+                Object voiceP = getVariables().get("voiceP");
+                if ((voiceP instanceof Integer)) {
+                    priority = ((Integer) priority).intValue();
                 }
-                mascot.voiceDemon.speak(soundFile, pri);
+                mascot.voiceDemon.speak(voice, priority);
             }
         }
         getVariables().init();
@@ -118,9 +119,9 @@ public abstract class ActionBase implements Action {
     protected Animation getAnimation() throws VariableException {
         for (Animation animation : getAnimations()) {
             if (animation.isEffective(getVariables())) {
-                if (SoundManager.voiceOn && null != animation.getVoice() && mascot.voiceDemon.getLastPlayed() != animation.getVoice()) {// 不重复播放同一个
-                    mascot.voiceDemon.speak(animation.getVoice(), animation.getVoicePriority());
-                }
+//                if (SoundManager.voiceOn && null != animation.getVoice() && mascot.voiceDemon.getLastPlayed() != animation.getVoice()) {// 不重复播放同一个
+//                    mascot.voiceDemon.speak(animation.getVoice(), animation.getVoicePriority());
+//                }
                 return animation;
             }
         }

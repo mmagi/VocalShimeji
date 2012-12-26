@@ -60,9 +60,6 @@ public class Main {
         } catch (Exception e) {
             log.log(Level.INFO, "载入欢迎语音出错");
         }
-        // preload all sound
-        log.log(Level.INFO, "正在预读语音文件({0})", "/media");
-        SoundManager.preLoadSounds();
         return clip;
     }
 
