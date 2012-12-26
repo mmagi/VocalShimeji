@@ -43,13 +43,9 @@ public class Mascot {
 
         this.id = lastId.incrementAndGet();
 
-        voiceDemon = SoundManager.getVoiceDataLineDaemon(this);
+        voiceDemon = SoundManager.startVoiceDataLineDaemon(this);
 
-        new Thread(voiceDemon, "DataLineDaemon" + id).start();
-
-        sfxDaemon = SoundManager.getSfxDataLineDaemon(this);
-
-        new Thread(sfxDaemon, "SfxLinesDaemon" + id).start();
+        sfxDaemon = SoundManager.startSfxDataLineDaemon(this);
 
         log.log(Level.INFO, "マスコット生成({0})", this);
 

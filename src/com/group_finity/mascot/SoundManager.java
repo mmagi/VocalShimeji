@@ -2,19 +2,13 @@ package com.group_finity.mascot;
 
 import com.sun.istack.internal.NotNull;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -30,10 +24,10 @@ public final class SoundManager {
     public static final int defaultVoicePriority = -10;
 
     //SourceLineDaemonCommonParams
-    private static final int bufferSizeInMSec = 100;
+    private static final int bufferSizeInMSec = 500;
     private static final int bufferSize = SoundManager.appAudioFormat.getFrameSize() * (int) (SoundManager.appAudioFormat.getFrameRate() * bufferSizeInMSec / 1000);
-    private static final int sleepMSec = 40;
-    private static final int bufferWriteThreshold = SoundManager.appAudioFormat.getFrameSize() * (int) (SoundManager.appAudioFormat.getFrameRate() * sleepMSec / 1000);
+    private static final int sleepMSec = 100;
+    private static final int bufferWriteThreshold = SoundManager.appAudioFormat.getFrameSize() * (int) (SoundManager.appAudioFormat.getFrameRate() * sleepMSec / 1200);
     /**
      * 某些特殊情况下，缓冲播放结束后还会卡循环，如果连续sleep这个次数以后，强制停止line;
      */
@@ -133,7 +127,7 @@ public final class SoundManager {
         new Invoker(resPath, cmd).start();
     }
 
-    public static VoiceDataLineDaemon getVoiceDataLineDaemon(Mascot mascot) {
+    public static VoiceDataLineDaemon startVoiceDataLineDaemon(Mascot mascot) {
         final VoiceDataLineDaemon voiceDaemon = new VoiceDataLineDaemon(mascot);
         new Thread(voiceDaemon, "DataLineDaemon" + mascot.toString()).start();
         return voiceDaemon;
@@ -141,10 +135,9 @@ public final class SoundManager {
 
     private static SfxDataLineDaemon sfxDataLineDaemon;
 
-    public synchronized static SfxDataLineDaemon getSfxDataLineDaemon(Mascot mascot) {
+    public synchronized static SfxDataLineDaemon startSfxDataLineDaemon(Mascot mascot) {
         if (null == sfxDataLineDaemon) {
             final SfxDataLineDaemon sfxDaemon = new SfxDataLineDaemon();
-            ;
             new Thread(sfxDaemon, "SfxLineDaemonForAll").start();
             sfxDataLineDaemon = sfxDaemon;
         }
@@ -204,44 +197,47 @@ public final class SoundManager {
 
         @Override
         public void run() {
-            voice:
-            if (voiceOn) {
-                final SourceDataLine line;
+            try {
+                voice:
+                if (voiceOn) {
+                    final SourceDataLine line;
 
-                try {
-                    line = AudioSystem.getSourceDataLine(appAudioFormat);
-                    line.open(appAudioFormat, bufferSize);
-                } catch (LineUnavailableException e) {
-                    log.log(Level.WARNING, "系统混音资源不足。");
-                    log.log(Level.WARNING, e.toString());
-                    break voice;
-                }
-                final CachedSound curSound = getSound(resPath);
+                    try {
+                        line = AudioSystem.getSourceDataLine(appAudioFormat);
+                        line.open(appAudioFormat, bufferSize);
+                    } catch (LineUnavailableException e) {
+                        log.log(Level.WARNING, "系统混音资源不足。");
+                        log.log(Level.WARNING, e.toString());
+                        break voice;
+                    }
+                    final CachedSound curSound = getSound(resPath);
 
-                int curPos = 0;
-                play:
-                while (voiceOn) {
-                    final int len = line.available();
-                    if (null != curSound && len > bufferWriteThreshold) {
-                        final int left = curSound.length - curPos;
-                        final int size = len > left ? left : len;
-                        line.write(curSound.bytes, curPos, size);
-                        curPos += size;
-                        line.start();
-                        if (curPos >= curSound.length) {
-                            break play;
+                    int curPos = 0;
+                    play:
+                    while (voiceOn) {
+                        final int len = line.available();
+                        if (null != curSound && len > bufferWriteThreshold) {
+                            final int left = curSound.length - curPos;
+                            final int size = len > left ? left : len;
+                            line.write(curSound.bytes, curPos, size);
+                            curPos += size;
+                            line.start();
+                            if (curPos >= curSound.length) {
+                                break play;
+                            }
+                        }
+                        try {
+                            Thread.sleep(sleepMSec);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
                     }
-                    try {
-                        Thread.sleep(sleepMSec);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    line.close();
                 }
-                line.close();
+            } finally {
+                if (null != cmd)
+                    cmd.run();//即使音频异常，也要执行
             }
-            if (null != cmd)
-                cmd.run();
         }
     }
 
@@ -293,10 +289,12 @@ public final class SoundManager {
                     line.stop();
                     line.flush();
                     curSound = null;
-                    try {
-                        Thread.sleep(sleepMSec);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    while (!voiceOn) {
+                        try {
+                            Thread.sleep(sleepMSec);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     final String nextPlay = voiceToPlay;
@@ -374,6 +372,7 @@ public final class SoundManager {
 
     public static final class SfxDataLineDaemon implements Runnable {
         private static final class sfxLine {
+            boolean busy = false;
             String nextRes;
             CachedSound curSound;
             int curPos;
@@ -390,12 +389,12 @@ public final class SoundManager {
         }
 
         final ConcurrentLinkedQueue<sfxLine> availableLines = new ConcurrentLinkedQueue<sfxLine>();
-        final ConcurrentLinkedQueue<sfxLine> busyLines = new ConcurrentLinkedQueue<sfxLine>();
         private static final int totalLines = 10;
+        final sfxLine[] lines = new sfxLine[totalLines];
 
         SfxDataLineDaemon() {
             for (int i = 0; i < totalLines; i++) {
-                availableLines.offer(new sfxLine());
+                availableLines.offer(lines[i] = new sfxLine());
             }
         }
 
@@ -403,10 +402,8 @@ public final class SoundManager {
         public void run() {
             while (true) {
                 if (sfxOn) {
-                    Iterator<sfxLine> it = busyLines.iterator();
-                    while (it.hasNext() && sfxOn) {
-                        final sfxLine line = it.next();
-                        synchronized (line) {
+                    for (final sfxLine line : lines)
+                        if (sfxOn && line.busy) {
                             if (null != line.nextRes) {
                                 line.curSound = getSound(line.nextRes);
                                 line.nextRes = null;
@@ -420,7 +417,7 @@ public final class SoundManager {
                                 line.line.start();
                                 line.curPos += len;
                                 if (line.curPos >= line.curSound.length) {
-                                    busyLines.remove(line);
+                                    line.busy = false;
                                     line.curPos = 0;
                                     line.nextRes = null;
                                     line.curSound = null;
@@ -428,7 +425,6 @@ public final class SoundManager {
                                 }
                             }
                         }
-                    }
                 }
                 try {
                     Thread.sleep(sleepMSec);
@@ -441,16 +437,15 @@ public final class SoundManager {
         public synchronized void sound(final String resPath) {
             sfxLine line;
             if ((line = availableLines.poll()) != null) {
-                synchronized (line) {
                     line.nextRes = resPath;
-                    busyLines.offer(line);
-                }
+                    line.busy = true;
             }//else too busy ignore this request
         }
 
         public void stop() {
             //改用共享音效线程，不用停止，忽略
         }
+
     }
     //    //每只十四独享音频线程，资源占用略大，改为共享
     //    public static final class SfxDataLineDaemon implements Runnable {

@@ -39,11 +39,11 @@ public class LogHandler extends java.util.logging.Handler {
         //        } else {
         //            sb.append(record.getLoggerName());
         //        }
-        if (record.getSourceMethodName() != null) {
-            sb.append(" ");
-            sb.append(record.getSourceMethodName());
-        }
-        sb.append(" ");
+//        if (record.getSourceMethodName() != null) {
+//            sb.append(" ");
+//            sb.append(record.getSourceMethodName());
+//        }
+//        sb.append(" ");
 
         sb.append(formatMessage(record));
         sb.append(lineSeparator);
