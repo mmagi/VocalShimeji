@@ -1,5 +1,3 @@
-package com.group_finity.mascot;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -10,8 +8,8 @@ import java.awt.*;
  * Time: 下午2:25
  */
 public class SplashScreen extends JWindow {
-    JLabel imageLabel = new JLabel();
-    static final JTextArea textArea = new JTextArea(6, 20);
+    final JLabel imageLabel = new JLabel();
+    final JTextArea textArea = new JTextArea(5, 20);
     static boolean closed = false;
 
     public SplashScreen() {
@@ -26,10 +24,6 @@ public class SplashScreen extends JWindow {
         pack();
         setLocationRelativeTo(null);
         setAlwaysOnTop(true);
-    }
-
-    public void showScreen() {
-        setVisible(true);
     }
 
     @Override

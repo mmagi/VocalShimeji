@@ -12,15 +12,18 @@ import java.util.logging.LogRecord;
  * Time: 下午3:26
  */
 public class LogHandler extends java.util.logging.Handler {
-
+    private static JTextArea output;
+    public static void setJTextArea(JTextArea output){
+        LogHandler.output = output;
+    }
     @Override
     public void publish(final LogRecord record) {
-        if (!SplashScreen.closed) {
+        if (null!=output) {
             SwingUtilities.invokeLater(new Runnable() {
 
                 @Override
                 public void run() {
-                    SplashScreen.textArea.append(format(record));
+                    output.append(format(record));
                 }
 
             });

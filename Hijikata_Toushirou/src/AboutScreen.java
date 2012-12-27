@@ -1,4 +1,4 @@
-package com.group_finity.mascot;
+import com.group_finity.mascot.Main;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +29,7 @@ public final class AboutScreen extends JWindow {
                         try {
                             Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + href[i]);
                         } catch (IOException e1) {
-                            Main.log.log(Level.INFO, "跳转网址失败", e1);
+                            Hijikata_Toushirou.log.log(Level.INFO, "跳转网址失败", e1);
                         }
                     }
                 }
@@ -38,22 +38,18 @@ public final class AboutScreen extends JWindow {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
         };
         addMouseListener(closeListener);
@@ -62,7 +58,4 @@ public final class AboutScreen extends JWindow {
         setAlwaysOnTop(true);
     }
 
-    public void showScreen() {
-        setVisible(true);
-    }
 }
