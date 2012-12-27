@@ -45,6 +45,11 @@ final class ActionWithSoundInvoker extends Thread {
                         curPos += size;
                         line.start();
                         if (curPos >= sound.bytes.length) {
+                            try {
+                                Thread.sleep(SoundFactory.bufferSizeInMSec);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             break play;
                         }
                     }
