@@ -5,9 +5,9 @@ import com.group_finity.mascot.environment.MascotEnvironment;
 import com.group_finity.mascot.exception.CantBeAliveException;
 import com.group_finity.mascot.image.MascotImage;
 import com.group_finity.mascot.image.TranslucentWindow;
-import com.group_finity.mascot.sound.SfxDataLineDaemon;
+import com.group_finity.mascot.sound.SfxController;
 import com.group_finity.mascot.sound.SoundFactory;
-import com.group_finity.mascot.sound.VoiceDataLineDaemon;
+import com.group_finity.mascot.sound.VoiceController;
 
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,17 +38,17 @@ public class Mascot {
 
     private MascotEnvironment environment = new MascotEnvironment(this);
 
-    public final VoiceDataLineDaemon voiceDemon;
+    public final VoiceController voiceController;
 
-    public final SfxDataLineDaemon sfxDaemon;
+    public final SfxController sfxController;
 
     public Mascot() {
 
         this.id = lastId.incrementAndGet();
 
-        voiceDemon = SoundFactory.startVoiceDataLineDaemon(this);
+        voiceController = SoundFactory.getVoiceController(this);
 
-        sfxDaemon = SoundFactory.startSfxDataLineDaemon(this);
+        sfxController = SoundFactory.getSfxController(this);
 
         log.log(Level.INFO, "マスコット生成({0})", this);
 
@@ -120,8 +120,8 @@ public class Mascot {
         if (getManager() != null)
             getManager().remove(this);
 
-        voiceDemon.stop();
-        sfxDaemon.stop();
+        voiceController.release();
+        sfxController.release();
     }
 
     public Manager getManager() {

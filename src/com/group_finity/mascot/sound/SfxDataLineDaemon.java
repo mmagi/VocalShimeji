@@ -12,7 +12,7 @@ import java.util.logging.Level;
  * Date: 12-12-26
  * Time: 下午2:25
  */
-public final class SfxDataLineDaemon implements Runnable {
+public final class SfxDataLineDaemon implements Runnable, SfxController {
     private static final class sfxLine {
         boolean busy = false;
         Sound curSound;
@@ -91,8 +91,9 @@ public final class SfxDataLineDaemon implements Runnable {
         }//else too busy ignore this request
     }
 
-    public void stop() {
-        //改用共享音效线程，不用停止，忽略
+    @Override
+    public void release() {
+        //共享音效line，不用释放，忽略
     }
 
 }

@@ -45,7 +45,7 @@ public class Pose {
         mascot.setImage(getImage().getImage(mascot.isLookRight()));
 
         if (null != sfx) {
-            mascot.sfxDaemon.sound(sfx);
+            mascot.sfxController.sound(sfx);
         }
 
     }

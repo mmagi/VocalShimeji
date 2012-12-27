@@ -54,7 +54,7 @@ public abstract class ActionBase implements Action {
                 if ((voiceP instanceof Integer)) {
                     priority = ((Integer) priority).intValue();
                 }
-                mascot.voiceDemon.speak(voice, priority);
+                mascot.voiceController.speak(voice, priority);
             }
         }
         getVariables().init();
@@ -119,9 +119,9 @@ public abstract class ActionBase implements Action {
     protected Animation getAnimation() throws VariableException {
         for (Animation animation : getAnimations()) {
             if (animation.isEffective(getVariables())) {
-//                if (SoundManager.voiceOn && null != animation.getVoice() && mascot.voiceDemon.getLastPlayed() != animation.getVoice()) {// 不重复播放同一个
-//                    mascot.voiceDemon.speak(animation.getVoice(), animation.getVoicePriority());
-//                }
+                if (SoundFactory.voiceOn && null != animation.getVoice() && mascot.voiceController.getLastPlayed() != animation.getVoice()) {// 不重复播放同一个
+                    mascot.voiceController.speak(animation.getVoice(), animation.getVoicePriority());
+                }
                 return animation;
             }
         }

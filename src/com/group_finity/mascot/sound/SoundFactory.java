@@ -46,16 +46,21 @@ public final class SoundFactory {
         new ActionWithSoundInvoker(sound, cmd).start();
     }
 
-    public static VoiceDataLineDaemon startVoiceDataLineDaemon(Mascot mascot) {
-        final VoiceDataLineDaemon voiceDaemon = new VoiceDataLineDaemon(mascot);
-        new Thread(voiceDaemon, "DataLineDaemon" + mascot.toString()).start();
-        return voiceDaemon;
+    private static VoiceDataLineDaemon voiceDataLineDaemon;
+
+    public synchronized static VoiceController getVoiceController(Mascot mascot) {
+        if (null == voiceDataLineDaemon) {
+            final VoiceDataLineDaemon voiceDaemon = new VoiceDataLineDaemon();
+            new Thread(voiceDaemon, "VoiceLineDaemonForAll").start();
+            voiceDataLineDaemon = voiceDaemon;
+        }
+        return voiceDataLineDaemon.createVoiceLine();
     }
 
     private static SfxDataLineDaemon sfxDataLineDaemon;
 
     //invoker 线程调用，保留锁
-    public synchronized static SfxDataLineDaemon startSfxDataLineDaemon(Mascot mascot) {
+    public synchronized static SfxController getSfxController(Mascot mascot) {
         if (null == sfxDataLineDaemon) {
             final SfxDataLineDaemon sfxDaemon = new SfxDataLineDaemon();
             new Thread(sfxDaemon, "SfxLineDaemonForAll").start();

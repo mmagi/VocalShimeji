@@ -3,11 +3,7 @@ package com.group_finity.mascot.win;
 import com.group_finity.mascot.image.NativeImage;
 import com.group_finity.mascot.image.TranslucentWindow;
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.GDI32;
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.platform.win32.WinNT;
-import com.sun.jna.platform.win32.WinUser;
+import com.sun.jna.platform.win32.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

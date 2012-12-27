@@ -25,7 +25,7 @@ final class ActionWithSoundInvoker extends Thread {
     public void run() {
         try {
             voice:
-            if (SoundFactory.voiceOn && null!=sound) {
+            if (SoundFactory.voiceOn && null != sound) {
                 final SourceDataLine line;
                 try {
                     line = AudioSystem.getSourceDataLine(SoundFactory.appAudioFormat);

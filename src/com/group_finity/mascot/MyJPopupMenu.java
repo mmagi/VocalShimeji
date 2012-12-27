@@ -57,10 +57,11 @@ class MyJPopupMenu extends JPopupMenu {
     static {
         restoreMenu.addActionListener(new ActionListener() {
             final Sound voice = SoundFactory.getSound("/cmd_iechange.wav");
-            final Runnable cmd =  new Runnable() {
+            final Runnable cmd = new Runnable() {
 
                 final Sound voiceFalse = SoundFactory.getSound("/response-noIE.wav");
                 final Sound voiceTrue = SoundFactory.getSound("/response-resetIE.wav");
+
                 @Override
                 public void run() {
                     if (NativeFactory.getInstance().getEnvironment().restoreIE()) {
@@ -70,9 +71,10 @@ class MyJPopupMenu extends JPopupMenu {
                     }
                 }
             };
+
             @Override
             public void actionPerformed(ActionEvent e) {
-                SoundFactory.invokeAfterSound(voice,cmd);
+                SoundFactory.invokeAfterSound(voice, cmd);
             }
         });
         increaseMenu.addActionListener(new ActionListener() {
@@ -85,6 +87,7 @@ class MyJPopupMenu extends JPopupMenu {
                 }
 
             };
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 SoundFactory.invokeAfterSound(sound, cmd);
@@ -99,6 +102,7 @@ class MyJPopupMenu extends JPopupMenu {
                     Main.getInstance().gatherAll();
                 }
             };
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 SoundFactory.invokeAfterSound(sound, cmd);
@@ -106,16 +110,17 @@ class MyJPopupMenu extends JPopupMenu {
         });
         oneMenu.addActionListener(new ActionListener() {
             final Sound sound = SoundFactory.getSound("/cmd_onlyone14.wav");
-            final Runnable cmd =new Runnable() {
+            final Runnable cmd = new Runnable() {
 
                 @Override
                 public void run() {
                     Main.getInstance().remainOne();
                 }
             };
+
             @Override
             public void actionPerformed(ActionEvent e) {
-                SoundFactory.invokeAfterSound(sound,cmd);
+                SoundFactory.invokeAfterSound(sound, cmd);
             }
         });
         voiceMenu.addItemListener(new ItemListener() {
@@ -138,12 +143,13 @@ class MyJPopupMenu extends JPopupMenu {
         });
         closeMenu.addActionListener(new ActionListener() {
             final Sound sound = SoundFactory.getSound("/cmd_bye.wav");
-            final Runnable cmd =new Runnable() {
+            final Runnable cmd = new Runnable() {
                 @Override
                 public void run() {
                     Main.getInstance().exit();
                 }
             };
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 SoundFactory.invokeAfterSound(sound, cmd);
@@ -153,7 +159,7 @@ class MyJPopupMenu extends JPopupMenu {
 
     public static JMenuItem createDisposeMenu(final Mascot mascot) {
         final JMenuItem disposeMenu = new JMenuItem("再见吧");//"ばいばい");
-            disposeMenu.addActionListener(new ActionListener() {
+        disposeMenu.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -164,7 +170,7 @@ class MyJPopupMenu extends JPopupMenu {
                         mascot.dispose();
                     }
                 };
-                SoundFactory.invokeAfterSound(sound,cmd);
+                SoundFactory.invokeAfterSound(sound, cmd);
             }
         });
         return disposeMenu;
@@ -181,6 +187,7 @@ class MyJPopupMenu extends JPopupMenu {
                 }
 
             };
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
