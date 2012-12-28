@@ -21,16 +21,20 @@ public class Hijikata_Toushirou {
 
     public static void main(String[] args) {
         LogHandler.setJTextArea(splashScreen.textArea);
+        Clip clip = null;
         splashScreen.setVisible(true);
         try {
             checkJnaDll();
-            Clip clip = initSound();
+            clip = initSound();
             Main.getInstance().run();
-            splashScreen.dispose();
-            clip.drain();
-            clip.close();
         } catch (Throwable e) {
             log.log(Level.WARNING, "启动时出现错误", e);
+            splashScreen.reportErrorAndExit();
+        }
+        splashScreen.dispose();
+        if(null!=clip){
+            clip.drain();
+            clip.close();
         }
     }
 
