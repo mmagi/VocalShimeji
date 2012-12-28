@@ -25,6 +25,7 @@ public class Hijikata_Toushirou {
         try {
             checkJnaDll();
             clip = initSound();
+            Main.getInstance().setAboutScreen(new AboutScreen());
             Main.getInstance().run();
         } catch (final Throwable e) {
             log.log(Level.ALL, "启动时出现错误", e);
