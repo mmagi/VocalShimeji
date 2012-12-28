@@ -51,7 +51,7 @@ class MyJPopupMenu extends JPopupMenu {
     static final JMenuItem restoreMenu = new JMenuItem("还原浏览器窗口");//IEを元に戻す");;
     static final JCheckBoxMenuItem voiceMenu = new JCheckBoxMenuItem("语音", true);
     static final JCheckBoxMenuItem sfxMenu = new JCheckBoxMenuItem("音效", true);
-    static final JMenuItem aboutMenu = new JMenuItem("关于Toshimeji");//"Toshimeji について");
+    static final JMenuItem aboutMenu = new JMenuItem("关于VocalShimeji");//"Toshimeji について");
     static final JMenuItem closeMenu = new JMenuItem("再见～");//ばいばい");
 
     static {
