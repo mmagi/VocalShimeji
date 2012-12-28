@@ -1,4 +1,3 @@
-import com.group_finity.mascot.LogHandler;
 import com.group_finity.mascot.Main;
 
 import javax.sound.sampled.AudioInputStream;
@@ -27,9 +26,9 @@ public class Hijikata_Toushirou {
             checkJnaDll();
             clip = initSound();
             Main.getInstance().run();
-        } catch (Throwable e) {
-            log.log(Level.WARNING, "启动时出现错误", e);
-            splashScreen.reportErrorAndExit();
+        } catch (final Throwable e) {
+            log.log(Level.ALL, "启动时出现错误", e);
+            splashScreen.reportErrorAndExit(e);
         }
         splashScreen.dispose();
         if(null!=clip){
@@ -38,7 +37,7 @@ public class Hijikata_Toushirou {
         }
     }
 
-    private static final void checkJnaDll() {
+    private static void checkJnaDll() {
         String arc = System.getProperty("os.arch").endsWith("64") ? "x86_64" : "x86";
         String dir = "lib/win32-" + arc;
         File jnaLib = new File(new File(dir), System.mapLibraryName("jnidispatch"));
@@ -49,7 +48,7 @@ public class Hijikata_Toushirou {
         }
     }
 
-    private final static Clip initSound() {
+    private static Clip initSound() {
         Clip clip = null;
         // play init sound
         try {
@@ -57,7 +56,7 @@ public class Hijikata_Toushirou {
             AudioInputStream ais = AudioSystem.getAudioInputStream(Main.class.getResource("/media/init.wav"));
             clip.open(ais);
             clip.start();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.log(Level.INFO, "载入欢迎语音出错");
         }
         return clip;
