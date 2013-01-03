@@ -131,6 +131,7 @@ public class Main {
             mascot.setBehavior(getConfiguration().buildBehavior(null, mascot));
 
             getManager().add(mascot);
+            System.out.println(getManager().getCount());
         } catch (BehaviorInstantiationException e) {
             log.log(Level.SEVERE, "最初の行動の初期化に失敗しました", e);
             mascot.dispose();
