@@ -3,14 +3,14 @@ package com.group_finity.mascot.win;
 import com.group_finity.mascot.image.NativeImage;
 import com.group_finity.mascot.image.TranslucentWindow;
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.*;
+import com.sun.jna.platform.win32.GDI32;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef;
+import com.sun.jna.platform.win32.WinNT;
+import com.sun.jna.platform.win32.WinUser;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 /**
  * α値つき画像ウィンドウ.
@@ -19,21 +19,6 @@ import java.io.IOException;
  * {@link #setAlpha(int)} で表示するときの濃度も指定できる.
  */
 class WindowsTranslucentWindow extends JWindow implements TranslucentWindow {
-
-    public static void main(String[] args) throws IOException {
-
-        WindowsTranslucentWindow win = new WindowsTranslucentWindow();
-
-        win.setBounds(200, 200, 200, 200);
-        win.setVisible(true);
-        win.setAlwaysOnTop(true);
-
-        BufferedImage img = ImageIO.read(new File("img/shime1.png"));
-        WindowsNativeImage wi = new WindowsNativeImage(img);
-
-        win.setImage(wi);
-        win.repaint();
-    }
 
     private static final long serialVersionUID = 1L;
 
