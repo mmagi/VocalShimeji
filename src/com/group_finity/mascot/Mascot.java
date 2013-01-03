@@ -182,10 +182,6 @@ public class Mascot {
         this.behavior.init(this);
     }
 
-    public int getTotalCount() {
-        return getManager().getCount();
-    }
-
     private boolean isAnimating() {
         return this.animating;
     }
