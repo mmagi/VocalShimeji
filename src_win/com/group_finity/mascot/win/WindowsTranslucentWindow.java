@@ -2,9 +2,9 @@ package com.group_finity.mascot.win;
 
 import com.group_finity.mascot.image.NativeImage;
 import com.group_finity.mascot.image.TranslucentWindow;
+import com.group_finity.mascot.win.jna.GDI32Ex;
+import com.group_finity.mascot.win.jna.User32Ex;
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.GDI32;
-import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinUser;
@@ -37,23 +37,23 @@ class WindowsTranslucentWindow extends JWindow implements TranslucentWindow {
 
         final WinDef.HWND hWnd = new WinDef.HWND(Native.getComponentPointer(this));
 
-        if (User32.INSTANCE.IsWindowVisible(hWnd)) {
+        if (User32Ex.INSTANCE.IsWindowVisible(hWnd)) {
 
-            final int exStyle = User32.INSTANCE.GetWindowLong(hWnd, WinUser.GWL_EXSTYLE);
+            final int exStyle = User32Ex.INSTANCE.GetWindowLongW(hWnd, WinUser.GWL_EXSTYLE);
             if ((exStyle & WinUser.WS_EX_LAYERED) == 0) {
-                User32.INSTANCE.SetWindowLong(hWnd, WinUser.GWL_EXSTYLE, exStyle | WinUser.WS_EX_LAYERED);
+                User32Ex.INSTANCE.SetWindowLongW(hWnd, WinUser.GWL_EXSTYLE, exStyle | WinUser.WS_EX_LAYERED);
             }
 
             // 画像の転送元DCを作成
-            final WinDef.HDC clientDC = User32.INSTANCE.GetDC(hWnd);
-            final WinDef.HDC memDC = GDI32.INSTANCE.CreateCompatibleDC(clientDC);
-            final WinNT.HANDLE oldBmp = GDI32.INSTANCE.SelectObject(memDC, imageHandle);
+            final WinDef.HDC clientDC = User32Ex.INSTANCE.GetDC(hWnd);
+            final WinDef.HDC memDC = GDI32Ex.INSTANCE.CreateCompatibleDC(clientDC);
+            final WinNT.HANDLE oldBmp = GDI32Ex.INSTANCE.SelectObject(memDC, imageHandle);
 
-            User32.INSTANCE.ReleaseDC(hWnd, clientDC);
+            User32Ex.INSTANCE.ReleaseDC(hWnd, clientDC);
 
             // 転送先領域
             final WinDef.RECT windowRect = new WinDef.RECT();
-            User32.INSTANCE.GetWindowRect(hWnd, windowRect);
+            User32Ex.INSTANCE.GetWindowRect(hWnd, windowRect);
 
             // 転送
             final WinUser.BLENDFUNCTION bf = new WinUser.BLENDFUNCTION();
@@ -69,12 +69,12 @@ class WindowsTranslucentWindow extends JWindow implements TranslucentWindow {
             size.cx = windowRect.right - windowRect.left;
             size.cy = windowRect.bottom - windowRect.top;
             final WinUser.POINT zero = new WinUser.POINT();
-            User32.INSTANCE.UpdateLayeredWindow(hWnd, null, lt, size, memDC, zero, 0, bf, WinUser.ULW_ALPHA);
+            User32Ex.INSTANCE.UpdateLayeredWindow(hWnd, null, lt, size, memDC, zero, 0, bf, WinUser.ULW_ALPHA);
 
             // ビットマップは元に戻しておく
-            GDI32.INSTANCE.SelectObject(memDC, oldBmp);
+            GDI32Ex.INSTANCE.SelectObject(memDC, oldBmp);
 
-            GDI32.INSTANCE.DeleteDC(memDC);
+            GDI32Ex.INSTANCE.DeleteDC(memDC);
         }
 
     }

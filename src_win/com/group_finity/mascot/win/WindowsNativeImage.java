@@ -3,7 +3,6 @@ package com.group_finity.mascot.win;
 import com.group_finity.mascot.image.NativeImage;
 import com.group_finity.mascot.win.jna.BITMAP;
 import com.group_finity.mascot.win.jna.GDI32Ex;
-import com.sun.jna.platform.win32.GDI32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinGDI;
 
@@ -36,9 +35,7 @@ class WindowsNativeImage implements NativeImage {
         bmi.bmiHeader.biPlanes = 1;
         bmi.bmiHeader.biBitCount = 32;
 
-        final WinDef.HBITMAP hBitmap = GDI32.INSTANCE.CreateDIBSection(null, bmi, WinGDI.DIB_RGB_COLORS, null, null, 0);
-
-        return hBitmap;
+        return GDI32Ex.INSTANCE.CreateDIBSection(null, bmi, WinGDI.DIB_RGB_COLORS, null, null, 0);
     }
 
     /**
@@ -80,7 +77,7 @@ class WindowsNativeImage implements NativeImage {
      * @param nativeHandle ビットマップのハンドル.
      */
     private static void freeNative(final WinDef.HBITMAP nativeHandle) {
-        GDI32.INSTANCE.DeleteObject(nativeHandle);
+        GDI32Ex.INSTANCE.DeleteObject(nativeHandle);
     }
 
     /**

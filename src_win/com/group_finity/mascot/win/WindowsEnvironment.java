@@ -4,8 +4,6 @@ import com.group_finity.mascot.environment.Area;
 import com.group_finity.mascot.environment.Environment;
 import com.group_finity.mascot.win.jna.GDI32Ex;
 import com.group_finity.mascot.win.jna.User32Ex;
-import com.sun.jna.platform.win32.GDI32;
-import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinUser;
 
@@ -16,7 +14,7 @@ import java.util.LinkedHashMap;
 /**
  * Java では取得が難しい環境情報をJNIを使用して取得する.
  */
-class WindowsEnvironment extends Environment {
+public class WindowsEnvironment extends Environment {
 
     /**
      * 作業領域を取得する. この領域はディスプレイ領域からタスクバーをのぞいたものになる.
@@ -41,7 +39,7 @@ class WindowsEnvironment extends Environment {
         // ウィンドウタイトルで IE かどうか判断する
         final char[] title = new char[1024];
 
-        final int titleLength = User32.INSTANCE.GetWindowText(ie, title, 1024);
+        final int titleLength = User32Ex.INSTANCE.GetWindowTextW(ie, title, 1024);
 
         if (new String(title, 0, titleLength).contains("Internet Explorer")) {
             ieCache.put(ie, true);
@@ -62,7 +60,7 @@ class WindowsEnvironment extends Environment {
         // ウィンドウクラウスで MSNメッセンジャか判断する
         final char[] className = new char[1024];
 
-        final int classNameLength = User32.INSTANCE.GetClassName(ie, className, 1024);
+        final int classNameLength = User32Ex.INSTANCE.GetClassNameW(ie, className, 1024);
 
         if (new String(className, 0, classNameLength).contains("IMWindowClass")) {
             ieCache.put(ie, true);
@@ -85,16 +83,14 @@ class WindowsEnvironment extends Environment {
         return false;
     }
 
-    static int f;
-
     private static WinDef.HWND findActiveIE() {
 
-        WinDef.HWND ie = User32.INSTANCE.GetWindow(User32.INSTANCE.GetForegroundWindow(), new WinDef.DWORD(WinUser.GW_HWNDFIRST));
+        WinDef.HWND ie = User32Ex.INSTANCE.GetWindow(User32Ex.INSTANCE.GetForegroundWindow(), new WinDef.DWORD(WinUser.GW_HWNDFIRST));
 
         while (User32Ex.INSTANCE.IsWindow(ie) != 0) {
 
-            if (User32.INSTANCE.IsWindowVisible(ie)) {
-                if ((User32.INSTANCE.GetWindowLong(ie, WinUser.GWL_STYLE) & WinUser.WS_MAXIMIZE) != 0) {
+            if (User32Ex.INSTANCE.IsWindowVisible(ie)) {
+                if ((User32Ex.INSTANCE.GetWindowLongW(ie, WinUser.GWL_STYLE) & WinUser.WS_MAXIMIZE) != 0) {
                     // 最大化されているウィンドウが見つかったので中止
                     return null;
                 }
@@ -104,7 +100,7 @@ class WindowsEnvironment extends Environment {
                 }
             }
 
-            ie = User32.INSTANCE.GetWindow(ie, new WinDef.DWORD(WinUser.GW_HWNDNEXT));
+            ie = User32Ex.INSTANCE.GetWindow(ie, new WinDef.DWORD(WinUser.GW_HWNDNEXT));
 
         }
 
@@ -127,7 +123,7 @@ class WindowsEnvironment extends Environment {
 
         // IE の矩形を取得
         final WinDef.RECT out = new WinDef.RECT();
-        User32.INSTANCE.GetWindowRect(ie, out);
+        User32Ex.INSTANCE.GetWindowRect(ie, out);
         final WinDef.RECT in = new WinDef.RECT();
         if (getWindowRgnBox(ie, in) == User32Ex.ERROR) {
             in.left = 0;
@@ -142,7 +138,7 @@ class WindowsEnvironment extends Environment {
 
     private static int getWindowRgnBox(final WinDef.HWND window, final WinDef.RECT rect) {
 
-        WinDef.HRGN hRgn = GDI32.INSTANCE.CreateRectRgn(0, 0, 0, 0);
+        WinDef.HRGN hRgn = GDI32Ex.INSTANCE.CreateRectRgn(0, 0, 0, 0);
         try {
             if (User32Ex.INSTANCE.GetWindowRgn(window, hRgn) == User32Ex.ERROR) {
                 return User32Ex.ERROR;
@@ -150,7 +146,7 @@ class WindowsEnvironment extends Environment {
             GDI32Ex.INSTANCE.GetRgnBox(hRgn, rect);
             return 1;
         } finally {
-            GDI32.INSTANCE.DeleteObject(hRgn);
+            GDI32Ex.INSTANCE.DeleteObject(hRgn);
         }
     }
 
@@ -162,7 +158,7 @@ class WindowsEnvironment extends Environment {
 
         // IE の矩形を取得
         final WinDef.RECT out = new WinDef.RECT();
-        User32.INSTANCE.GetWindowRect(ie, out);
+        User32Ex.INSTANCE.GetWindowRect(ie, out);
         final WinDef.RECT in = new WinDef.RECT();
         if (getWindowRgnBox(ie, in) == User32Ex.ERROR) {
             in.left = 0;
@@ -171,7 +167,7 @@ class WindowsEnvironment extends Environment {
             in.bottom = out.bottom - out.top;
         }
 
-        User32.INSTANCE.MoveWindow(ie, rect.x - in.left, rect.y - in.top, rect.width + (out.right - out.left) - (in.right - in.left), rect.height + (out.bottom - out.top) - (in.bottom - in.top), true);
+        User32Ex.INSTANCE.MoveWindow(ie, rect.x - in.left, rect.y - in.top, rect.width + (out.right - out.left) - (in.right - in.left), rect.height + (out.bottom - out.top) - (in.bottom - in.top), true);
 
         return true;
     }
@@ -182,7 +178,7 @@ class WindowsEnvironment extends Environment {
         final WinDef.RECT workArea = new WinDef.RECT();
         User32Ex.INSTANCE.SystemParametersInfoW(User32Ex.SPI_GETWORKAREA, 0, workArea, 0);
 
-        WinDef.HWND ie = User32.INSTANCE.GetWindow(User32.INSTANCE.GetForegroundWindow(), new WinDef.DWORD(WinUser.GW_HWNDFIRST));
+        WinDef.HWND ie = User32Ex.INSTANCE.GetWindow(User32Ex.INSTANCE.GetForegroundWindow(), new WinDef.DWORD(WinUser.GW_HWNDFIRST));
 
         while (User32Ex.INSTANCE.IsWindow(ie) != 0) {
             if (isIE(ie)) {
@@ -190,7 +186,7 @@ class WindowsEnvironment extends Environment {
 
                 // IE の矩形を取得
                 final WinDef.RECT rect = new WinDef.RECT();
-                User32.INSTANCE.GetWindowRect(ie, rect);
+                User32Ex.INSTANCE.GetWindowRect(ie, rect);
                 if ((rect.right <= workArea.left + 100) || (rect.bottom <= workArea.top + 100) || (rect.left >= workArea.right - 100) || (rect.top >= workArea.bottom - 100)) {
                     ret = true;
                     // 位置がおかしいような気がする
@@ -201,14 +197,14 @@ class WindowsEnvironment extends Environment {
                     rect.right += offsetX;
                     rect.top += offsetY;
                     rect.bottom += offsetY;
-                    User32.INSTANCE.MoveWindow(ie, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, true);
+                    User32Ex.INSTANCE.MoveWindow(ie, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, true);
                     User32Ex.INSTANCE.BringWindowToTop(ie);
                 }
 
                 break;
             }
 
-            ie = User32.INSTANCE.GetWindow(ie, new WinDef.DWORD(WinUser.GW_HWNDNEXT));
+            ie = User32Ex.INSTANCE.GetWindow(ie, new WinDef.DWORD(WinUser.GW_HWNDNEXT));
         }
         return ret;
     }
