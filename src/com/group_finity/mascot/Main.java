@@ -13,6 +13,7 @@ import javax.swing.*;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
@@ -37,11 +38,30 @@ public class Main {
         configuration = new Configuration();
     }
 
-
+    Cursor cursor;
     public void run() {
-            loadConfiguration();
+        loadConfiguration();
+        BufferedImage cursorImage = null;
+        try {
+            cursorImage = ImageIO.read(Main.class.getResource("/icon.png"));
+            Dimension size = Toolkit.getDefaultToolkit().getBestCursorSize(cursorImage.getWidth(), cursorImage.getHeight());
+            BufferedImage scaledImage = new BufferedImage(size.width, size.height, cursorImage.getType());
 
-            try {
+            // Paint scaled version of image to new image
+
+            Graphics2D graphics2D = scaledImage.createGraphics();
+            graphics2D.drawImage(cursorImage, 0, 0,cursorImage.getWidth(), cursorImage.getHeight(), null);
+            cursorImage = scaledImage;
+            // clean up
+
+            graphics2D.dispose();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Point hotSpot = new Point(8, 3);
+        String cursorName = "VocalShimejiCursor";
+        cursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImage, hotSpot, cursorName);
+        try {
                 SwingUtilities.invokeAndWait(new Runnable() {
                     @Override
                     public void run() {
@@ -125,7 +145,7 @@ public class Main {
         Mascot mascot = new Mascot();
 
         mascot.setAnchor(new Point(-1000, -1000));
-
+        mascot.getWindow().asJWindow().setCursor(cursor);
         mascot.setLookRight(Math.random() < 0.5D);
         try {
             mascot.setBehavior(getConfiguration().buildBehavior(null, mascot));
