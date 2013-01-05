@@ -105,9 +105,12 @@ class WindowsTranslucentWindow extends JWindow implements TranslucentWindow {
     private WindowsNativeImage getImage() {
         return this.image;
     }
-
+    private boolean needRepaint = false;
     public void setImage(final NativeImage image) {
-        this.image = (WindowsNativeImage) image;
+        if (image != this.image){
+            this.image = (WindowsNativeImage) image;
+            needRepaint=true;
+        }
     }
 
     public int getAlpha() {
@@ -119,7 +122,10 @@ class WindowsTranslucentWindow extends JWindow implements TranslucentWindow {
     }
 
     public void updateImage() {
-        repaint();
+        if (needRepaint){
+            needRepaint = false;
+            repaint();
+        }
     }
 
 }
