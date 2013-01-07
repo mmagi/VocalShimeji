@@ -23,10 +23,8 @@ public final class SoundFactory {
     static final int bufferSize = SoundFactory.appAudioFormat.getFrameSize() * (int) (SoundFactory.appAudioFormat.getFrameRate() * bufferSizeInMSec / 1000);
     static final int sleepMSec = 100;
     static final int bufferWriteThreshold = SoundFactory.appAudioFormat.getFrameSize() * (int) (SoundFactory.appAudioFormat.getFrameRate() * sleepMSec / 1200);
-    static final int forceStopSleepCount = bufferSizeInMSec / sleepMSec;//某些特殊情况下，缓冲播放结束后还会卡循环，如果连续sleep这个次数以后，强制停止line;
 
-
-    public static final Sound getSound(String resPath) {
+    public static Sound getSound(String resPath) {
         if (null == resPath) return null;
         Sound sound = soundCache.get(resPath);
         if (null == sound) {

@@ -23,7 +23,6 @@ public final class VoiceDataLineDaemon implements Runnable {
         Sound curSound;
         int curPos;
         int curLevel = 0; // 按绝对值比较大小：负数表示同级可互相打断 正数表示同级声音不互相打断 0=没有声音在播放
-        int sleepCount;
 
         public Sound getLastPlayed() {
             return lastPlayed;
@@ -80,8 +79,7 @@ public final class VoiceDataLineDaemon implements Runnable {
 
         while (true) {
             if (SoundFactory.voiceOn) {
-                for (int it = 0; it < lines.size(); it++) {
-                    final voiceLine line = lines.get(it);
+                for (final voiceLine line : lines) {
                     if (!SoundFactory.voiceOn) {
                         line.line.stop();
                         line.line.flush();
@@ -90,7 +88,6 @@ public final class VoiceDataLineDaemon implements Runnable {
                             final Sound nextSound = line.voiceToPlay;
                             line.voiceToPlay = null;
                             //更换音频
-                            changeSound:
                             if (null != nextSound) {
                                 line.lastPlayed = nextSound;
                                 if (line.curSound != null) { //换轨时不flush，做fadeInAndOut
@@ -112,8 +109,8 @@ public final class VoiceDataLineDaemon implements Runnable {
                                     while (line.line.available() < fadeLength) {
                                         Thread.yield();
                                     }
+                                    if (!line.line.isActive()) line.line.start();
                                     line.line.write(fadeBuffer, 0, fadeLength);
-                                    line.line.start();
                                     line.curSound = nextSound;
                                     line.curPos = fadeLength;
                                     // fade完成
@@ -129,18 +126,14 @@ public final class VoiceDataLineDaemon implements Runnable {
                                 final int curPos = line.curPos;
                                 final int left = curSound.bytes.length - curPos;
                                 final int size = len > left ? left : len;
+                                if (!line.line.isActive()) line.line.start();
                                 line.line.write(curSound.bytes, curPos, size);
-                                line.line.start();
                                 line.curPos += size;
                                 if (line.curPos >= curSound.bytes.length) { //换轨时不做flush，因此缓冲写完就判定为播放完成，不在意实际是否播放完
                                     line.curSound = null;
-                                    line.sleepCount = SoundFactory.forceStopSleepCount;
                                     line.curLevel = 0;
                                 }
                             } else {//缓冲数据还充足或当前没有音频要播放
-                                if (null == line.curSound && --line.sleepCount == 0) {//当前没有音频要播放时，若超过计数器，强制清空缓冲区，防止windows api卡音
-                                    line.line.flush();
-                                }
                             }
                         } else {
                             linePool.offer(line);
