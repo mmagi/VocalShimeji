@@ -10,6 +10,7 @@ import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinUser;
 
 import javax.swing.*;
+import java.awt.*;
 
 final class WindowsTranslucentWindow extends JWindow implements TranslucentWindow {
     @Override
@@ -36,6 +37,11 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
     }
 
     private static final long serialVersionUID = 1L;
+
+    @Override
+    public void paint(Graphics g) {
+        //nop;
+    }
 
     @Override
     public JWindow asJWindow() {
@@ -103,7 +109,7 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
             User32Ex.INSTANCE.UpdateLayeredWindow(hWnd, null, pptDst, pSize, hdcSrc, pptSrc, 0x00000000, blendFunction, WinUser.ULW_ALPHA);
             GDI32Ex.INSTANCE.SelectObject(hdcSrc, oldBmp);
         } else if (null != pptDst) {
-            User32Ex.INSTANCE.UpdateLayeredWindow(hWnd, null, pptDst, null, null, pptSrc, 0x00000000, blendFunction, WinUser.ULW_ALPHA);
+            User32Ex.INSTANCE.MoveWindow(hWnd,pptDst.x,pptDst.y,pSize.cx,pSize.cy,false);
             pptDst = null;
         }
     }
