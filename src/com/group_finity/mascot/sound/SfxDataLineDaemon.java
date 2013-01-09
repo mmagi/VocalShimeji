@@ -30,7 +30,7 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
     }
 
     final ConcurrentLinkedQueue<sfxLine> availableLines = new ConcurrentLinkedQueue<sfxLine>();
-    private static final int totalLines = 10;
+    private static final int totalLines = 50;
     final sfxLine[] lines = new sfxLine[totalLines];
 
     SfxDataLineDaemon() {
@@ -54,8 +54,6 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
                             line.curPos += len;
                             if (line.curPos >= line.curSound.bytes.length) {
                                 line.busy = false;
-                                line.curPos = 0;
-                                line.curSound = null;
                                 availableLines.offer(line);
                             }
                         }
@@ -82,11 +80,11 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
         }
     }
 
-    //只有一个主线程调用，不需要锁
     public void sound(final Sound sfx) {
         sfxLine line;
         if ((line = availableLines.poll()) != null) {
             line.curSound = sfx;
+            line.curPos = 0;
             line.busy = true;
         }//else too busy ignore this request
     }
