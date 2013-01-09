@@ -8,5 +8,7 @@ public interface TranslucentWindow {
 
     public void setImage(NativeImage image);
 
-    public void updateImage();
+    public void setPosition(int x,int y);
+
+    public void updateWindow();
 }

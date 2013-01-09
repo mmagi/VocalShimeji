@@ -15,7 +15,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Mascot {
-    private static final long serialVersionUID = 1L;
     private static final Logger log = Logger.getLogger(Mascot.class.getName());
 
     private static AtomicInteger lastId = new AtomicInteger();
@@ -75,7 +74,7 @@ public class Mascot {
         gintama = false;
     }
 
-    private final void gintamaTick() {
+    private void gintamaTick() {
         if (gintama) {
             anchor.move((anchor.x * 3 + gintamaX) / 4, (anchor.y * 3 + gintamaY) / 4);
         }
@@ -98,7 +97,7 @@ public class Mascot {
     public void apply() {
         if (isAnimating()) {
             if (getImage() != null) {
-                getWindow().asJWindow().setBounds(getBounds());
+                getWindow().setPosition(getAnchor().x - getImage().getCenter().x,getAnchor().y - getImage().getCenter().y);
 
                 getWindow().setImage(getImage().getImage());
 
@@ -106,7 +105,7 @@ public class Mascot {
                     getWindow().asJWindow().setVisible(true);
                 }
 
-                getWindow().updateImage();
+                getWindow().updateWindow();
             } else if (getWindow().asJWindow().isVisible()) {
                 getWindow().asJWindow().setVisible(false);
             }
@@ -159,10 +158,7 @@ public class Mascot {
     public Rectangle getBounds() {
         int top = getAnchor().y - getImage().getCenter().y;
         int left = getAnchor().x - getImage().getCenter().x;
-
-        Rectangle result = new Rectangle(left, top, getImage().getSize().width, getImage().getSize().height);
-
-        return result;
+        return new Rectangle(left, top, getImage().getSize().width, getImage().getSize().height);
     }
 
     public int getTime() {
