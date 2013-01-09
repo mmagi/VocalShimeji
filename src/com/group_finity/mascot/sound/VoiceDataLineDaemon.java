@@ -79,7 +79,8 @@ public final class VoiceDataLineDaemon implements Runnable {
 
         while (true) {
             if (SoundFactory.voiceOn) {
-                for (final voiceLine line : lines) {
+                for (int n = lines.size() - 1; n >= 0; n--) {
+                    final voiceLine line= lines.get(n);
                     if (!SoundFactory.voiceOn) {
                         line.line.stop();
                         line.line.flush();
