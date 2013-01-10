@@ -148,11 +148,9 @@ public class Main {
 
         mascot.setAnchor(new Point(-1000, -1000));
         mascot.getWindow().asJWindow().setCursor(cursor);
-        mascot.getWindow().asJWindow().add(mainMenu);
         mascot.setLookRight(Math.random() < 0.5D);
         try {
             mascot.setBehavior(getConfiguration().buildBehavior(null, mascot));
-
             getManager().add(mascot);
             System.out.println(getManager().getCount());
         } catch (BehaviorInstantiationException e) {
