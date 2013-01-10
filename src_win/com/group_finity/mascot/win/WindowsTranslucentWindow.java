@@ -17,17 +17,17 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
     public void setVisible(boolean b) {
         super.setVisible(b);
         if (b) {
-            try{
-            hWnd = new WinDef.HWND(Native.getComponentPointer(this));
-            final int exStyle = User32Ex.INSTANCE.GetWindowLongW(hWnd, WinUser.GWL_EXSTYLE);
-            if ((exStyle & WinUser.WS_EX_LAYERED) == 0) {
-                User32Ex.INSTANCE.SetWindowLongW(hWnd, WinUser.GWL_EXSTYLE, exStyle | WinUser.WS_EX_LAYERED);
-            }
-            final WinDef.HDC clientDC = User32Ex.INSTANCE.GetDC(hWnd);
-            if (null != hdcSrc)
-                GDI32Ex.INSTANCE.DeleteDC(hdcSrc);
-            hdcSrc = GDI32Ex.INSTANCE.CreateCompatibleDC(clientDC);
-            }catch (Exception ignored){
+            try {
+                hWnd = new WinDef.HWND(Native.getComponentPointer(this));
+                final int exStyle = User32Ex.INSTANCE.GetWindowLongW(hWnd, WinUser.GWL_EXSTYLE);
+                if ((exStyle & WinUser.WS_EX_LAYERED) == 0) {
+                    User32Ex.INSTANCE.SetWindowLongW(hWnd, WinUser.GWL_EXSTYLE, exStyle | WinUser.WS_EX_LAYERED);
+                }
+                final WinDef.HDC clientDC = User32Ex.INSTANCE.GetDC(hWnd);
+                if (null != hdcSrc)
+                    GDI32Ex.INSTANCE.DeleteDC(hdcSrc);
+                hdcSrc = GDI32Ex.INSTANCE.CreateCompatibleDC(clientDC);
+            } catch (Exception ignored) {
             }
         }
     }
@@ -109,7 +109,8 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
     }
 
     public final void updateWindow() {
-        if (null == hWnd) return;
+        if (null == hWnd)
+            return;
         if (null != imageHandle) {
             final WinNT.HANDLE oldBmp = GDI32Ex.INSTANCE.SelectObject(hdcSrc, imageHandle);
             imageHandle = null;
