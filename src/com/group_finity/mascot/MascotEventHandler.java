@@ -2,9 +2,7 @@ package com.group_finity.mascot;
 
 import com.group_finity.mascot.exception.CantBeAliveException;
 
-import javax.swing.*;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.logging.Level;
@@ -14,50 +12,36 @@ public class MascotEventHandler implements MouseListener {
 
     private static final Logger log = Logger.getLogger(MascotEventHandler.class.getName());
 
-    /**
-     * トレイアイコンの分のメニューも表示するかどうか.
-     * トレイアイコンの作成に失敗した時はここでトレイアイコンの分のメニューも表示する必要がある.
-     */
-    private static boolean showSystemTrayMenu = false;
-
-    public static void setShowSystemTrayMenu(boolean showSystemTrayMenu) {
-        MascotEventHandler.showSystemTrayMenu = showSystemTrayMenu;
-    }
-
-    public static boolean isShowSystemTrayMenu() {
-        return showSystemTrayMenu;
-    }
-
     private final Mascot mascot;
-    private final JPopupMenu popup;
+    private PopupMenu popup = Main.getInstance().mainMenu;
 
     public MascotEventHandler(Mascot mascot) {
         this.mascot = mascot;
-        popup = new JPopupMenu();
-        popup.add(MyJPopupMenu.createDisposeMenu(mascot));
+        //popup = new PopupMenu();
+//        popup.add(MascotPopupMenu.createDisposeMenu(mascot));
 
-        if (MascotEventHandler.isShowSystemTrayMenu()) {
-
-            popup.add(new JSeparator());
-
-            MyJPopupMenu.prepareMainMenu(popup);
-
-        }
-        popup.addPopupMenuListener(new PopupMenuListener() {
-            @Override
-            public void popupMenuCanceled(final PopupMenuEvent e) {
-            }
-
-            @Override
-            public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) {
-                getMascot().setAnimating(true);
-            }
-
-            @Override
-            public void popupMenuWillBecomeVisible(final PopupMenuEvent e) {
-                getMascot().setAnimating(false);
-            }
-        });
+//        if (MascotEventHandler.isShowSystemTrayMenu()) {
+//
+//            popup.addSeparator();
+//
+//            MascotPopupMenu.prepareMainMenu(popup);
+//
+//        }
+//        popup.addPopupMenuListener(new PopupMenuListener() {
+//            @Override
+//            public void popupMenuCanceled(final PopupMenuEvent e) {
+//            }
+//
+//            @Override
+//            public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) {
+//                getMascot().setAnimating(true);
+//            }
+//
+//            @Override
+//            public void popupMenuWillBecomeVisible(final PopupMenuEvent e) {
+//                getMascot().setAnimating(false);
+//            }
+//        });
     }
 
     public void mousePressed(final MouseEvent event) {
@@ -77,12 +61,15 @@ public class MascotEventHandler implements MouseListener {
     public void mouseReleased(final MouseEvent event) {
 
         if (event.isPopupTrigger()) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    popup.show(mascot.getWindow().asJWindow(), event.getX(), event.getY());
-                }
-            });
+//            SwingUtilities.invokeLater(new Runnable() {
+//                @Override
+//                public void run() {
+//                    popup.show(mascot.getWindow().asJWindow(), event.getX(), event.getY());
+//                }
+//            });
+            popup.show(event.getComponent(), event.getX(), event.getY());
+            System.out.println(event.getComponent());
+            System.out.println(event.getX() + ";" + event.getY());
         } else {
             if (getMascot().getBehavior() != null) {
                 try {

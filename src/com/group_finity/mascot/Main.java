@@ -109,24 +109,24 @@ public class Main {
         }
     }
 
-    MyJPopupMenu mainMenu = new MyJPopupMenu();
+    PopupMenu mainMenu = new PopupMenu();
 
     private void createTrayIcon() {
         log.log(Level.INFO, "正在创建托盘图标");
         if (SystemTray.getSystemTray() == null) {
             return;
         }
-        MyJPopupMenu.prepareMainMenu(mainMenu);
+        MascotPopupMenu.prepareMainMenu(mainMenu);
         try {
-            TrayIcon icon = new TrayIcon(ImageIO.read(Main.class.getResource("/icon.png")), "VocalShimeji", null);
-            MyJPopupMenu.prepareTrayIcon(icon, mainMenu);
+            TrayIcon icon = new TrayIcon(ImageIO.read(Main.class.getResource("/icon.png")), "VocalShimeji",mainMenu);
+            MascotPopupMenu.prepareTrayIcon(icon);
             SystemTray.getSystemTray().add(icon);
         } catch (IOException e) {
             log.log(Level.SEVERE, "トレイアイコンの作成に失敗", e);
             exit();
         } catch (AWTException e) {
             log.log(Level.SEVERE, "トレイアイコンの作成に失敗", e);
-            MascotEventHandler.setShowSystemTrayMenu(true);
+            MascotPopupMenu.setShowSystemTrayMenu(true);
             getManager().setExitOnLastRemoved(true);
         }
     }
@@ -148,6 +148,7 @@ public class Main {
 
         mascot.setAnchor(new Point(-1000, -1000));
         mascot.getWindow().asJWindow().setCursor(cursor);
+        mascot.getWindow().asJWindow().add(mainMenu);
         mascot.setLookRight(Math.random() < 0.5D);
         try {
             mascot.setBehavior(getConfiguration().buildBehavior(null, mascot));
