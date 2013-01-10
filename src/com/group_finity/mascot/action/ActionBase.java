@@ -21,6 +21,7 @@ public abstract class ActionBase implements Action {
     private static final boolean DEFAULT_CONDITION = true;
     public static final String PARAMETER_CONDITION = "条件";
     private static final int DEFAULT_DURATION = 2147483647;
+    public static final String PARAMETER_NAME = "名前";
     private Mascot mascot;
     private int startTime;
     private List<Animation> animations;
@@ -35,8 +36,8 @@ public abstract class ActionBase implements Action {
         try {
             return "動作(" + getClass().getSimpleName() + "," + getName() + ")";
         } catch (VariableException e) {
+            return "動作(" + getClass().getSimpleName() + "," + null + ")";
         }
-        return "動作(" + getClass().getSimpleName() + "," + null + ")";
     }
 
     public void init(Mascot mascot) throws VariableException {
@@ -51,8 +52,8 @@ public abstract class ActionBase implements Action {
                 Sound voice = (Sound) voiceI;
                 int priority = -10;
                 Object voiceP = getVariables().get("voiceP");
-                if ((voiceP instanceof Integer)) {
-                    priority = ((Integer) priority).intValue();
+                if (voiceP instanceof Integer) {
+                    priority = (Integer) voiceP;
                 }
                 mascot.voiceController.speak(voice, priority);
             }
@@ -82,18 +83,18 @@ public abstract class ActionBase implements Action {
     protected abstract void tick() throws LostGroundException, VariableException;
 
     public boolean hasNext() throws VariableException {
-        boolean effective = isEffective().booleanValue();
+        boolean effective = isEffective();
         boolean intime = getTime() < getDuration();
 
         return (effective) && (intime);
     }
 
     private Boolean isEffective() throws VariableException {
-        return (Boolean) eval("条件", Boolean.class, Boolean.valueOf(true));
+        return eval(PARAMETER_CONDITION, Boolean.class, DEFAULT_CONDITION);
     }
 
     private int getDuration() throws VariableException {
-        return ((Number) eval("長さ", Number.class, Integer.valueOf(2147483647))).intValue();
+        return (eval(PARAMETER_DURATION, Number.class, DEFAULT_DURATION)).intValue();
     }
 
     private void setMascot(Mascot mascot) {
@@ -113,7 +114,7 @@ public abstract class ActionBase implements Action {
     }
 
     private String getName() throws VariableException {
-        return (String) eval("名前", String.class, null);
+        return eval(PARAMETER_NAME, String.class, null);
     }
 
     protected Animation getAnimation() throws VariableException {
@@ -142,7 +143,7 @@ public abstract class ActionBase implements Action {
 
     protected <T> T eval(String name, Class<T> type, T defaultValue) throws VariableException {
         synchronized (getVariables()) {
-            Variable variable = (Variable) getVariables().getRawMap().get(name);
+            Variable variable = getVariables().getRawMap().get(name);
             if (variable != null) {
                 return type.cast(variable.get(getVariables()));
             }

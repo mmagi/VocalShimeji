@@ -17,11 +17,6 @@ public class MascotEnvironment {
         this.mascot = mascot;
     }
 
-    /**
-     * マスコットを含むスクリーンを取得する
-     *
-     * @return
-     */
     public Area getWorkArea() {
 
         if (currentWorkArea != null) {

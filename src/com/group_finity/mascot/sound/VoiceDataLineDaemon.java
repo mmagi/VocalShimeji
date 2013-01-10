@@ -77,10 +77,11 @@ public final class VoiceDataLineDaemon implements Runnable {
     @Override
     public final void run() {
 
+        //noinspection InfiniteLoopStatement
         while (true) {
             if (SoundFactory.voiceOn) {
                 for (int n = lines.size() - 1; n >= 0; n--) {
-                    final voiceLine line= lines.get(n);
+                    final voiceLine line = lines.get(n);
                     if (!SoundFactory.voiceOn) {
                         line.line.stop();
                         line.line.flush();

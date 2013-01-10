@@ -43,7 +43,7 @@ public class ImagePairLoader {
      * 画像を左右反転させる.
      *
      * @param src 左右反転したい画像
-     * @return　左右反転した
+     * @return 左右反転した
      */
     private static BufferedImage flip(final BufferedImage src) {
 

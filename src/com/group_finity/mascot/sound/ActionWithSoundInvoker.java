@@ -35,7 +35,6 @@ final class ActionWithSoundInvoker extends Thread {
                     break voice;
                 }
                 int curPos = 0;
-                play:
                 while (SoundFactory.voiceOn) {
                     final int len = line.available();
                     if (len >= SoundFactory.bufferWriteThreshold) {
@@ -50,7 +49,7 @@ final class ActionWithSoundInvoker extends Thread {
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            break play;
+                            break;
                         }
                     }
                     try {

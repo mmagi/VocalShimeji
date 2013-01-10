@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 
 public class Manager {
     private static final Logger log = Logger.getLogger(Manager.class.getName());
-    public static final int TICK_INTERVAL = 40;
     private final ArrayList<Mascot> mascots = new ArrayList<Mascot>();
 
     private final Set<Mascot> added = new LinkedHashSet<Mascot>();
@@ -31,6 +30,7 @@ public class Manager {
             public void run() {
                 long prev = System.nanoTime() / 1000000L;
                 try {
+                    //noinspection InfiniteLoopStatement
                     while (true) {
                         long cur = System.nanoTime() / 1000000L;
                         if (cur - prev >= 40L) {
@@ -141,14 +141,14 @@ public class Manager {
     public void remainOne() {
         synchronized (getMascots()) {
             for (int i = getMascots().size() - 1; i > 0; i--)
-                ((Mascot) getMascots().get(i)).dispose();
+                getMascots().get(i).dispose();
         }
     }
 
     public void disposeAll() {
         synchronized (getMascots()) {
             for (int i = getMascots().size() - 1; i >= 0; i--)
-                ((Mascot) getMascots().get(i)).dispose();
+                getMascots().get(i).dispose();
         }
     }
 
@@ -166,7 +166,7 @@ public class Manager {
         return this.exitOnLastRemoved;
     }
 
-    private final List<Mascot> getMascots() {
+    private List<Mascot> getMascots() {
         return this.mascots;
     }
 

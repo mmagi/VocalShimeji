@@ -25,11 +25,12 @@ public abstract class Environment {
             @Override
             public void run() {
                 try {
+                    //noinspection InfiniteLoopStatement
                     for (; ; ) {
                         updateScreenRect();
                         Thread.sleep(5000);
                     }
-                } catch (final InterruptedException e) {
+                } catch (final InterruptedException ignored) {
                 }
             }
 
@@ -48,7 +49,7 @@ public abstract class Environment {
         final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         final GraphicsDevice[] gs = ge.getScreenDevices();
 
-        for (int j = 0; j < gs.length; j++) {
+        for (int j = gs.length - 1; j >= 0; j--) {
             final GraphicsDevice gd = gs[j];
             screenRects.put(gd.getIDstring(), gd.getDefaultConfiguration().getBounds());
             virtualBounds = virtualBounds.union(gd.getDefaultConfiguration().getBounds());

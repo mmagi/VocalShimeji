@@ -146,6 +146,7 @@ public class BehaviorBuilder {
         return this.configuration;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean isNextAdditive() {
         return this.nextAdditive;
     }

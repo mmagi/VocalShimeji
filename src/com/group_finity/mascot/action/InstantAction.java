@@ -6,7 +6,6 @@ import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.VariableMap;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 /**
  * マスコットの状態を変更するだけで一瞬で終わるアクションの基底クラス.
@@ -14,8 +13,6 @@ import java.util.logging.Logger;
  * @author Yuki Yamada
  */
 public abstract class InstantAction extends ActionBase {
-
-    private static final Logger log = Logger.getLogger(InstantAction.class.getName());
 
     public InstantAction(final VariableMap params) {
         super(new ArrayList<Animation>(), params);
@@ -35,7 +32,8 @@ public abstract class InstantAction extends ActionBase {
 
     @Override
     public final boolean hasNext() throws VariableException {
-        return super.hasNext() && false;
+        //super.hasNext();
+        return false;
     }
 
     @Override

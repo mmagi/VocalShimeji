@@ -1,5 +1,3 @@
-import com.group_finity.mascot.Main;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -7,7 +5,7 @@ import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.logging.Level;
 
-public final class AboutScreen extends JWindow {
+final class AboutScreen extends JWindow {
 
     public AboutScreen() {
         JLabel imageLabel = new JLabel();

@@ -48,7 +48,7 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
         return this;
     }
 
-    final static WinUser.BLENDFUNCTION blendFunction = new WinUser.BLENDFUNCTION();
+    private final static WinUser.BLENDFUNCTION blendFunction = new WinUser.BLENDFUNCTION();
 
     static {
         blendFunction.BlendOp = WinUser.AC_SRC_OVER;
@@ -57,7 +57,7 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
         blendFunction.AlphaFormat = WinUser.AC_SRC_ALPHA;
     }
 
-    final WinUser.POINT pptSrc = new WinUser.POINT(); //zero
+    private final WinUser.POINT pptSrc = new WinUser.POINT(); //zero
 
     @Override
     final public String toString() {
@@ -78,13 +78,14 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
      * );
      */
 
-    WinDef.HWND hWnd;
-    WinUser.POINT pptDst;
-    WinDef.HDC hdcSrc;
-    final WinUser.SIZE pSize = new WinUser.SIZE();
+    private WinDef.HWND hWnd;
+    private WinUser.POINT pptDst;
+    private WinDef.HDC hdcSrc;
+    private final WinUser.SIZE pSize = new WinUser.SIZE();
     WinDef.HBITMAP imageHandle;
 
     private WindowsNativeImage lastImage;
+
     public final void setImage(final NativeImage image) {
         if (image != this.lastImage) {
             this.lastImage = (WindowsNativeImage) image;
@@ -93,9 +94,11 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
             pSize.cy = this.lastImage.getHeight();
         }
     }
+
     final private WinUser.POINT lastPosition = new WinUser.POINT();
+
     public final void setPosition(int x, int y) {
-        if(lastPosition.x != x || lastPosition.y != y){
+        if (lastPosition.x != x || lastPosition.y != y) {
             lastPosition.x = x;
             lastPosition.y = y;
             pptDst = lastPosition;
@@ -109,7 +112,7 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
             User32Ex.INSTANCE.UpdateLayeredWindow(hWnd, null, pptDst, pSize, hdcSrc, pptSrc, 0x00000000, blendFunction, WinUser.ULW_ALPHA);
             GDI32Ex.INSTANCE.SelectObject(hdcSrc, oldBmp);
         } else if (null != pptDst) {
-            User32Ex.INSTANCE.MoveWindow(hWnd,pptDst.x,pptDst.y,pSize.cx,pSize.cy,false);
+            User32Ex.INSTANCE.MoveWindow(hWnd, pptDst.x, pptDst.y, pSize.cx, pSize.cy, false);
             pptDst = null;
         }
     }

@@ -41,6 +41,7 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
 
     @Override
     public void run() {
+        //noinspection InfiniteLoopStatement
         while (true) {
             if (SoundFactory.sfxOn) {
                 for (final sfxLine line : lines) {

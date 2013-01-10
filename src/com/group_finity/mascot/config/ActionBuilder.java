@@ -42,18 +42,21 @@ public class ActionBuilder implements IActionBuilder {
         this.className = actionNode.getAttribute("クラス");
 
 
-        Object voice = actionNode.getAttribute("voice");
-        if (null != voice && voice.toString().length() > 0) {
-            this.voice = SoundFactory.getSound(voice.toString());
+        String voice = actionNode.getAttribute("voice");
+        if (null != voice && voice.length() > 0) {
+            this.voice = SoundFactory.getSound(voice);
         } else {
             this.voice = null;
         }
-        Object priority = actionNode.getAttribute("priority");
-        if ((priority instanceof Double)) {
-            this.voicePriority = ((Double) priority).intValue();
-        } else {
-            this.voicePriority = null;
+        String priority = actionNode.getAttribute("priority");
+        Integer pri = null;
+        if (null != priority && priority.length() > 0) {
+            try {
+                pri = Integer.decode(priority);
+            } catch (NumberFormatException ignored) {
+            }
         }
+        this.voicePriority = pri;
 
 
         log.log(Level.INFO, "動作読み込み開始({0})", this);
@@ -130,9 +133,9 @@ public class ActionBuilder implements IActionBuilder {
             } else if (this.type.equals("固定")) {
                 return new Animate(animations, variables);
             } else if (this.type.equals("複合")) {
-                return new Sequence(variables, actions.toArray(new Action[0]));
+                return new Sequence(variables, actions.toArray(new Action[actions.size()]));
             } else if (this.type.equals("選択")) {
-                return new Select(variables, actions.toArray(new Action[0]));
+                return new Select(variables, actions.toArray(new Action[actions.size()]));
             } else {
                 throw new ActionInstantiationException("動作の種類が不明(" + this + ")");
             }

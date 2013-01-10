@@ -28,7 +28,7 @@ public final class Sound {
         }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         final byte[] temp = new byte[1024];
-        int size = 0;
+        int size;
         while ((size = in.read(temp)) != -1) {
             out.write(temp, 0, size);
         }

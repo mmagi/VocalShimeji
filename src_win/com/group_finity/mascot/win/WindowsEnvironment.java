@@ -209,9 +209,9 @@ public class WindowsEnvironment extends Environment {
         return ret;
     }
 
-    public static Area workArea = new Area();
+    private final static Area workArea = new Area();
 
-    public static Area activeIE = new Area();
+    final public static Area activeIE = new Area();
 
     @Override
     public void tick() {
@@ -219,8 +219,8 @@ public class WindowsEnvironment extends Environment {
         workArea.set(getWorkAreaRect());
 
         final Rectangle ieRect = getActiveIERect();
-        activeIE.setVisible((ieRect != null) && ieRect.intersects(getScreen().toRectangle()));
-        activeIE.set(ieRect == null ? new Rectangle(-1, -1, 0, 0) : ieRect);
+        activeIE.setVisible(ieRect.intersects(getScreen().toRectangle()));
+        activeIE.set(ieRect);
 
     }
 

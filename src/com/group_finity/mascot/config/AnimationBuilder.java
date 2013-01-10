@@ -76,7 +76,7 @@ public class AnimationBuilder {
 
     public Animation buildAnimation() throws AnimationInstantiationException {
         try {
-            return new Animation(Variable.parse(this.getCondition()), this.getVoice(), this.getVoicePriority(), this.getPoses().toArray(new Pose[0]));
+            return new Animation(Variable.parse(this.getCondition()), this.getVoice(), this.getVoicePriority(), this.getPoses().toArray(new Pose[poses.size()]));
         } catch (final VariableException e) {
             throw new AnimationInstantiationException("条件の評価に失敗しました", e);
         }

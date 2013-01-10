@@ -30,7 +30,7 @@ public class LogFormatter extends SimpleFormatter {
      */
     @Override
     public synchronized String format(final LogRecord record) {
-        final StringBuffer sb = new StringBuffer();
+        final StringBuilder sb = new StringBuilder();
 
         // Minimize memory allocations here.
         this.dat.setTime(record.getMillis());
@@ -61,14 +61,16 @@ public class LogFormatter extends SimpleFormatter {
         final String message = formatMessage(record);
         sb.append(message);
         sb.append(this.lineSeparator);
+        //noinspection ThrowableResultOfMethodCallIgnored
         if (record.getThrown() != null) {
             try {
                 final StringWriter sw = new StringWriter();
                 final PrintWriter pw = new PrintWriter(sw);
+                //noinspection ThrowableResultOfMethodCallIgnored
                 record.getThrown().printStackTrace(pw);
                 pw.close();
                 sb.append(sw.toString());
-            } catch (final Exception ex) {
+            } catch (final Exception ignored) {
             }
         }
         return sb.toString();

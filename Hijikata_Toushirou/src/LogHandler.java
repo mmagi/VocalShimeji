@@ -11,12 +11,14 @@ import java.util.logging.LogRecord;
  */
 public class LogHandler extends java.util.logging.Handler {
     private static JTextArea output;
-    public static void setJTextArea(JTextArea output){
+
+    public static void setJTextArea(JTextArea output) {
         LogHandler.output = output;
     }
+
     @Override
     public void publish(final LogRecord record) {
-        if (null!=output) {
+        if (null != output) {
             SwingUtilities.invokeLater(new Runnable() {
 
                 @Override
@@ -46,15 +48,16 @@ public class LogHandler extends java.util.logging.Handler {
 
         sb.append(formatMessage(record));
         sb.append("\n");
+        //noinspection ThrowableResultOfMethodCallIgnored
         if (record.getThrown() != null) {
             try {
                 final StringWriter sw = new StringWriter();
                 final PrintWriter pw = new PrintWriter(sw);
+                //noinspection ThrowableResultOfMethodCallIgnored
                 record.getThrown().printStackTrace(pw);
                 pw.close();
                 sb.append(sw.toString());
-            } catch (final Exception ex) {
-                //goahead
+            } catch (final Exception ignored) {
             }
         }
         return sb.toString();
@@ -94,7 +97,7 @@ public class LogHandler extends java.util.logging.Handler {
             // However the cost is 14% higher, so we cheaply check for
             // 1 of the first 4 parameters
             if (format.contains("{0") || format.contains("{1") ||
-                        format.contains("{2") || format.contains("{3")) {
+                    format.contains("{2") || format.contains("{3")) {
                 return java.text.MessageFormat.format(format, parameters);
             }
             return format;

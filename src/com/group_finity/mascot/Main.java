@@ -17,7 +17,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class Main {
@@ -39,6 +38,7 @@ public class Main {
     }
 
     Cursor cursor;
+
     public void run() {
         loadConfiguration();
         BufferedImage cursorImage = null;
@@ -50,7 +50,7 @@ public class Main {
             // Paint scaled version of image to new image
 
             Graphics2D graphics2D = scaledImage.createGraphics();
-            graphics2D.drawImage(cursorImage, 0, 0,cursorImage.getWidth(), cursorImage.getHeight(), null);
+            graphics2D.drawImage(cursorImage, 0, 0, cursorImage.getWidth(), cursorImage.getHeight(), null);
             cursorImage = scaledImage;
             // clean up
 
@@ -62,20 +62,20 @@ public class Main {
         String cursorName = "VocalShimejiCursor";
         cursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImage, hotSpot, cursorName);
         try {
-                SwingUtilities.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        createTrayIcon();
-                    }
-                });
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                throw new RuntimeException("创建托盘图标出错",e);
-            }
-            createMascot();
+            SwingUtilities.invokeAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    createTrayIcon();
+                }
+            });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException("创建托盘图标出错", e);
+        }
+        createMascot();
 
-            getManager().start();
+        getManager().start();
 
     }
 
@@ -132,11 +132,13 @@ public class Main {
     }
 
     JWindow aboutScreen;
-    public void setAboutScreen(JWindow aboutScreen){
-        this.aboutScreen=aboutScreen;
+
+    public void setAboutScreen(JWindow aboutScreen) {
+        this.aboutScreen = aboutScreen;
     }
+
     protected void showAbout() {
-        if(null!=aboutScreen)
+        if (null != aboutScreen)
             aboutScreen.setVisible(true);
     }
 
@@ -184,13 +186,4 @@ public class Main {
         return this.manager;
     }
 
-    static {
-        try {
-            LogManager.getLogManager().readConfiguration(Main.class.getResourceAsStream("/conf/logging.properties"));
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

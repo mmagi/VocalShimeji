@@ -12,6 +12,7 @@ public class GDI32Ex {
     static {
         Native.register("gdi32");
     }
+
     public static final GDI32Ex INSTANCE = new GDI32Ex();//(GDI32Ex) Native.loadLibrary("gdi32", GDI32Ex.class);
 
     public native int GetObjectW(WinDef.HBITMAP hgdiobj, int cbBuffer, Structure lpvObject);

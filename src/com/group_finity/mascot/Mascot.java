@@ -97,7 +97,7 @@ public class Mascot {
     public void apply() {
         if (isAnimating()) {
             if (getImage() != null) {
-                getWindow().setPosition(getAnchor().x - getImage().getCenter().x,getAnchor().y - getImage().getCenter().y);
+                getWindow().setPosition(getAnchor().x - getImage().getCenter().x, getAnchor().y - getImage().getCenter().y);
 
                 getWindow().setImage(getImage().getImage());
 

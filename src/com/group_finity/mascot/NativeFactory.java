@@ -40,11 +40,6 @@ public abstract class NativeFactory {
         }
     }
 
-    /**
-     * 実行環境に応じたサブクラスのインスタンスを取得する.
-     *
-     * @return
-     */
     public static NativeFactory getInstance() {
         return instance;
     }
@@ -56,19 +51,7 @@ public abstract class NativeFactory {
      */
     public abstract Environment getEnvironment();
 
-    /**
-     * 指定された BufferedImage に対応するネイティブな画像を取得する.
-     * この画像は {@link TranslucentWindow} のマスキングに使用できる.
-     *
-     * @param src
-     * @return
-     */
     public abstract NativeImage newNativeImage(BufferedImage src);
 
-    /**
-     * 半透明表示が可能なウィンドウを作成する.
-     *
-     * @return
-     */
     public abstract TranslucentWindow newTransparentWindow();
 }

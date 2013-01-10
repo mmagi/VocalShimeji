@@ -4,7 +4,9 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
@@ -23,6 +25,11 @@ public class Hijikata_Toushirou {
         Clip clip = null;
         splashScreen.setVisible(true);
         try {
+            LogManager.getLogManager().readConfiguration(Main.class.getResourceAsStream("/conf/logging.properties"));
+        } catch (SecurityException ignored) {
+        } catch (IOException ignored) {
+        }
+        try {
             checkJnaDll();
             clip = initSound();
             Main.getInstance().setAboutScreen(new AboutScreen());
@@ -32,7 +39,7 @@ public class Hijikata_Toushirou {
             splashScreen.reportErrorAndExit(e);
         }
         splashScreen.dispose();
-        if(null!=clip){
+        if (null != clip) {
             clip.drain();
             clip.close();
         }
@@ -62,4 +69,5 @@ public class Hijikata_Toushirou {
         }
         return clip;
     }
+
 }
