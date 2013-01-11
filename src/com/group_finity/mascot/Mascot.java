@@ -193,5 +193,8 @@ public class Mascot {
     public MascotEnvironment getEnvironment() {
         return this.environment;
     }
-
+    //javascript中要使用，非冗余
+    public int getTotalCount(){
+        return this.manager.getCount();
+    }
 }
