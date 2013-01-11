@@ -82,43 +82,45 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
      */
 
     private WinDef.HWND hWnd;
-    private WinUser.POINT pptDst;
     private WinDef.HDC hdcSrc;
     private final WinUser.SIZE pSize = new WinUser.SIZE();
-    WinDef.HBITMAP imageHandle;
 
+    private WindowsNativeImage imageDst;
     private WindowsNativeImage lastImage;
 
     public final void setImage(final NativeImage image) {
         if (image != this.lastImage) {
             this.lastImage = (WindowsNativeImage) image;
-            imageHandle = this.lastImage.getHandle();
-            pSize.cx = this.lastImage.getWidth();
-            pSize.cy = this.lastImage.getHeight();
+            imageDst = this.lastImage;
         }
     }
 
+    private WinUser.POINT pptDst;
     final private WinUser.POINT lastPosition = new WinUser.POINT();
 
-    public final void setPosition(int x, int y) {
+    public final void setPosition(final int x, final int y) {
         if (lastPosition.x != x || lastPosition.y != y) {
             lastPosition.x = x;
             lastPosition.y = y;
-            pptDst = lastPosition;
+            pptDst = new WinUser.POINT(x,y);
         }
     }
 
     public final void updateWindow() {
         if (null == hWnd)
             return;
-        if (null != imageHandle) {
-            final WinNT.HANDLE oldBmp = GDI32Ex.INSTANCE.SelectObject(hdcSrc, imageHandle);
-            imageHandle = null;
+        final WindowsNativeImage imageDst = this.imageDst;
+        final WinUser.POINT pptDst = this.pptDst;
+        if (null != imageDst) {
+            this.imageDst = null;
+            final WinNT.HANDLE oldBmp = GDI32Ex.INSTANCE.SelectObject(hdcSrc, imageDst.getHandle());
+            pSize.cx = imageDst.getWidth();
+            pSize.cy = imageDst.getHeight();
             User32Ex.INSTANCE.UpdateLayeredWindow(hWnd, null, pptDst, pSize, hdcSrc, pptSrc, 0x00000000, blendFunction, WinUser.ULW_ALPHA);
             GDI32Ex.INSTANCE.SelectObject(hdcSrc, oldBmp);
         } else if (null != pptDst) {
             User32Ex.INSTANCE.MoveWindow(hWnd, pptDst.x, pptDst.y, pSize.cx, pSize.cy, false);
-            pptDst = null;
+            this.pptDst = null;
         }
     }
 

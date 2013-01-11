@@ -26,20 +26,20 @@ public class Manager {
             return;
         }
 
-        this.thread = new Thread("tick-manager") {
+        this.thread = new Thread("TickManager") {
             public void run() {
-                long prev = System.nanoTime() / 1000000L;
+                long prev = System.nanoTime();
                 try {
                     //noinspection InfiniteLoopStatement
                     while (true) {
-                        long cur = System.nanoTime() / 1000000L;
-                        if (cur - prev >= 40L) {
-                            if (cur > prev + 80L)
+                        long cur = System.nanoTime();
+                        if (cur - prev >= 40*1000000L) {
+                            if (cur > prev + 80*1000000L)
                                 prev = cur;
                             else
-                                prev += 40L;
+                                prev += 40*1000000L;
                         } else {
-                            Thread.sleep(1L, 0);
+                            Thread.sleep(1L);
                             continue;
                         }
 
