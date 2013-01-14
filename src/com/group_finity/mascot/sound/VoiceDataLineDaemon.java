@@ -18,11 +18,11 @@ public final class VoiceDataLineDaemon implements Runnable {
         final byte[] fadeBuffer = new byte[SoundFactory.bufferWriteThreshold];
         final SourceDataLine line;
         boolean alive;//初始化时用以是否成功获得资源，release时标记资源可回收到pool中;
-        Sound voiceToPlay;
+        volatile Sound voiceToPlay;
         Sound lastPlayed;
         Sound curSound;
         int curPos;
-        int curLevel = 0; // 按绝对值比较大小：负数表示同级可互相打断 正数表示同级声音不互相打断 0=没有声音在播放
+        volatile int curLevel = 0; // 按绝对值比较大小：负数表示同级可互相打断 正数表示同级声音不互相打断 0=没有声音在播放
 
         public Sound getLastPlayed() {
             return lastPlayed;

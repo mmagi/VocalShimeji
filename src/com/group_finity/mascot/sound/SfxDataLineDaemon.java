@@ -14,9 +14,9 @@ import java.util.logging.Level;
  */
 public final class SfxDataLineDaemon implements Runnable, SfxController {
     private static final class sfxLine {
-        boolean busy = false;
-        Sound curSound;
-        int curPos;
+        volatile boolean busy = false;
+        volatile Sound curSound;
+        volatile int curPos;
         SourceDataLine line;
 
         sfxLine() {
@@ -54,6 +54,8 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
                             line.line.write(line.curSound.bytes, line.curPos, len);
                             line.curPos += len;
                             if (line.curPos >= line.curSound.bytes.length) {
+                                line.curSound = null;
+                                line.curPos = 0;
                                 line.busy = false;
                                 availableLines.offer(line);
                             }
@@ -85,14 +87,13 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
         sfxLine line;
         if ((line = availableLines.poll()) != null) {
             line.curSound = sfx;
-            line.curPos = 0;
             line.busy = true;
         }//else too busy ignore this request
     }
-
+    @SuppressWarnings("EmptyMethod")
+    //共享音效line，不用释放，忽略
     @Override
     public void release() {
-        //共享音效line，不用释放，忽略
     }
 
 }

@@ -3,8 +3,10 @@ package com.group_finity.mascot;
 import com.group_finity.mascot.config.Configuration;
 import com.group_finity.mascot.exception.BehaviorInstantiationException;
 import com.group_finity.mascot.exception.CantBeAliveException;
+import com.group_finity.mascot.util.QueList;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,6 +17,9 @@ public class Manager {
     private final Set<Mascot> added = new LinkedHashSet<Mascot>();
 
     private final Set<Mascot> removed = new LinkedHashSet<Mascot>();
+
+    private final AtomicInteger mascotCount = new AtomicInteger(0);
+    private final QueList<Mascot> mascotList = new QueList<Mascot>();
     private boolean exitOnLastRemoved;
     private transient Thread thread;
 
@@ -71,52 +76,39 @@ public class Manager {
     private void tick() {
         NativeFactory.getInstance().getEnvironment().tick();
 
-        synchronized (getMascots()) {
-            for (Mascot mascot : getAdded()) {
-                getMascots().add(mascot);
+        for (final Iterator<Mascot> iterator = mascotList.iterator(); iterator.hasNext(); ) {
+            final Mascot mascot = iterator.next();
+            if (null == mascot.getManager()){
+                iterator.remove();
+            }else {
+                mascot.tick();
+                mascot.apply();
             }
-            getAdded().clear();
-
-            for (Mascot mascot : getRemoved()) {
-                getMascots().remove(mascot);
-            }
-            getRemoved().clear();
-
+        }
             if (!Gintama.disable) {
-                if (!Gintama.active && getMascots().size() == 52)
+                if (!Gintama.active && mascotCount.get() == 52)
                     Gintama.active(mascots);
             }
 
-            for (Mascot mascot : getMascots()) {
-                mascot.tick();
-            }
-
-            for (Mascot mascot : getMascots()) {
-                mascot.apply();
-            }
-
-        }
-
-        if ((isExitOnLastRemoved()) && (getMascots().size() == 0)) {
+        if ((isExitOnLastRemoved())) {
             Main.getInstance().exit();
         }
 
     }
 
     public void add(Mascot mascot) {
-        synchronized (getAdded()) {
-            getAdded().add(mascot);
-            getRemoved().remove(mascot);
-        }
         mascot.setManager(this);
+        mascotList.offer(mascot);
+        mascotCount.getAndIncrement();
     }
 
     public void remove(Mascot mascot) {
-        synchronized (getAdded()) {
-            getAdded().remove(mascot);
-            getRemoved().add(mascot);
+        synchronized (mascot){
+            if (null != mascot.getManager()){
+                mascotCount.getAndDecrement();
+                mascot.setManager(null);
+            }
         }
-        mascot.setManager(null);
     }
 
     public void setBehaviorAll(Configuration configuration, String name) {
@@ -153,9 +145,10 @@ public class Manager {
     }
 
     public int getCount() {
-        synchronized (getMascots()) {
-            return getMascots().size();
-        }
+        return mascotCount.get();
+//        synchronized (getMascots()) {
+//            return getMascots().size();
+//        }
     }
 
     public void setExitOnLastRemoved(boolean exitOnLastRemoved) {

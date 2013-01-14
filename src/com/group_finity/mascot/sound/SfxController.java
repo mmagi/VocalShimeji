@@ -9,6 +9,5 @@ package com.group_finity.mascot.sound;
 public interface SfxController {
     public void sound(final Sound sound);
 
-    @SuppressWarnings("EmptyMethod")
     public void release();
 }
