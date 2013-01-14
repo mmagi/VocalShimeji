@@ -41,9 +41,19 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
 
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public void paint(Graphics g) {
-        //nop;
+    }
+
+    @SuppressWarnings("EmptyMethod")
+    @Override
+    public void repaint() {
+    }
+
+    @SuppressWarnings("EmptyMethod")
+    @Override
+    public void update(Graphics g) {
     }
 
     @Override
@@ -85,7 +95,7 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
     private WinDef.HDC hdcSrc;
     private final WinUser.SIZE pSize = new WinUser.SIZE();
 
-    private WindowsNativeImage imageDst;
+    private volatile WindowsNativeImage imageDst;
     private WindowsNativeImage lastImage;
 
     public final void setImage(final NativeImage image) {
@@ -95,14 +105,14 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
         }
     }
 
-    private WinUser.POINT pptDst;
+    private volatile WinUser.POINT pptDst;
     final private WinUser.POINT lastPosition = new WinUser.POINT();
 
     public final void setPosition(final int x, final int y) {
         if (lastPosition.x != x || lastPosition.y != y) {
             lastPosition.x = x;
             lastPosition.y = y;
-            pptDst = new WinUser.POINT(x,y);
+            pptDst = new WinUser.POINT(x, y);
         }
     }
 
@@ -113,15 +123,29 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
         final WinUser.POINT pptDst = this.pptDst;
         if (null != imageDst) {
             this.imageDst = null;
-            final WinNT.HANDLE oldBmp = GDI32Ex.INSTANCE.SelectObject(hdcSrc, imageDst.getHandle());
+            final WinNT.HANDLE oldBmp = NSelectObj(imageDst.getHandle());
             pSize.cx = imageDst.getWidth();
             pSize.cy = imageDst.getHeight();
-            User32Ex.INSTANCE.UpdateLayeredWindow(hWnd, null, pptDst, pSize, hdcSrc, pptSrc, 0x00000000, blendFunction, WinUser.ULW_ALPHA);
-            GDI32Ex.INSTANCE.SelectObject(hdcSrc, oldBmp);
+            NUpdateWindow();
+            NSelectObj(oldBmp);
         } else if (null != pptDst) {
-            User32Ex.INSTANCE.MoveWindow(hWnd, pptDst.x, pptDst.y, pSize.cx, pSize.cy, false);
+            NMoveWin(pptDst);
             this.pptDst = null;
         }
     }
+
+    private void NMoveWin(WinUser.POINT pptDst) {
+        User32Ex.INSTANCE.MoveWindow(hWnd, pptDst.x, pptDst.y, pSize.cx, pSize.cy, false);
+    }
+
+    private WinNT.HANDLE NSelectObj(WinNT.HANDLE oldBmp) {
+        return GDI32Ex.INSTANCE.SelectObject(hdcSrc, oldBmp);
+    }
+
+    private void NUpdateWindow() {
+        User32Ex.INSTANCE.UpdateLayeredWindow(hWnd, null, lastPosition, pSize, hdcSrc, pptSrc, 0x00000000, blendFunction, WinUser.ULW_ALPHA);
+    }
+
+
 
 }
