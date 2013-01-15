@@ -5,6 +5,7 @@ import com.group_finity.mascot.exception.BehaviorInstantiationException;
 import com.group_finity.mascot.exception.CantBeAliveException;
 import com.group_finity.mascot.util.QueList;
 
+import javax.swing.*;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -57,8 +58,8 @@ public class Manager {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                long prev = System.nanoTime();
                 for (final Mascot mascot : mascotList.asCircle()) {
+                    long prev = System.nanoTime();
                     if (null != mascot) {
                         mascot.apply();
                     } else {
@@ -86,12 +87,8 @@ public class Manager {
     }
 
     public void remove(Mascot mascot) {
-        synchronized (mascot) {
-            if (null != mascot.getManager()) {
-                mascotCount.getAndDecrement();
-                mascot.setManager(null);
-            }
-        }
+       mascotCount.getAndDecrement();
+       mascot.setManager(null);
     }
 
     public void setBehaviorAll(Configuration configuration, String name) {
@@ -110,15 +107,20 @@ public class Manager {
 
     public void remainOne() {
         final Iterator<Mascot> iterator = mascotList.iterator();
-        for (iterator.next(); iterator.hasNext(); ) {
-            Mascot mascot = iterator.next();
-            mascot.dispose();
+        if (iterator.hasNext()) iterator.next();
+        while (iterator.hasNext()) {
+            iterator.next().dispose();
         }
     }
 
     public void disposeAll() {
         for (final Mascot mascot : mascotList) {
-            mascot.dispose();
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    mascot.dispose();
+                }
+            });
         }
     }
 

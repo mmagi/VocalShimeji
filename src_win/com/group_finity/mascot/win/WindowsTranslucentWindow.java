@@ -29,14 +29,23 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
                 hdcSrc = GDI32Ex.INSTANCE.CreateCompatibleDC(clientDC);
             } catch (Exception ignored) {
             }
+        }else{
+            hWnd = null;
+            if (null != hdcSrc){
+                GDI32Ex.INSTANCE.DeleteDC(hdcSrc);
+                hdcSrc = null;
+            }
         }
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        if (null != hdcSrc)
+        hWnd = null;
+        if (null != hdcSrc){
             GDI32Ex.INSTANCE.DeleteDC(hdcSrc);
+            hdcSrc = null;
+        }
     }
 
     private static final long serialVersionUID = 1L;
@@ -91,51 +100,40 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
      * );
      */
 
-    private WinDef.HWND hWnd;
-    private WinDef.HDC hdcSrc;
+    private volatile WinDef.HWND hWnd;
+    private volatile WinDef.HDC hdcSrc;
     private final WinUser.SIZE pSize = new WinUser.SIZE();
+    final private WinUser.POINT pptDst = new WinUser.POINT();
 
+    private volatile boolean outOfDate = false;
     private volatile WindowsNativeImage imageDst;
-    private WindowsNativeImage lastImage;
-
+    private volatile int posX,posY;
     public final void setImage(final NativeImage image) {
-        if (image != this.lastImage) {
-            this.lastImage = (WindowsNativeImage) image;
-            imageDst = this.lastImage;
+        if (image != this.imageDst) {
+            this.imageDst = (WindowsNativeImage) image;
+            outOfDate = true;
         }
     }
 
-    private volatile WinUser.POINT pptDst;
-    final private WinUser.POINT lastPosition = new WinUser.POINT();
-
     public final void setPosition(final int x, final int y) {
-        if (lastPosition.x != x || lastPosition.y != y) {
-            lastPosition.x = x;
-            lastPosition.y = y;
-            pptDst = new WinUser.POINT(x, y);
+        if (posX != x || posY != y) {
+            posX = x;
+            posY = y;
+            outOfDate = true;
         }
     }
 
     public final void updateWindow() {
-        if (null == hWnd)
-            return;
-        final WindowsNativeImage imageDst = this.imageDst;
-        final WinUser.POINT pptDst = this.pptDst;
-        if (null != imageDst) {
-            this.imageDst = null;
+        if (null != hWnd && outOfDate){
+            final WindowsNativeImage imageDst = this.imageDst;
+            this.pptDst.x = posX; this.pptDst.y = posY;
+            outOfDate = false;
             final WinNT.HANDLE oldBmp = NSelectObj(imageDst.getHandle());
             pSize.cx = imageDst.getWidth();
             pSize.cy = imageDst.getHeight();
             NUpdateWindow();
             NSelectObj(oldBmp);
-        } else if (null != pptDst) {
-            NMoveWin(pptDst);
-            this.pptDst = null;
         }
-    }
-
-    private void NMoveWin(WinUser.POINT pptDst) {
-        User32Ex.INSTANCE.MoveWindow(hWnd, pptDst.x, pptDst.y, pSize.cx, pSize.cy, false);
     }
 
     private WinNT.HANDLE NSelectObj(WinNT.HANDLE oldBmp) {
@@ -143,7 +141,7 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
     }
 
     private void NUpdateWindow() {
-        User32Ex.INSTANCE.UpdateLayeredWindow(hWnd, null, lastPosition, pSize, hdcSrc, pptSrc, 0x00000000, blendFunction, WinUser.ULW_ALPHA);
+        User32Ex.INSTANCE.UpdateLayeredWindow(hWnd, null, pptDst, pSize, hdcSrc, pptSrc, 0x00000000, blendFunction, WinUser.ULW_ALPHA);
     }
 
 

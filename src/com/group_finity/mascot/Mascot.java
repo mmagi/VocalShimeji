@@ -21,7 +21,7 @@ public class Mascot {
     private final int id;
     private final TranslucentWindow window = NativeFactory.getInstance().newTransparentWindow();
 
-    private Manager manager = null;
+    private volatile Manager manager = null;
 
     private Point anchor = new Point(0, 0);
 
@@ -112,15 +112,14 @@ public class Mascot {
         }
     }
 
-    public void dispose() {
-        log.log(Level.INFO, "マスコット破棄({0})", this);
-
-        getWindow().asJWindow().dispose();
-        if (getManager() != null)
+    public synchronized void dispose() {
+        if (manager != null){
             getManager().remove(this);
-
-        voiceController.release();
-        sfxController.release();
+            log.log(Level.INFO, "マスコット破棄({0})", this);
+            getWindow().asJWindow().dispose();
+            voiceController.release();
+            sfxController.release();
+        }
     }
 
     public Manager getManager() {
