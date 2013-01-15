@@ -7,7 +7,6 @@ import java.util.Iterator;
  * User: Magi
  * Date: 13-1-12
  * Time: 上午10:54
- * To change this template use File | Settings | File Templates.
  */
 public class QueList<T> implements Iterable<T> {
 
@@ -45,41 +44,35 @@ public class QueList<T> implements Iterable<T> {
         @SuppressWarnings("unchecked")
         protected ListNode<T> last = (ListNode<T>) null;
 
-        private boolean notReady = true;
-        private T nextObj = null;
+        private boolean preFetched = false;
 
-        private void prepareNext() {
-            last = cur;
-            cur = last.next;
-            if (cur.deleted) {
-                do {
-                    cur = cur.next;
-                } while (cur.deleted);
-                last.setNext(cur);
+        private void preFetch() {
+            if (!preFetched) {
+                last = cur;
+                cur = last.fetchNext();
+                preFetched = true;
             }
-            notReady = false;
-            nextObj = cur.object;
         }
 
         @Override
         public boolean hasNext() {
-            if (notReady) prepareNext();
-            return nextObj != null;
+            preFetch();
+            return cur != head;
         }
 
         @Override
         public T next() {
-            if (notReady) prepareNext();
-            notReady = true;
-            return nextObj;
+            preFetch();
+            preFetched = false;
+            return cur.object;
         }
 
         @Override
         public void remove() {
-            if (notReady) {
-                cur.markDeleted();
-            } else {
+            if (preFetched) {
                 last.markDeleted();
+            } else {
+                cur.markDeleted();
             }
         }
     }
@@ -109,13 +102,7 @@ public class QueList<T> implements Iterable<T> {
         @Override
         public final T next() {
             last = cur;
-            cur = last.getNext();
-            if (cur.deleted) {
-                do {
-                    cur = cur.getNext();
-                } while (cur.deleted);
-                last.setNext(cur);
-            }
+            cur = last.fetchNextB();
             return cur.object;
         }
 
@@ -136,12 +123,16 @@ public class QueList<T> implements Iterable<T> {
     private class ListNode<T> {
         volatile protected ListNode<T> next;
 
-        ListNode<T> getNext() {
+        ListNode<T> fetchNext() {
+            ListNode<T> next = this.next;
+            if (next.deleted) {
+                do {
+                    next = next.next;
+                }
+                while (next.deleted);
+                this.next = next;
+            }
             return next;
-        }
-
-        void setNext(ListNode<T> next) {
-            this.next = next;
         }
 
         private final T object;
@@ -160,6 +151,10 @@ public class QueList<T> implements Iterable<T> {
         void markDeleted() {
             deleted = true;
         }
+
+        ListNode<T> fetchNextB() {
+            return fetchNext();
+        }
     }
 
     private class ListHeaderNode<T> extends ListNode<T> {
@@ -168,21 +163,29 @@ public class QueList<T> implements Iterable<T> {
         }
 
         @Override
-        ListNode<T> getNext() {
-            while (this.next == this) {
-                try {
-                    synchronized (this) {
-                        this.wait();
-                    }
-                } catch (InterruptedException ignored) {
-                }
-            }
-            return this.next;
+        synchronized ListNode<T> fetchNext() {
+            return super.fetchNext();
         }
 
         @Override
         void markDeleted() {
             throw new UnsupportedOperationException();
+        }
+
+        /**
+         * fetchNext的阻塞版本，如果队列空则阻塞，直到至少有一个元素
+         *
+         * @return 下一个不是head的节点
+         */
+        synchronized ListNode<T> fetchNextB() {
+            ListNode<T> next;
+            while (this == (next = super.fetchNext())) {
+                try {
+                    this.wait();
+                } catch (InterruptedException ignored) {
+                }
+            }
+            return next;
         }
     }
 }

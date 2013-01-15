@@ -6,6 +6,7 @@ import com.group_finity.mascot.Mascot;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,16 +14,20 @@ import java.util.logging.Logger;
 public final class SoundFactory {
     static final Logger log = Logger.getLogger(Manager.class.getName());
     static final ConcurrentHashMap<String, Sound> soundCache = new ConcurrentHashMap<String, Sound>();
-    static final AudioFormat appAudioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false); //标准CD音质
+    public static final AudioFormat appAudioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false); //标准CD音质
     public static boolean voiceOn = true;
     public static boolean sfxOn = true;
     public static final int defaultVoicePriority = -10;
 
     //CommonParams For Deamon
-    static final int bufferSizeInMSec = 500;
-    static final int bufferSize = SoundFactory.appAudioFormat.getFrameSize() * (int) (SoundFactory.appAudioFormat.getFrameRate() * bufferSizeInMSec / 1000);
-    static final int sleepMSec = 100;
-    static final int bufferWriteThreshold = SoundFactory.appAudioFormat.getFrameSize() * (int) (SoundFactory.appAudioFormat.getFrameRate() * sleepMSec / 1200);
+    public static final int defaultBufferSizeInMSec = 500;
+    public static final int defaultBufferSize = SoundFactory.appAudioFormat.getFrameSize() * (int) (SoundFactory.appAudioFormat.getFrameRate() * defaultBufferSizeInMSec / 1000);
+    public static final int defaultSleepMSec = 100;
+    public static final int defaultWriteThreshold = SoundFactory.appAudioFormat.getFrameSize() * (int) (SoundFactory.appAudioFormat.getFrameRate() * defaultSleepMSec / 1200);
+    public static final byte [] silence = new byte[defaultWriteThreshold];
+    static {
+        Arrays.fill(silence, (byte)0);
+    }
 
     public static Sound getSound(String resPath) {
         if (null == resPath) return null;

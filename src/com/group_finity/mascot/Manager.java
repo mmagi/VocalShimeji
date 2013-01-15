@@ -41,7 +41,7 @@ public class Manager {
 
                         for (final Iterator<Mascot> iterator = mascotList.iterator(); iterator.hasNext(); ) {
                             final Mascot mascot = iterator.next();
-                            if (null == mascot.getManager()) {
+                            if (mascot.isDisposed()) {
                                 iterator.remove();
                             } else {
                                 mascot.tick();
@@ -87,8 +87,8 @@ public class Manager {
     }
 
     public void remove(Mascot mascot) {
-       mascotCount.getAndDecrement();
-       mascot.setManager(null);
+        mascot.getWindow().dispose();
+        mascotCount.getAndDecrement();
     }
 
     public void setBehaviorAll(Configuration configuration, String name) {

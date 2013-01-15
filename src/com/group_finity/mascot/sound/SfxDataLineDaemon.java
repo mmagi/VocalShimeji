@@ -22,7 +22,7 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
         sfxLine() {
             try {
                 line = AudioSystem.getSourceDataLine(SoundFactory.appAudioFormat);
-                line.open(SoundFactory.appAudioFormat, SoundFactory.bufferSize);
+                line.open(SoundFactory.appAudioFormat, SoundFactory.defaultBufferSize);
             } catch (LineUnavailableException e) {
                 SoundFactory.log.log(Level.WARNING, "音频资源不足无音效", e);
             }
@@ -47,10 +47,9 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
                 for (final sfxLine line : lines) {
                     if (SoundFactory.sfxOn && line.busy) {
                         int len;
-                        if (null != line.curSound && (len = line.line.available()) >= SoundFactory.bufferWriteThreshold) {
+                        if (null != line.curSound && (len = line.line.available()) >= SoundFactory.defaultWriteThreshold) {
                             final int left = line.curSound.bytes.length - line.curPos;
                             len = len > left ? left : len;
-                            if (!line.line.isActive()) line.line.start();
                             line.line.write(line.curSound.bytes, line.curPos, len);
                             line.curPos += len;
                             if (line.curPos >= line.curSound.bytes.length) {
@@ -63,7 +62,7 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
                     }
                 }
                 try {
-                    Thread.sleep(SoundFactory.sleepMSec);
+                    Thread.sleep(SoundFactory.defaultSleepMSec);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -74,7 +73,7 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
                 }
                 while (!SoundFactory.sfxOn) {
                     try {
-                        Thread.sleep(SoundFactory.sleepMSec);
+                        Thread.sleep(SoundFactory.defaultSleepMSec);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -87,6 +86,7 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
         sfxLine line;
         if ((line = availableLines.poll()) != null) {
             line.curSound = sfx;
+            if (!line.line.isActive()) line.line.start();
             line.busy = true;
         }//else too busy ignore this request
     }

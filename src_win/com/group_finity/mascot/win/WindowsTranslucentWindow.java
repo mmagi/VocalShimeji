@@ -14,10 +14,10 @@ import java.awt.*;
 
 final class WindowsTranslucentWindow extends JWindow implements TranslucentWindow {
     @Override
-    public void setVisible(boolean b) {
-        super.setVisible(b);
+    public void setVisible(final boolean b) {
         if (b) {
             try {
+                super.setVisible(b);
                 hWnd = new WinDef.HWND(Native.getComponentPointer(this));
                 final int exStyle = User32Ex.INSTANCE.GetWindowLongW(hWnd, WinUser.GWL_EXSTYLE);
                 if ((exStyle & WinUser.WS_EX_LAYERED) == 0) {
@@ -29,23 +29,24 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
                 hdcSrc = GDI32Ex.INSTANCE.CreateCompatibleDC(clientDC);
             } catch (Exception ignored) {
             }
-        }else{
+        } else {
             hWnd = null;
-            if (null != hdcSrc){
+            if (null != hdcSrc) {
                 GDI32Ex.INSTANCE.DeleteDC(hdcSrc);
                 hdcSrc = null;
             }
+            super.setVisible(b);
         }
     }
 
     @Override
     public void dispose() {
-        super.dispose();
         hWnd = null;
-        if (null != hdcSrc){
+        if (null != hdcSrc) {
             GDI32Ex.INSTANCE.DeleteDC(hdcSrc);
             hdcSrc = null;
         }
+        super.dispose();
     }
 
     private static final long serialVersionUID = 1L;
@@ -107,7 +108,8 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
 
     private volatile boolean outOfDate = false;
     private volatile WindowsNativeImage imageDst;
-    private volatile int posX,posY;
+    private volatile int posX, posY;
+
     public final void setImage(final NativeImage image) {
         if (image != this.imageDst) {
             this.imageDst = (WindowsNativeImage) image;
@@ -124,9 +126,10 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
     }
 
     public final void updateWindow() {
-        if (null != hWnd && outOfDate){
+        if (null != hWnd && outOfDate) {
             final WindowsNativeImage imageDst = this.imageDst;
-            this.pptDst.x = posX; this.pptDst.y = posY;
+            this.pptDst.x = posX;
+            this.pptDst.y = posY;
             outOfDate = false;
             final WinNT.HANDLE oldBmp = NSelectObj(imageDst.getHandle());
             pSize.cx = imageDst.getWidth();
@@ -143,7 +146,6 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
     private void NUpdateWindow() {
         User32Ex.INSTANCE.UpdateLayeredWindow(hWnd, null, pptDst, pSize, hdcSrc, pptSrc, 0x00000000, blendFunction, WinUser.ULW_ALPHA);
     }
-
 
 
 }

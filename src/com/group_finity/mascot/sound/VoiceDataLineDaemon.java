@@ -15,7 +15,7 @@ import java.util.logging.Level;
  */
 public final class VoiceDataLineDaemon implements Runnable {
     private static final class voiceLine implements VoiceController {
-        final byte[] fadeBuffer = new byte[SoundFactory.bufferWriteThreshold];
+        final byte[] fadeBuffer = new byte[SoundFactory.defaultWriteThreshold];
         final SourceDataLine line;
         boolean alive;//初始化时用以是否成功获得资源，release时标记资源可回收到pool中;
         volatile Sound voiceToPlay;
@@ -32,7 +32,7 @@ public final class VoiceDataLineDaemon implements Runnable {
             SourceDataLine line = null;
             try {
                 line = AudioSystem.getSourceDataLine(SoundFactory.appAudioFormat);
-                line.open(SoundFactory.appAudioFormat, SoundFactory.bufferSize);
+                line.open(SoundFactory.appAudioFormat, SoundFactory.defaultBufferSize);
                 alive = true;//标记初始化成功
             } catch (LineUnavailableException e) {
                 SoundFactory.log.log(Level.WARNING, "音频资源不足无语音", e);
@@ -53,6 +53,54 @@ public final class VoiceDataLineDaemon implements Runnable {
         @Override
         public void release() {
             alive = false;
+        }
+
+        final void writeLine(){
+            final int len;
+            if (null != curSound && (len = line.available()) >= SoundFactory.defaultWriteThreshold) {
+                final Sound curSound = this.curSound;
+                final int curPos = this.curPos;
+                final int left = curSound.bytes.length - curPos;
+                final int size = len > left ? left : len;
+                if (!line.isActive()) line.start();
+                line.write(curSound.bytes, curPos, size);
+                this.curPos += size;
+                if (this.curPos >= curSound.bytes.length) { //换轨时不做flush，因此缓冲写完就判定为播放完成，不在意实际是否播放完
+                    this.curSound = null;
+                    this.curLevel = 0;
+                }
+            }
+        }
+        final void fadeSwitchSoundTo(final Sound nextSound) {
+            lastPlayed = nextSound;
+            if (this.curSound != null) { //换轨时不flush，做fadeInAndOut
+                final Sound curSound = this.curSound;
+                final int curPos = this.curPos;
+                final byte[] fadeBuffer = this.fadeBuffer;
+                final int left = curSound.bytes.length - curPos;
+                int fadeLength;//=min(defaultWriteThreshold,剩余长度,下一个音频长度)
+                fadeLength = nextSound.bytes.length > SoundFactory.defaultWriteThreshold ? SoundFactory.defaultWriteThreshold : nextSound.bytes.length;
+                fadeLength = fadeLength > left ? left : fadeLength;
+                for (int i = 0; i < fadeLength; i += 2) { // 2 byte for 16bit sound format
+                    final int input1 = (curSound.bytes[curPos + i] & 0xff) + ((curSound.bytes[curPos + i + 1]) << 8);//for little-endian sound format
+                    final int input2 = (nextSound.bytes[i] & 0xff) + ((nextSound.bytes[i + 1]) << 8);// little-endian，highest byte not mask for signed value
+                    final double r = i / (double) fadeLength;
+                    final int out = (int) (((1.0 - r) * input1) + r * input2);//liner fade
+                    fadeBuffer[i] = (byte) (out & 0xff);
+                    fadeBuffer[i + 1] = (byte) ((out >> 8) & 0xff);
+                }
+                while (line.available() < fadeLength) {
+                    Thread.yield();
+                }
+                if (line.isActive()) line.start();
+                line.write(fadeBuffer, 0, fadeLength);
+                this.curSound = nextSound;
+                this.curPos = fadeLength;
+                // fade完成
+            } else { //curSound == null
+                this.curSound = nextSound;
+                this.curPos = 0;
+            }
         }
     }
 
@@ -89,61 +137,17 @@ public final class VoiceDataLineDaemon implements Runnable {
                         if (line.alive) {
                             final Sound nextSound = line.voiceToPlay;
                             line.voiceToPlay = null;
-                            //更换音频
                             if (null != nextSound) {
-                                line.lastPlayed = nextSound;
-                                if (line.curSound != null) { //换轨时不flush，做fadeInAndOut
-                                    final Sound curSound = line.curSound;
-                                    final int curPos = line.curPos;
-                                    final byte[] fadeBuffer = line.fadeBuffer;
-                                    final int left = curSound.bytes.length - curPos;
-                                    int fadeLength;//=min(bufferWriteThreshold,剩余长度,下一个音频长度)
-                                    fadeLength = nextSound.bytes.length > SoundFactory.bufferWriteThreshold ? SoundFactory.bufferWriteThreshold : nextSound.bytes.length;
-                                    fadeLength = fadeLength > left ? left : fadeLength;
-                                    for (int i = 0; i < fadeLength; i += 2) { // 2 byte for 16bit sound format
-                                        final int input1 = (curSound.bytes[curPos + i] & 0xff) + ((curSound.bytes[curPos + i + 1]) << 8);//for little-endian sound format
-                                        final int input2 = (nextSound.bytes[i] & 0xff) + ((nextSound.bytes[i + 1]) << 8);// little-endian，highest byte not mask for signed value
-                                        final double r = i / (double) fadeLength;
-                                        final int out = (int) (((1.0 - r) * input1) + r * input2);//liner fade
-                                        fadeBuffer[i] = (byte) (out & 0xff);
-                                        fadeBuffer[i + 1] = (byte) ((out >> 8) & 0xff);
-                                    }
-                                    while (line.line.available() < fadeLength) {
-                                        Thread.yield();
-                                    }
-                                    if (!line.line.isActive()) line.line.start();
-                                    line.line.write(fadeBuffer, 0, fadeLength);
-                                    line.curSound = nextSound;
-                                    line.curPos = fadeLength;
-                                    // fade完成
-                                } else { //curSound == null
-                                    line.curSound = nextSound;
-                                    line.curPos = 0;
-                                }
+                                line.fadeSwitchSoundTo(nextSound);
                             }
-                            //换轨已完成或无需换轨，开始写缓冲
-                            final int len;
-                            if (null != line.curSound && (len = line.line.available()) >= SoundFactory.bufferWriteThreshold) {
-                                final Sound curSound = line.curSound;
-                                final int curPos = line.curPos;
-                                final int left = curSound.bytes.length - curPos;
-                                final int size = len > left ? left : len;
-                                if (!line.line.isActive()) line.line.start();
-                                line.line.write(curSound.bytes, curPos, size);
-                                line.curPos += size;
-                                if (line.curPos >= curSound.bytes.length) { //换轨时不做flush，因此缓冲写完就判定为播放完成，不在意实际是否播放完
-                                    line.curSound = null;
-                                    line.curLevel = 0;
-                                }
-                            } else {//缓冲数据还充足或当前没有音频要播放
-                            }
+                            line.writeLine();
                         } else {
                             linePool.offer(line);
                         }
                     }
                 }
                 try {
-                    Thread.sleep(SoundFactory.sleepMSec);
+                    Thread.sleep(SoundFactory.defaultSleepMSec);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -154,7 +158,7 @@ public final class VoiceDataLineDaemon implements Runnable {
                 }
                 while (!SoundFactory.voiceOn) {
                     try {
-                        Thread.sleep(SoundFactory.sleepMSec);
+                        Thread.sleep(SoundFactory.defaultSleepMSec);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

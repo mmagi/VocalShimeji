@@ -29,7 +29,7 @@ final class ActionWithSoundInvoker extends Thread {
                 final SourceDataLine line;
                 try {
                     line = AudioSystem.getSourceDataLine(SoundFactory.appAudioFormat);
-                    line.open(SoundFactory.appAudioFormat, SoundFactory.bufferSize);
+                    line.open(SoundFactory.appAudioFormat, SoundFactory.defaultBufferSize);
                 } catch (LineUnavailableException e) {
                     SoundFactory.log.log(Level.WARNING, "系统混音资源不足。", e);
                     break voice;
@@ -37,7 +37,7 @@ final class ActionWithSoundInvoker extends Thread {
                 int curPos = 0;
                 while (SoundFactory.voiceOn) {
                     final int len = line.available();
-                    if (len >= SoundFactory.bufferWriteThreshold) {
+                    if (len >= SoundFactory.defaultWriteThreshold) {
                         final int left = sound.bytes.length - curPos;
                         final int size = len > left ? left : len;
                         line.write(sound.bytes, curPos, size);
@@ -45,7 +45,7 @@ final class ActionWithSoundInvoker extends Thread {
                         line.start();
                         if (curPos >= sound.bytes.length) {
                             try {
-                                Thread.sleep(SoundFactory.bufferSizeInMSec);
+                                Thread.sleep(SoundFactory.defaultBufferSizeInMSec);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -53,7 +53,7 @@ final class ActionWithSoundInvoker extends Thread {
                         }
                     }
                     try {
-                        Thread.sleep(SoundFactory.sleepMSec);
+                        Thread.sleep(SoundFactory.defaultSleepMSec);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

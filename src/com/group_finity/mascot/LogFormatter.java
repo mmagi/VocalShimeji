@@ -18,9 +18,9 @@ public class LogFormatter extends SimpleFormatter {
     private final static String format = "{0,date} {0,time}";
     private MessageFormat formatter;
 
-    private Object args[] = new Object[1];
+    private final Object[] args = new Object[1];
 
-    private String lineSeparator = System.getProperty("line.separator");
+    private final String lineSeparator = System.getProperty("line.separator");
 
     /**
      * Format the given LogRecord.
