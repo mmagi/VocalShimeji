@@ -27,7 +27,7 @@ public class WindowsEnvironment extends Environment {
         return new Rectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
     }
 
-    private static HashMap<WinDef.HWND, Boolean> ieCache = new LinkedHashMap<WinDef.HWND, Boolean>();
+    private static final HashMap<WinDef.HWND, Boolean> ieCache = new LinkedHashMap<WinDef.HWND, Boolean>();
 
     private static boolean isIE(final WinDef.HWND ie) {
 

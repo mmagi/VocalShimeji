@@ -15,7 +15,7 @@ import java.io.IOException;
  * Time: 下午1:47
  */
 public final class Sound {
-    final byte[] bytes;
+    public final byte[] bytes;
 
     Sound(@NotNull AudioInputStream in) throws IOException {
         AudioFormat baseFormat = in.getFormat();

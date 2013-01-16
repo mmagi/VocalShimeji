@@ -118,7 +118,7 @@ public class Main {
         }
         MascotPopupMenu.prepareMainMenu(mainMenu);
         try {
-            TrayIcon icon = new TrayIcon(ImageIO.read(Main.class.getResource("/icon.png")), "VocalShimeji",mainMenu);
+            TrayIcon icon = new TrayIcon(ImageIO.read(Main.class.getResource("/icon.png")), "VocalShimeji", mainMenu);
             MascotPopupMenu.prepareTrayIcon(icon);
             SystemTray.getSystemTray().add(icon);
         } catch (IOException e) {
@@ -172,8 +172,6 @@ public class Main {
 
     public void exit() {
         getManager().disposeAll();
-        getManager().stop();
-
         System.exit(0);
     }
 

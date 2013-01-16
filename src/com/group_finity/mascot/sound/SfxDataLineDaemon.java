@@ -12,26 +12,26 @@ import java.util.logging.Level;
  * Date: 12-12-26
  * Time: 下午2:25
  */
-public final class SfxDataLineDaemon implements Runnable, SfxController {
+final class SfxDataLineDaemon implements Runnable, SfxController {
     private static final class sfxLine {
-        boolean busy = false;
-        Sound curSound;
-        int curPos;
+        volatile boolean busy = false;
+        volatile Sound curSound;
+        volatile int curPos;
         SourceDataLine line;
 
         sfxLine() {
             try {
                 line = AudioSystem.getSourceDataLine(SoundFactory.appAudioFormat);
-                line.open(SoundFactory.appAudioFormat, SoundFactory.bufferSize);
+                line.open(SoundFactory.appAudioFormat, SoundFactory.defaultBufferSize);
             } catch (LineUnavailableException e) {
                 SoundFactory.log.log(Level.WARNING, "音频资源不足无音效", e);
             }
         }
     }
 
-    final ConcurrentLinkedQueue<sfxLine> availableLines = new ConcurrentLinkedQueue<sfxLine>();
+    private final ConcurrentLinkedQueue<sfxLine> availableLines = new ConcurrentLinkedQueue<sfxLine>();
     private static final int totalLines = 50;
-    final sfxLine[] lines = new sfxLine[totalLines];
+    private final sfxLine[] lines = new sfxLine[totalLines];
 
     SfxDataLineDaemon() {
         for (int i = 0; i < totalLines; i++) {
@@ -45,23 +45,26 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
         while (true) {
             if (SoundFactory.sfxOn) {
                 for (final sfxLine line : lines) {
-                    if (SoundFactory.sfxOn && line.busy) {
-                        int len;
-                        if (null != line.curSound && (len = line.line.available()) >= SoundFactory.bufferWriteThreshold) {
+                    int len;
+                    if (SoundFactory.sfxOn && line.busy && (len = line.line.available()) >= SoundFactory.defaultWriteThreshold) {
+                        if (null != line.curSound ) {
                             final int left = line.curSound.bytes.length - line.curPos;
                             len = len > left ? left : len;
-                            if (!line.line.isActive()) line.line.start();
                             line.line.write(line.curSound.bytes, line.curPos, len);
                             line.curPos += len;
                             if (line.curPos >= line.curSound.bytes.length) {
-                                line.busy = false;
-                                availableLines.offer(line);
+                                line.curSound = null;
+                                line.curPos = 0;
                             }
+                        }else {
+                            line.line.write(SoundFactory.silence,0,SoundFactory.defaultWriteThreshold);
+                            line.busy = false;
+                            availableLines.offer(line);
                         }
                     }
                 }
                 try {
-                    Thread.sleep(SoundFactory.sleepMSec);
+                    Thread.sleep(SoundFactory.defaultSleepMSec);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -72,7 +75,7 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
                 }
                 while (!SoundFactory.sfxOn) {
                     try {
-                        Thread.sleep(SoundFactory.sleepMSec);
+                        Thread.sleep(SoundFactory.defaultSleepMSec);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -85,14 +88,15 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
         sfxLine line;
         if ((line = availableLines.poll()) != null) {
             line.curSound = sfx;
-            line.curPos = 0;
+            if (!line.line.isActive()) line.line.start();
             line.busy = true;
         }//else too busy ignore this request
     }
 
+    @SuppressWarnings("EmptyMethod")
+    //共享音效line，不用释放，忽略
     @Override
     public void release() {
-        //共享音效line，不用释放，忽略
     }
 
 }

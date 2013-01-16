@@ -101,24 +101,25 @@ public class Mascot {
 
                 getWindow().setImage(getImage().getImage());
 
-                if (!getWindow().asJWindow().isVisible()) {
-                    getWindow().asJWindow().setVisible(true);
-                }
+                if (!getWindow().isVisible()) getWindow().setVisible(true);
 
                 getWindow().updateWindow();
-            } else if (getWindow().asJWindow().isVisible()) {
-                getWindow().asJWindow().setVisible(false);
+            } else if (getWindow().isVisible()) {
+                getWindow().setVisible(false);
             }
         }
     }
 
+    private boolean disposed = false;
+    public boolean isDisposed() {
+        return disposed;
+    }
+
     public void dispose() {
         log.log(Level.INFO, "マスコット破棄({0})", this);
-
-        getWindow().asJWindow().dispose();
-        if (getManager() != null)
-            getManager().remove(this);
-
+        animating = false;
+        disposed = true;
+        getManager().remove(this);
         voiceController.release();
         sfxController.release();
     }
@@ -193,8 +194,9 @@ public class Mascot {
     public MascotEnvironment getEnvironment() {
         return this.environment;
     }
+
     //javascript中要使用，非冗余
-    public int getTotalCount(){
+    public int getTotalCount() {
         return this.manager.getCount();
     }
 }

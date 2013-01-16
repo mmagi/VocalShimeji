@@ -11,4 +11,10 @@ public interface TranslucentWindow {
     public void setPosition(int x, int y);
 
     public void updateWindow();
+
+    public void dispose();
+
+    public void setVisible(boolean b);
+
+    public boolean isVisible();
 }
