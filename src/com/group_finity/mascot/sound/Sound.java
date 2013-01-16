@@ -1,12 +1,16 @@
 package com.group_finity.mascot.sound;
 
+import com.jogamp.openal.sound3d.AudioSystem3D;
+import com.jogamp.openal.sound3d.Buffer;
 import com.sun.istack.internal.NotNull;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,28 +19,9 @@ import java.io.IOException;
  * Time: 下午1:47
  */
 public final class Sound {
-    public final byte[] bytes;
+    public final Buffer buffer;
 
-    Sound(@NotNull AudioInputStream in) throws IOException {
-        AudioFormat baseFormat = in.getFormat();
-        if (!baseFormat.matches(SoundFactory.appAudioFormat)) {
-            AudioFormat decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(), 16, baseFormat.getChannels(), baseFormat.getChannels() * 2, baseFormat.getSampleRate(), false);
-            in = AudioSystem.getAudioInputStream(decodedFormat, in);
-            if (!decodedFormat.matches(SoundFactory.appAudioFormat)) {
-                in = AudioSystem.getAudioInputStream(SoundFactory.appAudioFormat, in);
-            }
-        }
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final byte[] temp = new byte[1024];
-        int size;
-        while ((size = in.read(temp)) != -1) {
-            out.write(temp, 0, size);
-        }
-        bytes = out.toByteArray();
-        try {
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();//not care
-        }
+    Sound(@NotNull InputStream in) throws IOException, UnsupportedAudioFileException {
+            buffer = AudioSystem3D.loadBuffer(in);
     }
 }

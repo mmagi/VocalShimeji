@@ -2,6 +2,14 @@ package com.group_finity.mascot.sound;
 
 import com.group_finity.mascot.Manager;
 import com.group_finity.mascot.Mascot;
+import com.jogamp.openal.AL;
+import com.jogamp.openal.ALFactory;
+import com.jogamp.openal.sound3d.AudioSystem3D;
+import com.jogamp.openal.sound3d.Buffer;
+import com.jogamp.openal.sound3d.Context;
+import com.jogamp.openal.sound3d.Device;
+import com.jogamp.openal.sound3d.Listener;
+import com.jogamp.openal.sound3d.Source;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -27,7 +35,14 @@ public final class SoundFactory {
     public static final int defaultWriteThreshold = SoundFactory.appAudioFormat.getFrameSize() * (int) (SoundFactory.appAudioFormat.getFrameRate() * defaultSleepMSec / 1200);
     public static final byte [] silence = new byte[defaultWriteThreshold];
     static {
-        Arrays.fill(silence, (byte)0);
+        AudioSystem3D.init();
+
+        Device localDevice = AudioSystem3D.openDevice(null);
+        Context localContext = AudioSystem3D.createContext(localDevice);
+        AudioSystem3D.makeContextCurrent(localContext);
+
+        Listener localListener = AudioSystem3D.getListener();
+        localListener.setPosition(0.0F, 0.0F, 0.0F);
     }
 
     public static Sound getSound(String resPath) {
@@ -35,7 +50,7 @@ public final class SoundFactory {
         Sound sound = soundCache.get(resPath);
         if (null == sound) {
             try {
-                sound = new Sound(AudioSystem.getAudioInputStream(SoundFactory.class.getResource("/media" + resPath)));
+                sound = new Sound(SoundFactory.class.getResourceAsStream("/media" + resPath));
                 soundCache.put(resPath, sound);
             } catch (UnsupportedAudioFileException e) {
                 log.log(Level.WARNING, "音频文件{0}的格式不支持", resPath);
@@ -54,27 +69,63 @@ public final class SoundFactory {
         invoker.Invoke(sound, cmd);
     }
 
-    private static VoiceDataLineDaemon voiceDataLineDaemon;
-
     public synchronized static VoiceController getVoiceController(Mascot mascot) {
-        if (null == voiceDataLineDaemon) {
-            final VoiceDataLineDaemon voiceDaemon = new VoiceDataLineDaemon();
-            new Thread(voiceDaemon, "VoiceLineDaemonForAll").start();
-            voiceDataLineDaemon = voiceDaemon;
-        }
-        return voiceDataLineDaemon.createVoiceLine();
+        return new VoiceController(){
+            Source localSource;
+            volatile Sound lastPlayed;
+            volatile int curLevel = 0;
+            @Override
+            public void speak(Sound voice, int pri) {
+                if(null == localSource){
+                    localSource = AudioSystem3D.generateSource(voice.buffer);
+                    localSource.setPosition(0.0F, 0.0F, 0.0F);
+                    localSource.setLooping(false);
+                }
+                int priority = Math.abs(pri);
+                if (0 == localSource.getBuffersProcessed() )
+                    if (priority > curLevel || (priority == curLevel && pri < 0)) {
+                        localSource.stop();
+                    }else{
+                        return;
+                    }
+                curLevel = priority;
+                lastPlayed = voice;
+                localSource.setBuffer(voice.buffer);
+                localSource.play();
+            }
+
+            @Override
+            public void release() {
+                localSource.delete();
+            }
+
+            @Override
+            public Sound getLastPlayed() {
+                return lastPlayed;
+            }
+        };
     }
 
-    private static SfxDataLineDaemon sfxDataLineDaemon;
+    //private static SfxDataLineDaemon sfxDataLineDaemon;
 
     //invoker 线程调用，保留锁
     public synchronized static SfxController getSfxController(Mascot mascot) {
-        if (null == sfxDataLineDaemon) {
-            final SfxDataLineDaemon sfxDaemon = new SfxDataLineDaemon();
-            new Thread(sfxDaemon, "SfxLineDaemonForAll").start();
-            sfxDataLineDaemon = sfxDaemon;
-        }
-        return sfxDataLineDaemon;
+//        if (null == sfxDataLineDaemon) {
+//            final SfxDataLineDaemon sfxDaemon = new SfxDataLineDaemon();
+//            new Thread(sfxDaemon, "SfxLineDaemonForAll").start();
+//            sfxDataLineDaemon = sfxDaemon;
+//        }
+        return new SfxController() {
+            @Override
+            public void sound(Sound sound) {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+
+            @Override
+            public void release() {
+                //To change body of implemented methods use File | Settings | File Templates.
+            }
+        };
     }
 
 }

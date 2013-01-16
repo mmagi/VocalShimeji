@@ -37,20 +37,20 @@ final class ActionWithSoundInvoker extends Thread {
         }
 
         final void updateLine() {
-            final int len;
-            if (null != curSound && (len = line.available()) >= SoundFactory.defaultWriteThreshold) {
-                final Sound curSound = this.curSound;
-                final int curPos = this.curPos;
-                final int left = curSound.bytes.length - curPos;
-                final int size = len > left ? left : len;
-                if (!line.isActive())
-                    line.start();
-                line.write(curSound.bytes, curPos, size);
-                this.curPos += size;
-                if (this.curPos >= curSound.bytes.length) {
-                    this.curSound = null;
-                }
-            }
+//            final int len;
+//            if (null != curSound && (len = line.available()) >= SoundFactory.defaultWriteThreshold) {
+//                final Sound curSound = this.curSound;
+//                final int curPos = this.curPos;
+//                final int left = curSound.bytes.length - curPos;
+//                final int size = len > left ? left : len;
+//                if (!line.isActive())
+//                    line.start();
+//                line.write(curSound.bytes, curPos, size);
+//                this.curPos += size;
+//                if (this.curPos >= curSound.bytes.length) {
+//                    this.curSound = null;
+//                }
+//            }
         }
     }
 
