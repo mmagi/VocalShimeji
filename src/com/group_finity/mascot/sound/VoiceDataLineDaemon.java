@@ -53,6 +53,7 @@ public final class VoiceDataLineDaemon implements Runnable {
         @Override
         public void release() {
             alive = false;
+            linePool.offer(this);
         }
 
         final void writeLine(){
@@ -142,7 +143,7 @@ public final class VoiceDataLineDaemon implements Runnable {
                             }
                             line.writeLine();
                         } else {
-                            linePool.offer(line);
+
                         }
                     }
                 }

@@ -44,9 +44,13 @@ public final class SoundFactory {
         }
         return sound;
     }
-
-    public static void invokeAfterSound(Sound sound, Runnable cmd) {
-        new ActionWithSoundInvoker(sound, cmd).start();
+    private static ActionWithSoundInvoker invoker = new ActionWithSoundInvoker();
+    static {
+        invoker.setName("ActionWithSoundInvoker");
+        invoker.start();
+    }
+    public static void invokeAfterSound(final Sound sound,final Runnable cmd) {
+        invoker.Invoke(sound,cmd);
     }
 
     private static VoiceDataLineDaemon voiceDataLineDaemon;

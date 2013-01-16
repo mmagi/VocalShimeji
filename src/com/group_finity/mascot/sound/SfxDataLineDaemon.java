@@ -45,9 +45,9 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
         while (true) {
             if (SoundFactory.sfxOn) {
                 for (final sfxLine line : lines) {
-                    if (SoundFactory.sfxOn && line.busy) {
-                        int len;
-                        if (null != line.curSound && (len = line.line.available()) >= SoundFactory.defaultWriteThreshold) {
+                    int len;
+                    if (SoundFactory.sfxOn && line.busy && (len = line.line.available()) >= SoundFactory.defaultWriteThreshold) {
+                        if (null != line.curSound ) {
                             final int left = line.curSound.bytes.length - line.curPos;
                             len = len > left ? left : len;
                             line.line.write(line.curSound.bytes, line.curPos, len);
@@ -55,9 +55,11 @@ public final class SfxDataLineDaemon implements Runnable, SfxController {
                             if (line.curPos >= line.curSound.bytes.length) {
                                 line.curSound = null;
                                 line.curPos = 0;
-                                line.busy = false;
-                                availableLines.offer(line);
                             }
+                        }else {
+                            line.line.write(SoundFactory.silence,0,SoundFactory.defaultWriteThreshold);
+                            line.busy = false;
+                            availableLines.offer(line);
                         }
                     }
                 }
