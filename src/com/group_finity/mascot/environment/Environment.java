@@ -21,7 +21,7 @@ public abstract class Environment {
 
     static {
 
-        final Thread thread = new Thread() {
+        final Thread thread = new Thread("EnvironmentMonitor") {
             @Override
             public void run() {
                 try {

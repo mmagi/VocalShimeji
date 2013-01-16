@@ -14,10 +14,10 @@ import java.awt.*;
 
 final class WindowsTranslucentWindow extends JWindow implements TranslucentWindow {
     @Override
-    public void setVisible(boolean b) {
-        super.setVisible(b);
+    public void setVisible(final boolean b) {
         if (b) {
             try {
+                super.setVisible(b);
                 hWnd = new WinDef.HWND(Native.getComponentPointer(this));
                 final int exStyle = User32Ex.INSTANCE.GetWindowLongW(hWnd, WinUser.GWL_EXSTYLE);
                 if ((exStyle & WinUser.WS_EX_LAYERED) == 0) {
@@ -29,21 +29,41 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
                 hdcSrc = GDI32Ex.INSTANCE.CreateCompatibleDC(clientDC);
             } catch (Exception ignored) {
             }
+        } else {
+            hWnd = null;
+            if (null != hdcSrc) {
+                GDI32Ex.INSTANCE.DeleteDC(hdcSrc);
+                hdcSrc = null;
+            }
+            super.setVisible(b);
         }
     }
 
     @Override
     public void dispose() {
-        super.dispose();
-        if (null != hdcSrc)
+        hWnd = null;
+        if (null != hdcSrc) {
             GDI32Ex.INSTANCE.DeleteDC(hdcSrc);
+            hdcSrc = null;
+        }
+        super.dispose();
     }
 
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public void paint(Graphics g) {
-        //nop;
+    }
+
+    @SuppressWarnings("EmptyMethod")
+    @Override
+    public void repaint() {
+    }
+
+    @SuppressWarnings("EmptyMethod")
+    @Override
+    public void update(Graphics g) {
     }
 
     @Override
@@ -81,45 +101,51 @@ final class WindowsTranslucentWindow extends JWindow implements TranslucentWindo
      * );
      */
 
-    private WinDef.HWND hWnd;
-    private WinUser.POINT pptDst;
-    private WinDef.HDC hdcSrc;
+    private volatile WinDef.HWND hWnd;
+    private volatile WinDef.HDC hdcSrc;
     private final WinUser.SIZE pSize = new WinUser.SIZE();
-    WinDef.HBITMAP imageHandle;
+    final private WinUser.POINT pptDst = new WinUser.POINT();
 
-    private WindowsNativeImage lastImage;
+    private volatile boolean outOfDate = false;
+    private volatile WindowsNativeImage imageDst;
+    private volatile int posX, posY;
 
     public final void setImage(final NativeImage image) {
-        if (image != this.lastImage) {
-            this.lastImage = (WindowsNativeImage) image;
-            imageHandle = this.lastImage.getHandle();
-            pSize.cx = this.lastImage.getWidth();
-            pSize.cy = this.lastImage.getHeight();
+        if (image != this.imageDst) {
+            this.imageDst = (WindowsNativeImage) image;
+            outOfDate = true;
         }
     }
 
-    final private WinUser.POINT lastPosition = new WinUser.POINT();
-
-    public final void setPosition(int x, int y) {
-        if (lastPosition.x != x || lastPosition.y != y) {
-            lastPosition.x = x;
-            lastPosition.y = y;
-            pptDst = lastPosition;
+    public final void setPosition(final int x, final int y) {
+        if (posX != x || posY != y) {
+            posX = x;
+            posY = y;
+            outOfDate = true;
         }
     }
 
     public final void updateWindow() {
-        if (null == hWnd)
-            return;
-        if (null != imageHandle) {
-            final WinNT.HANDLE oldBmp = GDI32Ex.INSTANCE.SelectObject(hdcSrc, imageHandle);
-            imageHandle = null;
-            User32Ex.INSTANCE.UpdateLayeredWindow(hWnd, null, pptDst, pSize, hdcSrc, pptSrc, 0x00000000, blendFunction, WinUser.ULW_ALPHA);
-            GDI32Ex.INSTANCE.SelectObject(hdcSrc, oldBmp);
-        } else if (null != pptDst) {
-            User32Ex.INSTANCE.MoveWindow(hWnd, pptDst.x, pptDst.y, pSize.cx, pSize.cy, false);
-            pptDst = null;
+        if (null != hWnd && outOfDate) {
+            final WindowsNativeImage imageDst = this.imageDst;
+            this.pptDst.x = posX;
+            this.pptDst.y = posY;
+            outOfDate = false;
+            final WinNT.HANDLE oldBmp = NSelectObj(imageDst.getHandle());
+            pSize.cx = imageDst.getWidth();
+            pSize.cy = imageDst.getHeight();
+            NUpdateWindow();
+            NSelectObj(oldBmp);
         }
     }
+
+    private WinNT.HANDLE NSelectObj(WinNT.HANDLE oldBmp) {
+        return GDI32Ex.INSTANCE.SelectObject(hdcSrc, oldBmp);
+    }
+
+    private void NUpdateWindow() {
+        User32Ex.INSTANCE.UpdateLayeredWindow(hWnd, null, pptDst, pSize, hdcSrc, pptSrc, 0x00000000, blendFunction, WinUser.ULW_ALPHA);
+    }
+
 
 }
