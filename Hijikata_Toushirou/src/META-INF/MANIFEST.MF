@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
-Class-Path: lib/jna-lite.jar lib/platform-lite.jar lib/VocalShimeji.jar
+Class-Path: lib/jna-lite.jar lib/platform-lite.jar lib/VocalShimeji.ja
+ r lib/gluegen-rt.jar lib/joal.jar
 Main-Class: Hijikata_Toushirou
 
