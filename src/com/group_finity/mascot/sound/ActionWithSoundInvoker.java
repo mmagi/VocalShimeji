@@ -1,8 +1,6 @@
 package com.group_finity.mascot.sound;
 
 import com.group_finity.mascot.util.QueList;
-import com.jogamp.openal.sound3d.AudioSystem3D;
-import com.jogamp.openal.sound3d.Source;
 
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -17,10 +15,10 @@ final class ActionWithSoundInvoker extends Thread {
     class Task {
         Runnable cmd;
         boolean done;
-        Source localSource;
-
+        SoundSource localSource;
         Task(final Sound sound, final Runnable cmd) {
-            localSource = AudioSystem3D.generateSource(sound.buffer);
+            localSource = new SoundSource();
+            localSource.setBuffer(sound);
             localSource.setPosition(0.0F, 0.0F, 0.0F);
             localSource.setLooping(false);
             this.cmd = cmd;

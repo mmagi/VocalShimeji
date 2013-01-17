@@ -2,8 +2,14 @@ package com.group_finity.mascot.sound;
 
 import com.group_finity.mascot.Manager;
 import com.group_finity.mascot.Mascot;
-import com.jogamp.openal.sound3d.*;
+import com.jogamp.openal.AL;
+import com.jogamp.openal.ALFactory;
+import com.jogamp.openal.sound3d.AudioSystem3D;
+import com.jogamp.openal.sound3d.Context;
+import com.jogamp.openal.sound3d.Device;
+import com.jogamp.openal.sound3d.Listener;
 
+import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -35,7 +41,7 @@ public final class SoundFactory {
         Sound sound = soundCache.get(resPath);
         if (null == sound) {
             try {
-                sound = new Sound(SoundFactory.class.getResourceAsStream("/media" + resPath));
+                sound = new Sound(AudioSystem.getAudioInputStream(SoundFactory.class.getResource("/media" + resPath)));
                 soundCache.put(resPath, sound);
             } catch (UnsupportedAudioFileException e) {
                 log.log(Level.WARNING, "音频文件{0}的格式不支持", resPath);
@@ -59,7 +65,11 @@ public final class SoundFactory {
 
     public synchronized static VoiceController getVoiceController(Mascot mascot) {
         return new VoiceController() {
-            Source localSource;
+            SoundSource localSource = new SoundSource();
+            {
+                localSource.setPosition(0.0F, 0.0F, 0.0F);
+                localSource.setLooping(false);
+            }
             volatile Sound lastPlayed;
             volatile int curLevel = 0;
 
@@ -67,9 +77,6 @@ public final class SoundFactory {
             public void speak(Sound voice, int pri) {
                 if (voiceOn) {
                     if (null == localSource) {
-                        localSource = AudioSystem3D.generateSource(voice.buffer);
-                        localSource.setPosition(0.0F, 0.0F, 0.0F);
-                        localSource.setLooping(false);
                     }
                     int priority = Math.abs(pri);
                     if (0 == localSource.getBuffersProcessed())
@@ -80,7 +87,7 @@ public final class SoundFactory {
                         }
                     curLevel = priority;
                     lastPlayed = voice;
-                    localSource.setBuffer(voice.buffer);
+                    localSource.setBuffer(voice);
                     localSource.play();
                 }
             }
@@ -100,22 +107,23 @@ public final class SoundFactory {
 
     public synchronized static SfxController getSfxController(Mascot mascot) {
         return new SfxController() {
-            Source localSource;
+            SoundSource localSource = new SoundSource();
+            SoundSource localSourceBack = new SoundSource();
 
-            Source localSourceBack;
+            {
+                localSource.setPosition(0.0F, 0.0F, 0.0F);
+                localSource.setLooping(false);
+                localSourceBack.setPosition(0.0F, 0.0F, 0.0F);
+                localSourceBack.setLooping(false);
+            }
 
             @Override
             public void sound(Sound sound) {
                 if (sfxOn) {
-                    if (null == localSource) {
-                        localSource = AudioSystem3D.generateSource(sound.buffer);
-                        localSource.setPosition(0.0F, 0.0F, 0.0F);
-                        localSource.setLooping(false);
-                    }
                     localSource.stop();
-                    localSource.setBuffer(sound.buffer);
+                    localSource.setBuffer(sound);
                     localSource.play();
-                    final Source swap = localSource;
+                    final SoundSource swap = localSource;
                     localSource = localSourceBack;
                     localSourceBack = swap;
                 }
@@ -128,6 +136,9 @@ public final class SoundFactory {
             }
         };
     }
+
+    static AL al = ALFactory.getAL();
+
 
 }
 
