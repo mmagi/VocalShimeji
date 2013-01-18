@@ -7,7 +7,7 @@ package com.group_finity.mascot.sound;
  * Time: 上午9:25
  */
 public interface SfxController {
-    public void sound(final Sound sound);
+    public void sound(final SoundBuffer sound);
 
     public void release();
 }

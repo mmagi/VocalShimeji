@@ -17,7 +17,7 @@ final class ActionWithSoundInvoker extends Thread {
         boolean done;
         SoundSource localSource;
 
-        Task(final Sound sound, final Runnable cmd) {
+        Task(final SoundBuffer sound, final Runnable cmd) {
             try {
                 localSource = new SoundSource();
                 localSource.setBuffer(sound);
@@ -35,7 +35,7 @@ final class ActionWithSoundInvoker extends Thread {
         }
 
         final void updateLine() {
-            this.done = (localSource.getBuffersProcessed() >= localSource.getBuffersQueued());
+            this.done = localSource == null || !localSource.isPlaying();
         }
 
         final void release() {
@@ -45,7 +45,7 @@ final class ActionWithSoundInvoker extends Thread {
 
     QueList<Task> tasks = new QueList<Task>();
 
-    void Invoke(Sound sound, Runnable cmd) {
+    void Invoke(SoundBuffer sound, Runnable cmd) {
         final Task task = new Task(sound, cmd);
         tasks.offer(task);
         task.start();

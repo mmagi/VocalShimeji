@@ -1,6 +1,6 @@
 package com.group_finity.mascot;
 
-import com.group_finity.mascot.sound.Sound;
+import com.group_finity.mascot.sound.SoundBuffer;
 import com.group_finity.mascot.sound.SoundFactory;
 
 import javax.swing.*;
@@ -16,11 +16,11 @@ class MascotPopupMenu {
     private static final ResourceBundle resourceBundle = Main.resourceBundle;
 
     static final ActionListener restoreMenuListener = new ActionListener() {
-        final Sound voice = SoundFactory.getSound(resourceBundle.getString("sound.cmd_restore_window"));
+        final SoundBuffer voice = SoundFactory.getSound(resourceBundle.getString("sound.cmd_restore_window"));
         final Runnable cmd = new Runnable() {
 
-            final Sound voiceFalse = SoundFactory.getSound(resourceBundle.getString("sound.response_nothing_reset"));
-            final Sound voiceTrue = SoundFactory.getSound(resourceBundle.getString("sound.response_reset"));
+            final SoundBuffer voiceFalse = SoundFactory.getSound(resourceBundle.getString("sound.response_nothing_reset"));
+            final SoundBuffer voiceTrue = SoundFactory.getSound(resourceBundle.getString("sound.response_reset"));
 
             @Override
             public void run() {
@@ -38,7 +38,7 @@ class MascotPopupMenu {
         }
     };
     static final ActionListener increaseMenuListener = new ActionListener() {
-        final Sound sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_one_more_mascot"));
+        final SoundBuffer sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_one_more_mascot"));
         final Runnable cmd = new Runnable() {
 
             @Override
@@ -54,7 +54,7 @@ class MascotPopupMenu {
         }
     };
     static final ActionListener gatherMenuListener = new ActionListener() {
-        final Sound sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_together"));
+        final SoundBuffer sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_together"));
         final Runnable cmd = new Runnable() {
 
             @Override
@@ -69,7 +69,7 @@ class MascotPopupMenu {
         }
     };
     static final ActionListener oneMenuListener = new ActionListener() {
-        final Sound sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_remain_one_mascot"));
+        final SoundBuffer sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_remain_one_mascot"));
         final Runnable cmd = new Runnable() {
 
             @Override
@@ -90,7 +90,7 @@ class MascotPopupMenu {
         }
     };
     static final ActionListener closeMenuListener = new ActionListener() {
-        final Sound sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_exit_app"));
+        final SoundBuffer sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_exit_app"));
         final Runnable cmd = new Runnable() {
             @Override
             public void run() {
@@ -105,7 +105,7 @@ class MascotPopupMenu {
     };
 
     private static class disposrMenuListener implements ActionListener {
-        final static Sound sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_dispose_mascot"));
+        final static SoundBuffer sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_dispose_mascot"));
         final Mascot mascot;
 
         public disposrMenuListener(Mascot mascot) {
@@ -155,7 +155,7 @@ class MascotPopupMenu {
 
     public static void prepareTrayIcon(final TrayIcon icon) {
         icon.addMouseListener(new MouseListener() {
-            final Sound sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_one_more_mascot"));
+            final SoundBuffer sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_one_more_mascot"));
             final Runnable cmd = new Runnable() {
 
                 @Override

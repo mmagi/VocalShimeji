@@ -8,7 +8,7 @@ import com.group_finity.mascot.exception.LostGroundException;
 import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.Variable;
 import com.group_finity.mascot.script.VariableMap;
-import com.group_finity.mascot.sound.Sound;
+import com.group_finity.mascot.sound.SoundBuffer;
 import com.group_finity.mascot.sound.SoundFactory;
 
 import java.util.List;
@@ -48,8 +48,8 @@ public abstract class ActionBase implements Action {
         getVariables().put("action", this);
         if (SoundFactory.voiceOn) {
             Object voiceI = getVariables().get("voiceI");
-            if (null != voiceI && voiceI instanceof Sound) {
-                Sound voice = (Sound) voiceI;
+            if (null != voiceI && voiceI instanceof SoundBuffer) {
+                SoundBuffer voice = (SoundBuffer) voiceI;
                 int priority = -10;
                 Object voiceP = getVariables().get("voiceP");
                 if (voiceP instanceof Integer) {

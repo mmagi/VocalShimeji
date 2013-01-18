@@ -2,7 +2,7 @@ package com.group_finity.mascot.animation;
 
 import com.group_finity.mascot.Mascot;
 import com.group_finity.mascot.image.ImagePair;
-import com.group_finity.mascot.sound.Sound;
+import com.group_finity.mascot.sound.SoundBuffer;
 
 import java.awt.*;
 
@@ -15,7 +15,7 @@ public class Pose {
 
     private final int duration;
 
-    private final Sound sfx;
+    private final SoundBuffer sfx;
 
     //    public Pose(final ImagePair image) {
     //        this(image, 0, 0, 1, null);
@@ -25,7 +25,7 @@ public class Pose {
     //        this(image, 0, 0, duration, null);
     //    }
 
-    public Pose(final ImagePair image, final int dx, final int dy, final int duration, final Sound sfx) {
+    public Pose(final ImagePair image, final int dx, final int dy, final int duration, final SoundBuffer sfx) {
 
         this.image = image;
         this.dx = dx;

@@ -1,5 +1,6 @@
 package com.group_finity.mascot.sound;
 
+import com.jogamp.openal.AL;
 import com.jogamp.openal.sound3d.Vec3f;
 
 /**
@@ -10,7 +11,7 @@ import com.jogamp.openal.sound3d.Vec3f;
  */
 public class SoundSource {
     private final int sourceID;
-    private Sound Sound;
+    private SoundBuffer buffer;
 
     SoundSource(){
         int[] arrayOfInt = new int[1];
@@ -18,270 +19,481 @@ public class SoundSource {
         sourceID = arrayOfInt[0];
     }
 
-    public void play()
-    {
-        SoundFactory.al.alSourcePlay(this.sourceID);
+    /**
+     * Beginning playing the audio in this source.
+     */
+    public void play() {
+        SoundFactory.al.alSourcePlay(sourceID);
     }
 
-    public void pause()
-    {
-        SoundFactory.al.alSourcePause(this.sourceID);
+    /**
+     * pauses the audio in this Source.
+     */
+    public void pause() {
+        SoundFactory.al.alSourcePause(sourceID);
     }
 
-    public void stop()
-    {
-        SoundFactory.al.alSourceStop(this.sourceID);
+    /**
+     * Stops the audio in this Source
+     */
+    public void stop() {
+        SoundFactory.al.alSourceStop(sourceID);
     }
 
-    public void rewind()
-    {
-        SoundFactory.al.alSourceRewind(this.sourceID);
+    /**
+     * Rewinds the audio in this source
+     */
+    public void rewind() {
+        SoundFactory.al.alSourceRewind(sourceID);
     }
 
-    public void delete()
-    {
-        SoundFactory.al.alDeleteSources(1, new int[] { this.sourceID }, 0);
+    /**
+     * Delete this source, freeing its resources.
+     */
+    public void delete() {
+        SoundFactory.al.alDeleteSources(1, new int[] { sourceID }, 0);
     }
 
-    public void setPitch(float paramFloat)
-    {
-        SoundFactory.al.alSourcef(this.sourceID, 4099, paramFloat);
+    /**
+     * Sets the pitch of the audio on this source. The pitch may be modified
+     * without altering the playback speed of the audio.
+     *
+     * @param pitch the pitch value of this source.
+     */
+    public void setPitch(float pitch) {
+        SoundFactory.al.alSourcef(sourceID, AL.AL_PITCH, pitch);
     }
 
-    public float getPitch()
-    {
-        float[] arrayOfFloat = new float[1];
-        SoundFactory.al.alGetSourcef(this.sourceID, 4099, arrayOfFloat, 0);
+    /**
+     * Gets the pitch of the audio on this source. The pitch may be modified
+     * without altering the playback speed of the audio.
+     *
+     * @return the pitch value of this source.
+     */
+    public float getPitch() {
+        float[] result = new float[1];
+        SoundFactory.al.alGetSourcef(sourceID, AL.AL_PITCH, result, 0);
 
-        return arrayOfFloat[0];
+        return result[0];
     }
 
-    public void setGain(float paramFloat)
-    {
-        SoundFactory.al.alSourcef(this.sourceID, 4106, paramFloat);
+    /**
+     * Sets the gain of the audio on this source. This can be used to contro
+     * the volume of the source.
+     *
+     * @param gain the gain of the audio on this source
+     */
+    public void setGain(float gain) {
+        SoundFactory.al.alSourcef(sourceID, AL.AL_GAIN, gain);
     }
 
-    public float getGain()
-    {
-        float[] arrayOfFloat = new float[1];
-        SoundFactory.al.alGetSourcef(this.sourceID, 4106, arrayOfFloat, 0);
+    /**
+     * Gets the gain of the audio on this source. This can be used to contro
+     * the volume of the source.
+     *
+     * @return the gain of the audio on this source
+     */
+    public float getGain() {
+        float[] result = new float[1];
+        SoundFactory.al.alGetSourcef(sourceID, AL.AL_GAIN, result, 0);
 
-        return arrayOfFloat[0];
+        return result[0];
     }
 
-    public void setMaxDistance(float paramFloat)
-    {
-        SoundFactory.al.alSourcef(this.sourceID, 4131, paramFloat);
+    /**
+     * Sets the max distance where there will no longer be any attenuation of
+     * the source.
+     *
+     * @param maxDistance the max ditance for source attentuation.
+     */
+    public void setMaxDistance(float maxDistance) {
+        SoundFactory.al.alSourcef(sourceID, AL.AL_MAX_DISTANCE, maxDistance);
     }
 
-    public float getMaxDistance()
-    {
-        float[] arrayOfFloat = new float[1];
-        SoundFactory.al.alGetSourcef(this.sourceID, 4131, arrayOfFloat, 0);
+    /**
+     * Gets the max distance where there will no longer be any attenuation of
+     * the source.
+     *
+     * @return the max ditance for source attentuation.
+     */
+    public float getMaxDistance() {
+        float[] result = new float[1];
+        SoundFactory.al.alGetSourcef(sourceID, AL.AL_MAX_DISTANCE, result, 0);
 
-        return arrayOfFloat[0];
+        return result[0];
     }
 
-    public void setRolloffFactor(float paramFloat)
-    {
-        SoundFactory.al.alSourcef(this.sourceID, 4129, paramFloat);
+    /**
+     * Sets the rolloff rate of the source. The default value is 1.0
+     *
+     * @param rolloffFactor the rolloff rate of the source.
+     */
+    public void setRolloffFactor(float rolloffFactor) {
+        SoundFactory.al.alSourcef(sourceID, AL.AL_ROLLOFF_FACTOR, rolloffFactor);
     }
 
-    public float getRolloffFactor()
-    {
-        float[] arrayOfFloat = new float[1];
-        SoundFactory.al.alGetSourcef(this.sourceID, 4129, arrayOfFloat, 0);
+    /**
+     * Gets the rolloff rate of the source. The default value is 1.0
+     *
+     * @return the rolloff rate of the source.
+     */
+    public float getRolloffFactor() {
+        float[] result = new float[1];
+        SoundFactory.al.alGetSourcef(sourceID, AL.AL_ROLLOFF_FACTOR, result, 0);
 
-        return arrayOfFloat[0];
+        return result[0];
     }
 
-    public void setReferenceDistance(float paramFloat)
-    {
-        SoundFactory.al.alSourcef(this.sourceID, 4128, paramFloat);
+    /**
+     * Sets the distance under which the volume for the source would normally
+     * drop by half, before being influenced by rolloff factor or max distance.
+     *
+     * @param referenceDistance the reference distance for the source.
+     */
+    public void setReferenceDistance(float referenceDistance) {
+        SoundFactory.al.alSourcef(sourceID, AL.AL_REFERENCE_DISTANCE, referenceDistance);
     }
 
-    public float getReferenceDistance()
-    {
-        float[] arrayOfFloat = new float[1];
-        SoundFactory.al.alGetSourcef(this.sourceID, 4128, arrayOfFloat, 0);
+    /**
+     * Gets the distance under which the volume for the source would normally
+     * drop by half, before being influenced by rolloff factor or max distance.
+     *
+     * @return the reference distance for the source.
+     */
+    public float getReferenceDistance() {
+        float[] result = new float[1];
+        SoundFactory.al.alGetSourcef(sourceID, AL.AL_REFERENCE_DISTANCE, result, 0);
 
-        return arrayOfFloat[0];
+        return result[0];
     }
 
-    public void setMinGain(float paramFloat)
-    {
-        SoundFactory.al.alSourcef(this.sourceID, 4109, paramFloat);
+    /**
+     * Sets the minimum gain for this source.
+     *
+     * @param minGain the minimum gain for this source.
+     */
+    public void setMinGain(float minGain) {
+        SoundFactory.al.alSourcef(sourceID, AL.AL_MIN_GAIN, minGain);
     }
 
-    public float getMinGain()
-    {
-        float[] arrayOfFloat = new float[1];
-        SoundFactory.al.alGetSourcef(this.sourceID, 4109, arrayOfFloat, 0);
+    /**
+     * Gets the minimum gain for this source.
+     *
+     * @return the minimum gain for this source.
+     */
+    public float getMinGain() {
+        float[] result = new float[1];
+        SoundFactory.al.alGetSourcef(sourceID, AL.AL_MIN_GAIN, result, 0);
 
-        return arrayOfFloat[0];
+        return result[0];
     }
 
-    public void setMaxGain(float paramFloat)
-    {
-        SoundFactory.al.alSourcef(this.sourceID, 4110, paramFloat);
+    /**
+     * Sets the maximum gain for this source.
+     *
+     * @param maxGain the maximum gain for this source
+     */
+    public void setMaxGain(float maxGain) {
+        SoundFactory.al.alSourcef(sourceID, AL.AL_MAX_GAIN, maxGain);
     }
 
-    public float getMaxGain()
-    {
-        float[] arrayOfFloat = new float[1];
-        SoundFactory.al.alGetSourcef(this.sourceID, 4110, arrayOfFloat, 0);
+    /**
+     * SGets the maximum gain for this source.
+     *
+     * @return the maximum gain for this source
+     */
+    public float getMaxGain() {
+        float[] result = new float[1];
+        SoundFactory.al.alGetSourcef(sourceID, AL.AL_MAX_GAIN, result, 0);
 
-        return arrayOfFloat[0];
+        return result[0];
     }
 
-    public void setConeOuterGain(float paramFloat)
-    {
-        SoundFactory.al.alSourcef(this.sourceID, 4130, paramFloat);
+    /**
+     * Sets the gain when outside the oriented cone.
+     *
+     * @param coneOuterGain the gain when outside the oriented cone.
+     */
+    public void setConeOuterGain(float coneOuterGain) {
+        SoundFactory.al.alSourcef(sourceID, AL.AL_CONE_OUTER_GAIN, coneOuterGain);
     }
 
-    public float getConeOuterGain()
-    {
-        float[] arrayOfFloat = new float[1];
-        SoundFactory.al.alGetSourcef(this.sourceID, 4130, arrayOfFloat, 0);
+    /**
+     * Gets the gain when outside the oriented cone.
+     *
+     * @return the gain when outside the oriented cone.
+     */
+    public float getConeOuterGain() {
+        float[] result = new float[1];
+        SoundFactory.al.alGetSourcef(sourceID, AL.AL_CONE_OUTER_GAIN, result, 0);
 
-        return arrayOfFloat[0];
+        return result[0];
     }
 
-    public void setPosition(Vec3f paramVec3f)
-    {
-        SoundFactory.al.alSource3f(this.sourceID, 4100, paramVec3f.v1, paramVec3f.v2, paramVec3f.v3);
+    /**
+     * Sets the x,y,z position of the source.
+     *
+     * @param position a Vec3f object containing the x,y,z position of the
+     * source.
+     */
+    public void setPosition(Vec3f position) {
+        SoundFactory.al.alSource3f(
+                             sourceID,
+                             AL.AL_POSITION,
+                             position.v1,
+                             position.v2,
+                             position.v3);
     }
 
-    public void setPosition(float paramFloat1, float paramFloat2, float paramFloat3)
-    {
-        SoundFactory.al.alSource3f(this.sourceID, 4100, paramFloat1, paramFloat2, paramFloat3);
+    /**
+     * Sets the x,y,z position of the source.
+     *
+     * @param x the x position of the source.
+     * @param y the y position of the source.
+     * @param z the z position of the source.
+     */
+    public void setPosition(float x, float y, float z) {
+        SoundFactory.al.alSource3f(sourceID, AL.AL_POSITION, x, y, z);
     }
 
-    public Vec3f getPosition()
-    {
-        Vec3f localVec3f;
-        float[] arrayOfFloat = new float[3];
-        SoundFactory.al.alGetSourcefv(this.sourceID, 4100, arrayOfFloat, 0);
-        localVec3f = new Vec3f(arrayOfFloat[0], arrayOfFloat[1], arrayOfFloat[2]);
+    /**
+     * Gets the x,y,z position of the source.
+     *
+     * @return a Vec3f object containing the x,y,z position of the
+     * source.
+     */
+    public Vec3f getPosition() {
+        Vec3f result = null;
+        float[] pos = new float[3];
+        SoundFactory.al.alGetSourcefv(sourceID, AL.AL_POSITION, pos, 0);
+        result = new Vec3f(pos[0], pos[1], pos[2]);
 
-        return localVec3f;
+        return result;
     }
 
-    public void setVelocity(Vec3f paramVec3f)
-    {
-        SoundFactory.al.alSource3f(this.sourceID, 4102, paramVec3f.v1, paramVec3f.v2, paramVec3f.v3);
+    /**
+     * Sets the velocity vector of the source.
+     *
+     * @param velocity the velocity vector of the source
+     */
+    public void setVelocity(Vec3f velocity) {
+        SoundFactory.al.alSource3f(
+                             sourceID,
+                             AL.AL_VELOCITY,
+                             velocity.v1,
+                             velocity.v2,
+                             velocity.v3);
     }
 
-    public void setVelocity(float paramFloat1, float paramFloat2, float paramFloat3)
-    {
-        SoundFactory.al.alSource3f(this.sourceID, 4102, paramFloat1, paramFloat2, paramFloat3);
+    /**
+     * Sets the velocity vector of the source.
+     *
+     * @param x the x velocity of the source.
+     * @param y the y velocity of the source.
+     * @param z the z velocity of the source.
+     */
+    public void setVelocity(float x, float y, float z) {
+        SoundFactory.al.alSource3f(sourceID, AL.AL_VELOCITY, x, y, z);
     }
 
-    public Vec3f getVelocity()
-    {
-        Vec3f localVec3f;
-        float[] arrayOfFloat = new float[3];
-        SoundFactory.al.alGetSourcefv(this.sourceID, 4102, arrayOfFloat, 0);
-        localVec3f = new Vec3f(arrayOfFloat[0], arrayOfFloat[1], arrayOfFloat[2]);
+    /**
+     * Gets the velocity vector of the source.
+     *
+     * @return the velocity vector of the source
+     */
+    public Vec3f getVelocity() {
+        Vec3f result = null;
+        float[] vel = new float[3];
+        SoundFactory.al.alGetSourcefv(sourceID, AL.AL_VELOCITY, vel, 0);
+        result = new Vec3f(vel[0], vel[1], vel[2]);
 
-        return localVec3f;
+        return result;
     }
 
-    public void setDirection(Vec3f paramVec3f)
-    {
-        SoundFactory.al.alSource3f(this.sourceID, 4101, paramVec3f.v1, paramVec3f.v2, paramVec3f.v3);
+    /**
+     * Sets the direction vector of the source.
+     *
+     * @param direction the direction vector of the source.
+     */
+    public void setDirection(Vec3f direction) {
+        SoundFactory.al.alSource3f(
+                             sourceID,
+                             AL.AL_DIRECTION,
+                             direction.v1,
+                             direction.v2,
+                             direction.v3);
     }
 
-    public void setDirection(float paramFloat1, float paramFloat2, float paramFloat3)
-    {
-        SoundFactory.al.alSource3f(this.sourceID, 4101, paramFloat1, paramFloat2, paramFloat3);
+    /**
+     * Sets the direction vector of the source.
+     *
+     * @param x the x direction of the source.
+     * @param y the y direction of the source.
+     * @param z the z direction of the source.
+     */
+    public void setDirection(float x, float y, float z) {
+        SoundFactory.al.alSource3f(sourceID, AL.AL_DIRECTION, x, y, z);
     }
 
-    public Vec3f getDirection()
-    {
-        Vec3f localVec3f;
-        float[] arrayOfFloat = new float[3];
-        SoundFactory.al.alGetSourcefv(this.sourceID, 4101, arrayOfFloat, 0);
-        localVec3f = new Vec3f(arrayOfFloat[0], arrayOfFloat[1], arrayOfFloat[2]);
+    /**
+     * Gets the direction vector of the source.
+     *
+     * @return the direction vector of the source.
+     */
+    public Vec3f getDirection() {
+        Vec3f result = null;
+        float[] dir = new float[3];
+        SoundFactory.al.alGetSourcefv(sourceID, AL.AL_DIRECTION, dir, 0);
+        result = new Vec3f(dir[0], dir[1], dir[2]);
 
-        return localVec3f;
+        return result;
     }
 
-    public void setSourceRelative(boolean paramBoolean)
-    {
-        int i = paramBoolean ? 1 : 0;
-        SoundFactory.al.alSourcei(this.sourceID, 514, i);
+    /**
+     * Determines if the position of the source is relative to the listener. 
+     * The default is false.
+     * @param isRelative true if the position of the source is relative
+     * to the listener, false if the position of the source is relative to the 
+     * world.
+     */
+    public void setSourceRelative(boolean isRelative) {
+        int rel = isRelative ? 1 : 0;
+        SoundFactory.al.alSourcei(sourceID, AL.AL_SOURCE_RELATIVE, rel);
     }
 
-    public boolean isSourceRelative()
-    {
-        int[] arrayOfInt = new int[1];
-        SoundFactory.al.alGetSourcei(this.sourceID, 514, arrayOfInt, 0);
+    /**
+     * Determines if the position of the source is relative to the listener. 
+     * The default is false.
+     * @return true if the position of the source is relative
+     * to the listener, false if the position of the source is relative to the 
+     * world.
+     */
+    public boolean isSourceRelative() {
+        int[] result = new int[1];
+        SoundFactory.al.alGetSourcei(sourceID, AL.AL_SOURCE_RELATIVE, result, 0);
 
-        return arrayOfInt[0] == 1;
+        return result[0] == 1;
     }
 
-    public void setLooping(boolean paramBoolean)
-    {
-        int i = paramBoolean ? 1 : 0;
-        SoundFactory.al.alSourcei(this.sourceID, 4103, i);
+    /**
+     * turns looping on or off. 
+     *
+     * @param isLooping true-looping is on, false-looping is off
+     */
+    public void setLooping(boolean isLooping) {
+        int loop = isLooping ? 1 : 0;
+        SoundFactory.al.alSourcei(sourceID, AL.AL_LOOPING, loop);
     }
 
-    public boolean getLooping()
-    {
-        int[] arrayOfInt = new int[1];
-        SoundFactory.al.alGetSourcei(this.sourceID, 4103, arrayOfInt, 0);
-        return arrayOfInt[0] == 1;
+    /**
+     * indicates whether looping is turned on or off. 
+     *
+     * @return true-looping is on, false-looping is off
+     */
+    public boolean getLooping() {
+        boolean result = false;
+        int[] tmp = new int[1];
+        SoundFactory.al.alGetSourcei(sourceID, AL.AL_LOOPING, tmp, 0);
+        return tmp[0] == AL.AL_TRUE;
     }
 
-    public int getBuffersQueued()
-    {
-        int[] arrayOfInt = new int[1];
-        SoundFactory.al.alGetSourcei(this.sourceID, 4117, arrayOfInt, 0);
 
-        return arrayOfInt[0];
+    /**
+     * Gets the number of buffers currently queued on this source. 
+     * @return the number of buffers currently queued on this source.
+     */
+    public int getBuffersQueued() {
+        int[] result = new int[1];
+        SoundFactory.al.alGetSourcei(sourceID, AL.AL_BUFFERS_QUEUED, result, 0);
+
+        return result[0];
     }
 
-    public int getBuffersProcessed()
-    {
-        int[] arrayOfInt = new int[1];
-        SoundFactory.al.alGetSourcei(this.sourceID, 4118, arrayOfInt, 0);
+    /**
+     * Gets the number of buffers already processed on this source. 
+     * @return the number of buffers already processed on this source.
+     */
+    public int getBuffersProcessed() {
+        int[] result = new int[1];
+        SoundFactory.al.alGetSourcei(sourceID, AL.AL_BUFFERS_PROCESSED, result, 0);
 
-        return arrayOfInt[0];
+        return result[0];
     }
 
-    public void setBuffer(Sound paramBuffer)
-    {
-        SoundFactory.al.alSourcei(this.sourceID, 4105, paramBuffer.bufferID);
-        this.Sound = paramBuffer;
+    /**
+     * Sets the buffer associated with this source.
+     *
+     * @param buffer the buffer associated with this source
+     */
+    public void setBuffer(SoundBuffer buffer) {
+        SoundFactory.al.alSourcei(sourceID, AL.AL_BUFFER, buffer.bufferID);
+        this.buffer = buffer;
     }
 
-    public Sound getBuffer()
-    {
-        return this.Sound;
+    /**
+     * Gets the buffer associated with this source.
+     *
+     * @return the buffer associated with this source
+     */
+    public SoundBuffer getBuffer() {
+        return buffer;
     }
 
-    public void queueBuffers(Sound[] paramArrayOfBuffer)
-    {
-        int i = paramArrayOfBuffer.length;
-        int[] arrayOfInt = new int[i];
+    /**
+     * Queues one or more buffers on a source. Useful for streaming audio, 
+     * buffers will be played in the order they are queued.
+     *
+     * @param buffers a set of initialized (loaded) buffers.
+     */
+    public void queueBuffers(SoundBuffer[] buffers) {
+        int numSounds = buffers.length;
+        int[] arr = new int[numSounds];
 
-        for (int j = 0; j < i; j++) {
-            arrayOfInt[j] = paramArrayOfBuffer[j].bufferID;
+        for (int i = 0; i < numSounds; i++) {
+            arr[i] = buffers[i].bufferID;
         }
 
-        SoundFactory.al.alSourceQueueBuffers(this.sourceID, i, arrayOfInt, 0);
+        SoundFactory.al.alSourceQueueBuffers(sourceID, numSounds, arr, 0);
     }
 
-    public void unqueueBuffers(Sound[] paramArrayOfBuffer)
-    {
-        int i = paramArrayOfBuffer.length;
-        int[] arrayOfInt = new int[i];
+    /**
+     * Unqueues one or more buffers on a source.
+     *
+     * @param buffers a set of previously queued buffers.
+     */
+    public void unqueueBuffers(SoundBuffer[] buffers) {
+        int numSounds = buffers.length;
+        int[] arr = new int[numSounds];
 
-        for (int j = 0; j < i; j++) {
-            arrayOfInt[j] = paramArrayOfBuffer[j].bufferID;
+        for (int i = 0; i < numSounds; i++) {
+            arr[i] = buffers[i].bufferID;
         }
 
-        SoundFactory.al.alSourceUnqueueBuffers(this.sourceID, i, arrayOfInt, 0);
+        SoundFactory.al.alSourceUnqueueBuffers(sourceID, numSounds, arr, 0);
+    }
+
+    /**
+     * 查询声源的当前状态
+     * @return 声源的当前状态 (AL_STOPPED, AL_PLAYING, …)
+     */
+    public int getState(){
+        int[] result = new int[1];
+        SoundFactory.al.alGetSourcei(sourceID, AL.AL_SOURCE_STATE, result, 0);
+        return result[0];
+    }
+
+    /**
+     * 查询声源当前状态
+     * @return 声源当前状态是否为AL_PLAYING
+     */
+    public boolean isPlaying(){
+        return getState() == AL.AL_PLAYING;
+    }
+    /**
+     * 查询声源当前状态
+     * @return 声源当前状态是否为AL_STOPPED
+     */
+    public boolean isStopped(){
+        return getState() == AL.AL_STOPPED;
     }
 }

@@ -4,7 +4,7 @@ import com.group_finity.mascot.Mascot;
 import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.Variable;
 import com.group_finity.mascot.script.VariableMap;
-import com.group_finity.mascot.sound.Sound;
+import com.group_finity.mascot.sound.SoundBuffer;
 
 public class Animation {
 
@@ -12,11 +12,11 @@ public class Animation {
 
     private final Pose[] poses;
 
-    private final Sound voice;
+    private final SoundBuffer voice;
 
     private final int voicePriority;
 
-    public Animation(final Variable condition, final Sound voice, final int voicePriority, final Pose... poses) {
+    public Animation(final Variable condition, final SoundBuffer voice, final int voicePriority, final Pose... poses) {
 
         if (poses.length == 0) {
             throw new IllegalArgumentException("poses.length==0");
@@ -76,7 +76,7 @@ public class Animation {
         return this.poses;
     }
 
-    public Sound getVoice() {
+    public SoundBuffer getVoice() {
         return this.voice;
     }
 

@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 
 public final class SoundFactory {
     static final Logger log = Logger.getLogger(Manager.class.getName());
-    private static final ConcurrentHashMap<String, Sound> soundCache = new ConcurrentHashMap<String, Sound>();
+    private static final ConcurrentHashMap<String, SoundBuffer> soundCache = new ConcurrentHashMap<String, SoundBuffer>();
     public static boolean voiceOn = true;
     public static boolean sfxOn = true;
     public static final int defaultVoicePriority = -10;
@@ -36,12 +36,12 @@ public final class SoundFactory {
         localListener.setPosition(0.0F, 0.0F, 0.0F);
     }
 
-    public static Sound getSound(String resPath) {
+    public static SoundBuffer getSound(String resPath) {
         if (null == resPath) return null;
-        Sound sound = soundCache.get(resPath);
+        SoundBuffer sound = soundCache.get(resPath);
         if (null == sound) {
             try {
-                sound = new Sound(AudioSystem.getAudioInputStream(SoundFactory.class.getResource("/media" + resPath)));
+                sound = new SoundBuffer(AudioSystem.getAudioInputStream(SoundFactory.class.getResource("/media" + resPath)));
                 soundCache.put(resPath, sound);
             } catch (UnsupportedAudioFileException e) {
                 log.log(Level.WARNING, "音频文件{0}的格式不支持", resPath);
@@ -59,7 +59,7 @@ public final class SoundFactory {
         invoker.start();
     }
 
-    public static void invokeAfterSound(final Sound sound, final Runnable cmd) {
+    public static void invokeAfterSound(final SoundBuffer sound, final Runnable cmd) {
         invoker.Invoke(sound, cmd);
     }
 
@@ -70,14 +70,14 @@ public final class SoundFactory {
                 localSource.setPosition(0.0F, 0.0F, 0.0F);
                 localSource.setLooping(false);
             }
-            volatile Sound lastPlayed;
+            volatile SoundBuffer lastPlayed;
             volatile int curLevel = 0;
 
             @Override
-            public void speak(Sound voice, int pri) {
+            public void speak(SoundBuffer voice, int pri) {
                 if (voiceOn) {
                     int priority = Math.abs(pri);
-                        if (localSource.getBuffersQueued() > localSource.getBuffersProcessed())
+                        if (localSource.isPlaying())
                             if (priority > curLevel || (priority == curLevel && pri < 0)) {
                                 localSource.stop();
                             } else {
@@ -96,7 +96,7 @@ public final class SoundFactory {
             }
 
             @Override
-            public Sound getLastPlayed() {
+            public SoundBuffer getLastPlayed() {
                 return lastPlayed;
             }
         };
@@ -116,7 +116,7 @@ public final class SoundFactory {
             }
 
             @Override
-            public void sound(Sound sound) {
+            public void sound(SoundBuffer sound) {
                 if (sfxOn) {
                     localSource.stop();
                     localSource.setBuffer(sound);

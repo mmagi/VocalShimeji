@@ -7,7 +7,7 @@ import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.image.ImagePair;
 import com.group_finity.mascot.image.ImagePairLoader;
 import com.group_finity.mascot.script.Variable;
-import com.group_finity.mascot.sound.Sound;
+import com.group_finity.mascot.sound.SoundBuffer;
 import com.group_finity.mascot.sound.SoundFactory;
 
 import java.awt.*;
@@ -24,7 +24,7 @@ public class AnimationBuilder {
     private final String condition;
 
     private final List<Pose> poses = new ArrayList<Pose>();
-    private final Sound voice;
+    private final SoundBuffer voice;
     private final int voicePriority;
 
     public AnimationBuilder(final Entry animationNode) throws IOException {
@@ -56,7 +56,7 @@ public class AnimationBuilder {
         final String anchorText = frameNode.getAttribute("基準座標");
         final String moveText = frameNode.getAttribute("移動速度");
         final String durationText = frameNode.getAttribute("長さ");
-        final Sound sfx = SoundFactory.getSound(frameNode.getAttribute("sfx"));
+        final SoundBuffer sfx = SoundFactory.getSound(frameNode.getAttribute("sfx"));
         final String[] anchorCoordinates = anchorText.split(",");
         final Point anchor = new Point(Integer.parseInt(anchorCoordinates[0]), Integer.parseInt(anchorCoordinates[1]));
 
@@ -90,7 +90,7 @@ public class AnimationBuilder {
         return this.condition;
     }
 
-    public Sound getVoice() {
+    public SoundBuffer getVoice() {
         return this.voice;
     }
 
