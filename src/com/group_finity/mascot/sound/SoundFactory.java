@@ -65,7 +65,7 @@ public final class SoundFactory {
 
     public synchronized static VoiceController getVoiceController(Mascot mascot) {
         return new VoiceController() {
-            SoundSource localSource = new SoundSource();
+            final SoundSource localSource = new SoundSource();
             {
                 localSource.setPosition(0.0F, 0.0F, 0.0F);
                 localSource.setLooping(false);
@@ -76,15 +76,13 @@ public final class SoundFactory {
             @Override
             public void speak(Sound voice, int pri) {
                 if (voiceOn) {
-                    if (null == localSource) {
-                    }
                     int priority = Math.abs(pri);
-                    if (0 == localSource.getBuffersProcessed())
-                        if (priority > curLevel || (priority == curLevel && pri < 0)) {
-                            localSource.stop();
-                        } else {
-                            return;
-                        }
+                        if (localSource.getBuffersQueued() > localSource.getBuffersProcessed())
+                            if (priority > curLevel || (priority == curLevel && pri < 0)) {
+                                localSource.stop();
+                            } else {
+                                return;
+                            }
                     curLevel = priority;
                     lastPlayed = voice;
                     localSource.setBuffer(voice);

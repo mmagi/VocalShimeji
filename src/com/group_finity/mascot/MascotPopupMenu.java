@@ -7,24 +7,20 @@ import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
+import java.util.ResourceBundle;
 
 
 class MascotPopupMenu {
-
     private static boolean showSystemTrayMenu = false;
+    private static final ResourceBundle resourceBundle = Main.resourceBundle;
 
     static final ActionListener restoreMenuListener = new ActionListener() {
-        final Sound voice = SoundFactory.getSound("/cmd_iechange.wav");
+        final Sound voice = SoundFactory.getSound(resourceBundle.getString("sound.cmd_restore_window"));
         final Runnable cmd = new Runnable() {
 
-            final Sound voiceFalse = SoundFactory.getSound("/response-noIE.wav");
-            final Sound voiceTrue = SoundFactory.getSound("/response-resetIE.wav");
+            final Sound voiceFalse = SoundFactory.getSound(resourceBundle.getString("sound.response_nothing_reset"));
+            final Sound voiceTrue = SoundFactory.getSound(resourceBundle.getString("sound.response_reset"));
 
             @Override
             public void run() {
@@ -42,7 +38,7 @@ class MascotPopupMenu {
         }
     };
     static final ActionListener increaseMenuListener = new ActionListener() {
-        final Sound sound = SoundFactory.getSound("/cmd_onemore14.wav");
+        final Sound sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_one_more_mascot"));
         final Runnable cmd = new Runnable() {
 
             @Override
@@ -58,7 +54,7 @@ class MascotPopupMenu {
         }
     };
     static final ActionListener gatherMenuListener = new ActionListener() {
-        final Sound sound = SoundFactory.getSound("/cmd_gether.wav");
+        final Sound sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_together"));
         final Runnable cmd = new Runnable() {
 
             @Override
@@ -73,7 +69,7 @@ class MascotPopupMenu {
         }
     };
     static final ActionListener oneMenuListener = new ActionListener() {
-        final Sound sound = SoundFactory.getSound("/cmd_onlyone14.wav");
+        final Sound sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_remain_one_mascot"));
         final Runnable cmd = new Runnable() {
 
             @Override
@@ -94,7 +90,7 @@ class MascotPopupMenu {
         }
     };
     static final ActionListener closeMenuListener = new ActionListener() {
-        final Sound sound = SoundFactory.getSound("/cmd_bye.wav");
+        final Sound sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_exit_app"));
         final Runnable cmd = new Runnable() {
             @Override
             public void run() {
@@ -109,7 +105,7 @@ class MascotPopupMenu {
     };
 
     private static class disposrMenuListener implements ActionListener {
-        final static Sound sound = SoundFactory.getSound("/cmd_hide.wav");
+        final static Sound sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_dispose_mascot"));
         final Mascot mascot;
 
         public disposrMenuListener(Mascot mascot) {
@@ -135,7 +131,7 @@ class MascotPopupMenu {
             prepareMainMenu(popupMenu);
             popupMenu.addSeparator();
         }
-        final JMenuItem disposeMenu = new JMenuItem("再见吧");//"ばいばい");
+        final JMenuItem disposeMenu = new JMenuItem(resourceBundle.getString("menu.cmd_dispose_mascot"));//"ばいばい");
         disposeMenu.addActionListener(new disposrMenuListener(mascot));
         popupMenu.add(disposeMenu);
         mascot.getWindow().asJWindow().add(popupMenu);
@@ -159,7 +155,7 @@ class MascotPopupMenu {
 
     public static void prepareTrayIcon(final TrayIcon icon) {
         icon.addMouseListener(new MouseListener() {
-            final Sound sound = SoundFactory.getSound("/cmd_onemore14.wav");
+            final Sound sound = SoundFactory.getSound(resourceBundle.getString("sound.cmd_one_more_mascot"));
             final Runnable cmd = new Runnable() {
 
                 @Override
@@ -195,8 +191,8 @@ class MascotPopupMenu {
 
     }
 
-    private static final CheckboxMenuItem voiceMenu = new CheckboxMenuItem("语音", SoundFactory.voiceOn);
-    private static final JCheckBoxMenuItem jVoiceMenu = new JCheckBoxMenuItem("语音", SoundFactory.voiceOn);
+    private static final CheckboxMenuItem voiceMenu = new CheckboxMenuItem(resourceBundle.getString("menu.checkbox_voice"), SoundFactory.voiceOn);
+    private static final JCheckBoxMenuItem jVoiceMenu = new JCheckBoxMenuItem(resourceBundle.getString("menu.checkbox_voice"), SoundFactory.voiceOn);
 
     static {
         ItemListener sfxMenuListener = new ItemListener() {
@@ -211,8 +207,8 @@ class MascotPopupMenu {
         jVoiceMenu.addItemListener(sfxMenuListener);
     }
 
-    private static final CheckboxMenuItem sfxMenu = new CheckboxMenuItem("音效", SoundFactory.sfxOn);
-    private static final JCheckBoxMenuItem jSfxMenu = new JCheckBoxMenuItem("音效", SoundFactory.sfxOn);
+    private static final CheckboxMenuItem sfxMenu = new CheckboxMenuItem(resourceBundle.getString("menu.checkbox_sfx"), SoundFactory.sfxOn);
+    private static final JCheckBoxMenuItem jSfxMenu = new JCheckBoxMenuItem(resourceBundle.getString("menu.checkbox_sfx"), SoundFactory.sfxOn);
 
     static {
         ItemListener sfxMenuListener = new ItemListener() {
@@ -228,17 +224,17 @@ class MascotPopupMenu {
     }
 
     public static void prepareMainMenu(PopupMenu mainMenu) {
-        final MenuItem increaseMenu = new MenuItem("增加一只");//増やす");
+        final MenuItem increaseMenu = new MenuItem(resourceBundle.getString("menu.cmd_one_more_mascot"));//増やす");
         increaseMenu.addActionListener(increaseMenuListener);
-        final MenuItem gatherMenu = new MenuItem("集合！");//あつまれ！");
+        final MenuItem gatherMenu = new MenuItem(resourceBundle.getString("menu.cmd_together"));//あつまれ！");
         gatherMenu.addActionListener(gatherMenuListener);
-        final MenuItem oneMenu = new MenuItem("只留一只");//一匹だけ残す");
+        final MenuItem oneMenu = new MenuItem(resourceBundle.getString("menu.cmd_remain_one_mascot"));//一匹だけ残す");
         oneMenu.addActionListener(oneMenuListener);
-        final MenuItem restoreMenu = new MenuItem("还原浏览器窗口");//IEを元に戻す");
+        final MenuItem restoreMenu = new MenuItem(resourceBundle.getString("menu.cmd_restore_window"));//IEを元に戻す");
         restoreMenu.addActionListener(restoreMenuListener);
-        final MenuItem aboutMenu = new MenuItem("关于VocalShimeji");//"Toshimeji について");
+        final MenuItem aboutMenu = new MenuItem(resourceBundle.getString("menu.cmd_show_about_win"));//"Toshimeji について");
         aboutMenu.addActionListener(aboutMenuListener);
-        final MenuItem closeMenu = new MenuItem("再见～");//ばいばい");
+        final MenuItem closeMenu = new MenuItem(resourceBundle.getString("menu.cmd_exit_app"));//ばいばい");
         closeMenu.addActionListener(closeMenuListener);
         mainMenu.add(increaseMenu);
         mainMenu.add(gatherMenu);
@@ -253,17 +249,17 @@ class MascotPopupMenu {
     }
 
     public static void prepareMainMenu(JPopupMenu mainMenu) {
-        final JMenuItem increaseMenu = new JMenuItem("增加一只");//増やす");
+        final JMenuItem increaseMenu = new JMenuItem(resourceBundle.getString("menu.cmd_one_more_mascot"));//増やす");
         increaseMenu.addActionListener(increaseMenuListener);
-        final JMenuItem gatherMenu = new JMenuItem("集合！");//あつまれ！");
+        final JMenuItem gatherMenu = new JMenuItem(resourceBundle.getString("menu.cmd_together"));//あつまれ！");
         gatherMenu.addActionListener(gatherMenuListener);
-        final JMenuItem oneMenu = new JMenuItem("只留一只");//一匹だけ残す");
+        final JMenuItem oneMenu = new JMenuItem(resourceBundle.getString("menu.cmd_remain_one_mascot"));//一匹だけ残す");
         oneMenu.addActionListener(oneMenuListener);
-        final JMenuItem restoreMenu = new JMenuItem("还原浏览器窗口");//IEを元に戻す");
+        final JMenuItem restoreMenu = new JMenuItem(resourceBundle.getString("menu.cmd_restore_window"));//IEを元に戻す");
         restoreMenu.addActionListener(restoreMenuListener);
-        final JMenuItem aboutMenu = new JMenuItem("关于VocalShimeji");//"Toshimeji について");
+        final JMenuItem aboutMenu = new JMenuItem(resourceBundle.getString("menu.cmd_show_about_win"));//"Toshimeji について");
         aboutMenu.addActionListener(aboutMenuListener);
-        final JMenuItem closeMenu = new JMenuItem("再见～");//ばいばい");
+        final JMenuItem closeMenu = new JMenuItem(resourceBundle.getString("menu.cmd_exit_app"));//ばいばい");
         closeMenu.addActionListener(closeMenuListener);
         mainMenu.add(increaseMenu);
         mainMenu.add(gatherMenu);

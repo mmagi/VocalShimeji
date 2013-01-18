@@ -15,7 +15,7 @@ public class Manager {
     private static final Logger log = Logger.getLogger(Manager.class.getName());
     private final AtomicInteger mascotCount = new AtomicInteger(0);
     private final QueList<Mascot> mascotList = new QueList<Mascot>();
-    private boolean exitOnLastRemoved;
+    private boolean alive = true;
 
     public Manager() {
     }
@@ -25,7 +25,7 @@ public class Manager {
             public void run() {
                 long prev = System.nanoTime();
                 try {
-                    while (!isExitOnLastRemoved()) {
+                    while (notExitOnLastRemoved()) {
                         long cur = System.nanoTime();
                         if (cur - prev >= 40 * 1000000L) {
                             if (cur > prev + 80 * 1000000L)
@@ -129,11 +129,11 @@ public class Manager {
     }
 
     public void setExitOnLastRemoved(boolean exitOnLastRemoved) {
-        this.exitOnLastRemoved = exitOnLastRemoved;
+        this.alive = !exitOnLastRemoved;
     }
 
-    public boolean isExitOnLastRemoved() {
-        return this.exitOnLastRemoved;
+    public boolean notExitOnLastRemoved() {
+        return this.alive;
     }
 
 }

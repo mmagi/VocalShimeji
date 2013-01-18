@@ -16,21 +16,29 @@ final class ActionWithSoundInvoker extends Thread {
         Runnable cmd;
         boolean done;
         SoundSource localSource;
+
         Task(final Sound sound, final Runnable cmd) {
-            localSource = new SoundSource();
-            localSource.setBuffer(sound);
-            localSource.setPosition(0.0F, 0.0F, 0.0F);
-            localSource.setLooping(false);
+            try {
+                localSource = new SoundSource();
+                localSource.setBuffer(sound);
+                localSource.setPosition(0.0F, 0.0F, 0.0F);
+                localSource.setLooping(false);
+                this.done = false;
+            } catch (Throwable e) {
+                this.done = true;
+            }
             this.cmd = cmd;
-            this.done = false;
         }
-        final void start(){
-             localSource.play();
+
+        final void start() {
+            localSource.play();
         }
+
         final void updateLine() {
-            this.done = (localSource.getBuffersProcessed () >= localSource.getBuffersQueued());
+            this.done = (localSource.getBuffersProcessed() >= localSource.getBuffersQueued());
         }
-        final void release(){
+
+        final void release() {
             localSource.delete();
         }
     }
@@ -61,9 +69,9 @@ final class ActionWithSoundInvoker extends Thread {
                         SoundFactory.log.log(Level.WARNING, "执行命令时异常", e);
                     } finally {
                         iterator.remove();
-                        try{
-                        task.release();
-                        }catch (Throwable ignored) {
+                        try {
+                            task.release();
+                        } catch (Throwable ignored) {
                         }
                     }
                 } else {
