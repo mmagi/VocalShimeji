@@ -6,6 +6,7 @@ import com.group_finity.mascot.exception.BehaviorInstantiationException;
 import com.group_finity.mascot.exception.CantBeAliveException;
 import com.group_finity.mascot.exception.ConfigurationException;
 import com.group_finity.mascot.sound.SoundFactory;
+import com.group_finity.mascot.util.PropertiseBundle;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -16,54 +17,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Locale;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Main {
-    static final ResourceBundle resourceBundle =
-            ResourceBundle.getBundle("conf/vocalshimeji",new ResourceBundle.Control() {
-        public ResourceBundle newBundle
-                (String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
-                throws IllegalAccessException, InstantiationException, IOException
-        {
-            // The below is a copy of the default implementation.
-            String bundleName = toBundleName(baseName, locale);
-            String resourceName = toResourceName(bundleName, "properties");
-            ResourceBundle bundle = null;
-            InputStream stream = null;
-            if (reload) {
-                URL url = loader.getResource(resourceName);
-                if (url != null) {
-                    URLConnection connection = url.openConnection();
-                    if (connection != null) {
-                        connection.setUseCaches(false);
-                        stream = connection.getInputStream();
-                    }
-                }
-            } else {
-                stream = loader.getResourceAsStream(resourceName);
-            }
-            if (stream != null) {
-                try {
-                    // Only this line is changed to make it to read properties files as UTF-8.
-                    bundle = new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
-                } finally {
-                    stream.close();
-                }
-            }
-            return bundle;
-        }
-    });
     static final Logger log = Logger.getLogger(Main.class.getName());
-    static final String BEHAVIOR_GATHER = resourceBundle.getString("action.BEHAVIOR_GATHER");
+    static final String BEHAVIOR_GATHER = PropertiseBundle.resourceBundle.getString("action.BEHAVIOR_GATHER");
     private static Main instance = new Main();
 
     public static Main getInstance() {
@@ -83,13 +43,13 @@ public class Main {
 
     private void initSound() {
         try {
-            SoundFactory.invokeAfterSound(SoundFactory.getSound(resourceBundle.getString("sound.init")),new Runnable() {
+            SoundFactory.invokeAfterSound(SoundFactory.getSound(PropertiseBundle.resourceBundle.getString("sound.init")), new Runnable() {
                 @Override
                 public void run() {
                 }
             });
         } catch (final Exception e) {
-            Main.log.log(Level.WARNING, resourceBundle.getString("exception.init_sound_failed"));
+            Main.log.log(Level.WARNING, PropertiseBundle.resourceBundle.getString("exception.init_sound_failed"));
         }
     }
 
@@ -98,7 +58,7 @@ public class Main {
         loadConfiguration();
         BufferedImage cursorImage = null;
         try {
-            cursorImage = ImageIO.read(Main.class.getResource(resourceBundle.getString("image.mouse_icon")));
+            cursorImage = ImageIO.read(Main.class.getResource(PropertiseBundle.resourceBundle.getString("image.mouse_icon")));
             Dimension size = Toolkit.getDefaultToolkit().getBestCursorSize(cursorImage.getWidth(), cursorImage.getHeight());
             BufferedImage scaledImage = new BufferedImage(size.width, size.height, cursorImage.getType());
 
@@ -126,7 +86,7 @@ public class Main {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
-            log.log(Level.WARNING, resourceBundle.getString("exception.init_tray_icon_failed"), e);
+            log.log(Level.WARNING, PropertiseBundle.resourceBundle.getString("exception.init_tray_icon_failed"), e);
         }
         createMascot();
 
@@ -136,11 +96,11 @@ public class Main {
 
     private void loadConfiguration() {
         try {
-            log.log(Level.INFO, resourceBundle.getString("message.loading_config"), "Behavior.xml");
+            log.log(Level.INFO, PropertiseBundle.resourceBundle.getString("message.loading_config"), "Behavior.xml");
 
             Document actions = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(Main.class.getResourceAsStream("/conf/Behavior.xml"));
 
-            log.log(Level.INFO, resourceBundle.getString("message.loading_config"), "Actions.xml");
+            log.log(Level.INFO, PropertiseBundle.resourceBundle.getString("message.loading_config"), "Actions.xml");
 
             getConfiguration().load(new Entry(actions.getDocumentElement()));
 
@@ -150,16 +110,16 @@ public class Main {
 
             getConfiguration().validate();
         } catch (IOException e) {
-            log.log(Level.SEVERE, resourceBundle.getString("excpetion.load_config_failed"), e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("excpetion.load_config_failed"), e);
             exit();
         } catch (SAXException e) {
-            log.log(Level.SEVERE, resourceBundle.getString("excpetion.load_config_failed"), e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("excpetion.load_config_failed"), e);
             exit();
         } catch (ParserConfigurationException e) {
-            log.log(Level.SEVERE, resourceBundle.getString("excpetion.load_config_failed"), e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("excpetion.load_config_failed"), e);
             exit();
         } catch (ConfigurationException e) {
-            log.log(Level.SEVERE, resourceBundle.getString("excpetion.load_config_failed"), e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("excpetion.load_config_failed"), e);
             exit();
         }
     }
@@ -167,20 +127,20 @@ public class Main {
     PopupMenu mainMenu = new PopupMenu();
 
     private void createTrayIcon() {
-        log.log(Level.INFO, resourceBundle.getString("message.create_tray_icon"));
+        log.log(Level.INFO, PropertiseBundle.resourceBundle.getString("message.create_tray_icon"));
         if (SystemTray.getSystemTray() == null) {
             return;
         }
         MascotPopupMenu.prepareMainMenu(mainMenu);
         try {
-            TrayIcon icon = new TrayIcon(ImageIO.read(Main.class.getResource(resourceBundle.getString("image.tray_icon"))), "VocalShimeji", mainMenu);
+            TrayIcon icon = new TrayIcon(ImageIO.read(Main.class.getResource(PropertiseBundle.resourceBundle.getString("image.tray_icon"))), "VocalShimeji", mainMenu);
             MascotPopupMenu.prepareTrayIcon(icon);
             SystemTray.getSystemTray().add(icon);
         } catch (IOException e) {
-            log.log(Level.SEVERE, resourceBundle.getString("exception.create_tray_icon_failed"), e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("exception.create_tray_icon_failed"), e);
             exit();
         } catch (AWTException e) {
-            log.log(Level.SEVERE, resourceBundle.getString("exception.create_tray_icon_failed"), e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("exception.create_tray_icon_failed"), e);
             MascotPopupMenu.setShowSystemTrayMenu(true);
             getManager().setExitOnLastRemoved(true);
         }
@@ -209,10 +169,10 @@ public class Main {
             getManager().add(mascot);
             System.out.println(getManager().getCount());
         } catch (BehaviorInstantiationException e) {
-            log.log(Level.SEVERE, resourceBundle.getString("exception.mascot.build_behavior_failed"), e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("exception.mascot.build_behavior_failed"), e);
             mascot.dispose();
         } catch (CantBeAliveException e) {
-            log.log(Level.SEVERE, resourceBundle.getString("exception.mascot.apply_behavior_failed"), e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("exception.mascot.apply_behavior_failed"), e);
             mascot.dispose();
         }
     }

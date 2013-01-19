@@ -65,11 +65,13 @@ public class Manager {
                     } else {
                         final long cur = System.nanoTime();
                         final long sleeptime = 40 * 1000000L - cur + prev;
-                        if (sleeptime > 0) try {
-                            Thread.sleep(sleeptime / 1000000L);
-                        } catch (InterruptedException ignored) {
-                        }
-                        else Thread.yield();
+                        if (sleeptime > 0)
+                            try {
+                                Thread.sleep(sleeptime / 1000000L);
+                            } catch (InterruptedException ignored) {
+                            }
+                        else
+                            Thread.yield();
                     }
                 }
             }
@@ -80,10 +82,10 @@ public class Manager {
         mascot.setManager(this);
         mascotList.offer(mascot);
         mascotCount.getAndIncrement();
-//        if (!Gintama.disable) {
-//                if (!Gintama.active && mascotCount.get() == 52)
-//                    Gintama.active(mascotList);
-//        }
+        //        if (!Gintama.disable) {
+        //                if (!Gintama.active && mascotCount.get() == 52)
+        //                    Gintama.active(mascotList);
+        //        }
     }
 
     public void remove(Mascot mascot) {
@@ -107,7 +109,8 @@ public class Manager {
 
     public void remainOne() {
         final Iterator<Mascot> iterator = mascotList.iterator();
-        if (iterator.hasNext()) iterator.next();
+        if (iterator.hasNext())
+            iterator.next();
         while (iterator.hasNext()) {
             iterator.next().dispose();
         }

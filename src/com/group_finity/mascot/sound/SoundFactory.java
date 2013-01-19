@@ -2,6 +2,7 @@ package com.group_finity.mascot.sound;
 
 import com.group_finity.mascot.Manager;
 import com.group_finity.mascot.Mascot;
+import com.group_finity.mascot.environment.Area;
 import com.jogamp.openal.AL;
 import com.jogamp.openal.ALFactory;
 import com.jogamp.openal.sound3d.AudioSystem3D;
@@ -11,6 +12,7 @@ import com.jogamp.openal.sound3d.Listener;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import java.awt.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,8 +22,8 @@ public final class SoundFactory {
     private static final ConcurrentHashMap<String, SoundBuffer> soundCache = new ConcurrentHashMap<String, SoundBuffer>();
     public static boolean voiceOn = true;
     public static boolean sfxOn = true;
+    public static boolean sound3D = true;
     public static final int defaultVoicePriority = -10;
-
     @SuppressWarnings("WeakerAccess")
     public static final int defaultSleepMSec = 100;
 
@@ -33,11 +35,13 @@ public final class SoundFactory {
         AudioSystem3D.makeContextCurrent(localContext);
 
         Listener localListener = AudioSystem3D.getListener();
-        localListener.setPosition(0.0F, 0.0F, 0.0F);
+
+        localListener.setPosition(0F, 0F, 0.5F);
     }
 
     public static SoundBuffer getSound(String resPath) {
-        if (null == resPath) return null;
+        if (null == resPath)
+            return null;
         SoundBuffer sound = soundCache.get(resPath);
         if (null == sound) {
             try {
@@ -66,23 +70,25 @@ public final class SoundFactory {
     public synchronized static VoiceController getVoiceController(Mascot mascot) {
         return new VoiceController() {
             final SoundSource localSource = new SoundSource();
+
             {
                 localSource.setPosition(0.0F, 0.0F, 0.0F);
                 localSource.setLooping(false);
             }
+
             volatile SoundBuffer lastPlayed;
             volatile int curLevel = 0;
 
             @Override
             public void speak(SoundBuffer voice, int pri) {
-                if (voiceOn) {
+                if (voiceOn && lastPlayed != voice) {
                     int priority = Math.abs(pri);
-                        if (localSource.isPlaying())
-                            if (priority > curLevel || (priority == curLevel && pri < 0)) {
-                                localSource.stop();
-                            } else {
-                                return;
-                            }
+                    if (curLevel >= 0 && localSource.isPlaying())
+                        if (priority > curLevel || (priority == curLevel && pri < 0)) {
+                            localSource.stop();
+                        } else {
+                            return;
+                        }
                     curLevel = priority;
                     lastPlayed = voice;
                     localSource.setBuffer(voice);
@@ -91,46 +97,77 @@ public final class SoundFactory {
             }
 
             @Override
-            public void release() {
-                if (null != localSource) localSource.delete();
+            public void updatePosition(final Point anchor, final Area area) {
+                if (voiceOn) {
+                    if (curLevel >= 0) {
+                        if (localSource.isPlaying()) {
+                            final float x = anchor.x / (float) area.getWidth() - 0.5F;
+                            final float y = anchor.y / (float) area.getHeight() - 0.5F;
+                            localSource.setPosition(x, y, 0.5F); //openal使用右手坐标系
+                        } else {
+                            curLevel = -1;
+                        }
+                    }
+                } else {
+                    if (curLevel >= 0) {
+                        localSource.stop();
+                        curLevel = -1;
+                    }
+                }
             }
 
+
             @Override
-            public SoundBuffer getLastPlayed() {
-                return lastPlayed;
+            public void release() {
+                if (null != localSource)
+                    localSource.delete();
             }
+
         };
     }
 
 
     public synchronized static SfxController getSfxController(Mascot mascot) {
         return new SfxController() {
-            SoundSource localSource = new SoundSource();
-            SoundSource localSourceBack = new SoundSource();
+            final SoundSource localSource = new SoundSource();
 
             {
                 localSource.setPosition(0.0F, 0.0F, 0.0F);
-                localSource.setLooping(false);
-                localSourceBack.setPosition(0.0F, 0.0F, 0.0F);
-                localSourceBack.setLooping(false);
+                localSource.setLooping(true);
             }
 
+            SoundBuffer buffer;
+
             @Override
-            public void sound(SoundBuffer sound) {
-                if (sfxOn) {
+            public void sound(final SoundBuffer sound) {
+                if (sound != buffer) {
                     localSource.stop();
-                    localSource.setBuffer(sound);
-                    localSource.play();
-                    final SoundSource swap = localSource;
-                    localSource = localSourceBack;
-                    localSourceBack = swap;
+                    buffer = sound;
+                    if (null != sound) {
+                        localSource.setBuffer(sound);
+                        localSource.play();
+                    }
+                }
+            }
+
+
+            public void updatePosition(final Point anchor, final Area area) {
+                if (buffer != null) {
+                    if (sfxOn) {
+                        final float x = anchor.x / (float) area.getWidth() - 0.5F;
+                        final float y = anchor.y / (float) area.getHeight() - 0.5F;
+                        localSource.setPosition(x, y, 0.5F);//右手坐标系
+                    } else {
+                        localSource.stop();
+                        buffer = null;
+                    }
                 }
             }
 
             @Override
             public void release() {
-                if (null != localSource) localSource.delete();
-                if (null != localSourceBack) localSourceBack.delete();
+                if (null != localSource)
+                    localSource.delete();
             }
         };
     }

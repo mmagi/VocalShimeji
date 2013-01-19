@@ -120,9 +120,10 @@ public abstract class ActionBase implements Action {
     protected Animation getAnimation() throws VariableException {
         for (Animation animation : getAnimations()) {
             if (animation.isEffective(getVariables())) {
-                if (SoundFactory.voiceOn && null != animation.getVoice() && mascot.voiceController.getLastPlayed() != animation.getVoice()) {// 不重复播放同一个
+                if (SoundFactory.voiceOn && null != animation.getVoice()) {
                     mascot.voiceController.speak(animation.getVoice(), animation.getVoicePriority());
                 }
+                if (SoundFactory.sfxOn) mascot.sfxController.sound(animation.getSfx());
                 return animation;
             }
         }

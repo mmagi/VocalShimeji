@@ -16,7 +16,9 @@ public class Animation {
 
     private final int voicePriority;
 
-    public Animation(final Variable condition, final SoundBuffer voice, final int voicePriority, final Pose... poses) {
+    private final SoundBuffer sfx;
+
+    public Animation(final Variable condition, final SoundBuffer voice, final int voicePriority, final SoundBuffer sfx, final Pose... poses) {
 
         if (poses.length == 0) {
             throw new IllegalArgumentException("poses.length==0");
@@ -25,6 +27,7 @@ public class Animation {
         this.condition = condition;
         this.poses = poses;
         this.voice = voice;
+        this.sfx = sfx;
         this.voicePriority = voicePriority;
     }
 
@@ -82,5 +85,9 @@ public class Animation {
 
     public int getVoicePriority() {
         return voicePriority;
+    }
+
+    public SoundBuffer getSfx() {
+        return this.sfx;
     }
 }

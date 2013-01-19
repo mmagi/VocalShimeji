@@ -56,12 +56,12 @@
                 <attribute name="種類" use="required">
                     <simpleType>
                         <restriction base="string">
-                            <enumeration value="組み込み"></enumeration>
-                            <enumeration value="移動"></enumeration>
-                            <enumeration value="静止"></enumeration>
-                            <enumeration value="固定"></enumeration>
-                            <enumeration value="複合"></enumeration>
-                            <enumeration value="選択"></enumeration>
+                            <enumeration value="組み込み"/>
+                            <enumeration value="移動"/>
+                            <enumeration value="静止"/>
+                            <enumeration value="固定"/>
+                            <enumeration value="複合"/>
+                            <enumeration value="選択"/>
                         </restriction>
                     </simpleType>
                 </attribute>
@@ -75,9 +75,9 @@
                 <attribute name="枠">
                     <simpleType>
                         <restriction base="string">
-                            <enumeration value="地面"></enumeration>
-                            <enumeration value="壁"></enumeration>
-                            <enumeration value="天井"></enumeration>
+                            <enumeration value="地面"/>
+                            <enumeration value="壁"/>
+                            <enumeration value="天井"/>
                         </restriction>
                     </simpleType>
                 </attribute>
@@ -107,6 +107,7 @@
         <attribute name="条件" type="string"/>
         <attribute name="voice" type="string"/>
         <attribute name="priority" type="int"/>
+        <attribute name="sfx" type="string"/>
     </complexType>
 
     <complexType name="ポーズ">
@@ -132,7 +133,6 @@
             </simpleType>
         </attribute>
         <attribute name="長さ" type="int" use="required"/>
-        <attribute name="sfx" type="string"/>
     </complexType>
 
     <complexType name="動作参照">

@@ -26,6 +26,7 @@ public class AnimationBuilder {
     private final List<Pose> poses = new ArrayList<Pose>();
     private final SoundBuffer voice;
     private final int voicePriority;
+    private final SoundBuffer sfx;
 
     public AnimationBuilder(final Entry animationNode) throws IOException {
         this.condition = animationNode.getAttribute("条件") == null ? "true" : animationNode.getAttribute("条件");
@@ -40,6 +41,8 @@ public class AnimationBuilder {
                 log.log(Level.WARNING, "配置文件格式有误" + e.toString());
             }
         this.voicePriority = vp;
+        String sfx = animationNode.getAttribute("sfx");
+        this.sfx = SoundFactory.getSound(sfx);
         log.log(Level.INFO, "アニメーション読み込み開始");
 
         for (final Entry frameNode : animationNode.getChildren()) {
@@ -56,7 +59,6 @@ public class AnimationBuilder {
         final String anchorText = frameNode.getAttribute("基準座標");
         final String moveText = frameNode.getAttribute("移動速度");
         final String durationText = frameNode.getAttribute("長さ");
-        final SoundBuffer sfx = SoundFactory.getSound(frameNode.getAttribute("sfx"));
         final String[] anchorCoordinates = anchorText.split(",");
         final Point anchor = new Point(Integer.parseInt(anchorCoordinates[0]), Integer.parseInt(anchorCoordinates[1]));
 
@@ -66,7 +68,7 @@ public class AnimationBuilder {
         final Point move = new Point(Integer.parseInt(moveCoordinates[0]), Integer.parseInt(moveCoordinates[1]));
 
         final int duration = Integer.parseInt(durationText);
-        final Pose pose = new Pose(image, move.x, move.y, duration, sfx);
+        final Pose pose = new Pose(image, move.x, move.y, duration);
 
         log.log(Level.INFO, "姿勢読み込み({0})", pose);
 
@@ -76,7 +78,7 @@ public class AnimationBuilder {
 
     public Animation buildAnimation() throws AnimationInstantiationException {
         try {
-            return new Animation(Variable.parse(this.getCondition()), this.getVoice(), this.getVoicePriority(), this.getPoses().toArray(new Pose[poses.size()]));
+            return new Animation(Variable.parse(this.getCondition()), this.voice, this.voicePriority, this.sfx, this.getPoses().toArray(new Pose[poses.size()]));
         } catch (final VariableException e) {
             throw new AnimationInstantiationException("条件の評価に失敗しました", e);
         }
@@ -90,11 +92,4 @@ public class AnimationBuilder {
         return this.condition;
     }
 
-    public SoundBuffer getVoice() {
-        return this.voice;
-    }
-
-    public int getVoicePriority() {
-        return this.voicePriority;
-    }
 }
