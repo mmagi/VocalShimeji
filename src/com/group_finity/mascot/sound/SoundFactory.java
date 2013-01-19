@@ -45,7 +45,7 @@ public final class SoundFactory {
         SoundBuffer sound = soundCache.get(resPath);
         if (null == sound) {
             try {
-                sound = new SoundBuffer(AudioSystem.getAudioInputStream(SoundFactory.class.getResource("/media" + resPath)));
+                sound = new SoundBuffer(AudioSystem.getAudioInputStream(SoundFactory.class.getResource("/media/" + resPath)));
                 soundCache.put(resPath, sound);
             } catch (UnsupportedAudioFileException e) {
                 log.log(Level.WARNING, "音频文件{0}的格式不支持", resPath);

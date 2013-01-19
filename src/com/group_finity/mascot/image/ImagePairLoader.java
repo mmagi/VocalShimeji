@@ -26,14 +26,14 @@ public class ImagePairLoader {
         // shime1.png に対して shime1-r.png を反転画像として使用するようにして回避。
         String rightName = name.replaceAll("\\.[a-zA-Z]+$", "-r$0");
 
-        final BufferedImage leftImage = ImageIO.read(ImagePairLoader.class.getResource(name));
+        final BufferedImage leftImage = ImageIO.read(ImagePairLoader.class.getResource("/image/"+name));
 
 
         final BufferedImage rightImage;
-        if (ImagePairLoader.class.getResource(rightName) == null) {
+        if (ImagePairLoader.class.getResource("/image/"+rightName) == null) {
             rightImage = flip(leftImage);
         } else {
-            rightImage = ImageIO.read(ImagePairLoader.class.getResource(rightName));
+            rightImage = ImageIO.read(ImagePairLoader.class.getResource("/image/"+rightName));
         }
 
         return new ImagePair(new MascotImage(leftImage, center), new MascotImage(rightImage, new Point(rightImage.getWidth() - center.x, center.y)));

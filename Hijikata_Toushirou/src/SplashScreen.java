@@ -17,7 +17,7 @@ public class SplashScreen extends JWindow {
     static boolean closed = false;
 
     public SplashScreen() {
-        ImageIcon logo = new ImageIcon(SplashScreen.class.getResource("/media/splash.png"));
+        ImageIcon logo = new ImageIcon(SplashScreen.class.getResource("/res/splash.png"));
         imageLabel.setIcon(logo);
         setLayout(new BorderLayout());
         add(imageLabel, BorderLayout.CENTER);
