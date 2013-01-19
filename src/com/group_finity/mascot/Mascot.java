@@ -61,29 +61,9 @@ public class Mascot {
         return "マスコット" + this.id;
     }
 
-    private boolean gintama = false;
-    private int gintamaX = 0, gintamaY = 0;
-
-    protected final void setGintama(int x, int y) {
-        gintama = true;
-        gintamaX = x;
-        gintamaY = y;
-    }
-
-    protected final void clearGintama() {
-        gintama = false;
-    }
-
-    private void gintamaTick() {
-        if (gintama) {
-            anchor.move((anchor.x * 3 + gintamaX) / 4, (anchor.y * 3 + gintamaY) / 4);
-        }
-    }
-
     void tick() {
         if ((isAnimating()) && (getBehavior() != null)) {
             try {
-                gintamaTick();
                 getBehavior().next();
             } catch (CantBeAliveException e) {
                 log.log(Level.SEVERE, "生き続けることが出来ない状況", e);
@@ -95,17 +75,20 @@ public class Mascot {
     }
 
     public void apply() {
-        if (isAnimating()) {
-            if (getImage() != null) {
-                getWindow().setPosition(getAnchor().x - getImage().getCenter().x, getAnchor().y - getImage().getCenter().y);
+        if (animating) {
+            if (image != null) {
+                window.setPosition(anchor.x - image.getCenter().x, anchor.y - image.getCenter().y);
+                if (SoundFactory.sound3D) {
+                    voiceController.updatePosition(anchor, environment.getScreen());
+                    sfxController.updatePosition(anchor, environment.getScreen());
+                }
+                window.setImage(image.getImage());
+                if (!window.isVisible())
+                    window.setVisible(true);
 
-                getWindow().setImage(getImage().getImage());
-
-                if (!getWindow().isVisible()) getWindow().setVisible(true);
-
-                getWindow().updateWindow();
-            } else if (getWindow().isVisible()) {
-                getWindow().setVisible(false);
+                window.updateWindow();
+            } else if (window.isVisible()) {
+                window.setVisible(false);
             }
         }
     }

@@ -3,7 +3,7 @@ package com.group_finity.mascot.config;
 import com.group_finity.mascot.action.Action;
 import com.group_finity.mascot.exception.ActionInstantiationException;
 import com.group_finity.mascot.exception.ConfigurationException;
-import com.group_finity.mascot.sound.Sound;
+import com.group_finity.mascot.sound.SoundBuffer;
 import com.group_finity.mascot.sound.SoundFactory;
 
 import java.util.LinkedHashMap;
@@ -23,7 +23,7 @@ public class ActionRef implements IActionBuilder {
 
     private final Integer voicePriority;
 
-    private final Sound voice;
+    private final SoundBuffer voice;
 
     public ActionRef(final Configuration configuration, final Entry refNode) {
         this.configuration = configuration;

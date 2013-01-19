@@ -5,6 +5,8 @@ import com.group_finity.mascot.config.Entry;
 import com.group_finity.mascot.exception.BehaviorInstantiationException;
 import com.group_finity.mascot.exception.CantBeAliveException;
 import com.group_finity.mascot.exception.ConfigurationException;
+import com.group_finity.mascot.sound.SoundFactory;
+import com.group_finity.mascot.util.PropertiseBundle;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -21,7 +23,7 @@ import java.util.logging.Logger;
 
 public class Main {
     static final Logger log = Logger.getLogger(Main.class.getName());
-    static final String BEHAVIOR_GATHER = "マウスの周りに集まる";
+    static final String BEHAVIOR_GATHER = PropertiseBundle.resourceBundle.getString("action.BEHAVIOR_GATHER");
     private static Main instance = new Main();
 
     public static Main getInstance() {
@@ -39,11 +41,24 @@ public class Main {
 
     Cursor cursor;
 
+    private void initSound() {
+        try {
+            SoundFactory.invokeAfterSound(SoundFactory.getSound(PropertiseBundle.resourceBundle.getString("sound.init")), new Runnable() {
+                @Override
+                public void run() {
+                }
+            });
+        } catch (final Exception e) {
+            Main.log.log(Level.WARNING, PropertiseBundle.resourceBundle.getString("exception.init_sound_failed"));
+        }
+    }
+
     public void run() {
+        initSound();
         loadConfiguration();
         BufferedImage cursorImage = null;
         try {
-            cursorImage = ImageIO.read(Main.class.getResource("/icon.png"));
+            cursorImage = ImageIO.read(Main.class.getResource(PropertiseBundle.resourceBundle.getString("image.mouse_icon")));
             Dimension size = Toolkit.getDefaultToolkit().getBestCursorSize(cursorImage.getWidth(), cursorImage.getHeight());
             BufferedImage scaledImage = new BufferedImage(size.width, size.height, cursorImage.getType());
 
@@ -71,7 +86,7 @@ public class Main {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
-            throw new RuntimeException("创建托盘图标出错", e);
+            log.log(Level.WARNING, PropertiseBundle.resourceBundle.getString("exception.init_tray_icon_failed"), e);
         }
         createMascot();
 
@@ -81,11 +96,11 @@ public class Main {
 
     private void loadConfiguration() {
         try {
-            log.log(Level.INFO, "正在载入配置文件({0})", "Behavior.xml");
+            log.log(Level.INFO, PropertiseBundle.resourceBundle.getString("message.loading_config"), "Behavior.xml");
 
             Document actions = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(Main.class.getResourceAsStream("/conf/Behavior.xml"));
 
-            log.log(Level.INFO, "正在载入配置文件({0})", "Actions.xml");
+            log.log(Level.INFO, PropertiseBundle.resourceBundle.getString("message.loading_config"), "Actions.xml");
 
             getConfiguration().load(new Entry(actions.getDocumentElement()));
 
@@ -95,16 +110,16 @@ public class Main {
 
             getConfiguration().validate();
         } catch (IOException e) {
-            log.log(Level.SEVERE, "配置文件读取失败", e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("excpetion.load_config_failed"), e);
             exit();
         } catch (SAXException e) {
-            log.log(Level.SEVERE, "配置文件读取失败", e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("excpetion.load_config_failed"), e);
             exit();
         } catch (ParserConfigurationException e) {
-            log.log(Level.SEVERE, "配置文件读取失败", e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("excpetion.load_config_failed"), e);
             exit();
         } catch (ConfigurationException e) {
-            log.log(Level.SEVERE, "配置文件读取失败", e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("excpetion.load_config_failed"), e);
             exit();
         }
     }
@@ -112,20 +127,20 @@ public class Main {
     PopupMenu mainMenu = new PopupMenu();
 
     private void createTrayIcon() {
-        log.log(Level.INFO, "正在创建托盘图标");
+        log.log(Level.INFO, PropertiseBundle.resourceBundle.getString("message.create_tray_icon"));
         if (SystemTray.getSystemTray() == null) {
             return;
         }
         MascotPopupMenu.prepareMainMenu(mainMenu);
         try {
-            TrayIcon icon = new TrayIcon(ImageIO.read(Main.class.getResource("/icon.png")), "VocalShimeji", mainMenu);
+            TrayIcon icon = new TrayIcon(ImageIO.read(Main.class.getResource(PropertiseBundle.resourceBundle.getString("image.tray_icon"))), "VocalShimeji", mainMenu);
             MascotPopupMenu.prepareTrayIcon(icon);
             SystemTray.getSystemTray().add(icon);
         } catch (IOException e) {
-            log.log(Level.SEVERE, "トレイアイコンの作成に失敗", e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("exception.create_tray_icon_failed"), e);
             exit();
         } catch (AWTException e) {
-            log.log(Level.SEVERE, "トレイアイコンの作成に失敗", e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("exception.create_tray_icon_failed"), e);
             MascotPopupMenu.setShowSystemTrayMenu(true);
             getManager().setExitOnLastRemoved(true);
         }
@@ -154,10 +169,10 @@ public class Main {
             getManager().add(mascot);
             System.out.println(getManager().getCount());
         } catch (BehaviorInstantiationException e) {
-            log.log(Level.SEVERE, "最初の行動の初期化に失敗しました", e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("exception.mascot.build_behavior_failed"), e);
             mascot.dispose();
         } catch (CantBeAliveException e) {
-            log.log(Level.SEVERE, "生き続けることが出来ない状況", e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("exception.mascot.apply_behavior_failed"), e);
             mascot.dispose();
         }
     }

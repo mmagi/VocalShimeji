@@ -1,5 +1,9 @@
 package com.group_finity.mascot.sound;
 
+import com.group_finity.mascot.environment.Area;
+
+import java.awt.*;
+
 /**
  * Created with IntelliJ IDEA.
  * User: magi
@@ -7,9 +11,9 @@ package com.group_finity.mascot.sound;
  * Time: 上午9:29
  */
 public interface VoiceController {
-    public void speak(final Sound voice, final int pri);
+    public void speak(final SoundBuffer voice, final int pri);
+
+    public void updatePosition(final Point anchor, final Area area);
 
     public void release();
-
-    public Sound getLastPlayed();
 }

@@ -2,9 +2,6 @@ package com.group_finity.mascot.sound;
 
 import com.group_finity.mascot.util.QueList;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
 import java.util.Iterator;
 import java.util.logging.Level;
 
@@ -16,48 +13,42 @@ import java.util.logging.Level;
  */
 final class ActionWithSoundInvoker extends Thread {
     class Task {
-        Sound curSound;
         Runnable cmd;
-        int curPos;
         boolean done;
-        SourceDataLine line;
+        SoundSource localSource;
 
-        Task(final Sound sound, final Runnable cmd) {
-            this.curSound = sound;
-            this.cmd = cmd;
-            this.curPos = 0;
-            this.done = false;
+        Task(final SoundBuffer sound, final Runnable cmd) {
             try {
-                this.line = AudioSystem.getSourceDataLine(SoundFactory.appAudioFormat);
-                this.line.open(SoundFactory.appAudioFormat, SoundFactory.defaultBufferSize);
-            } catch (LineUnavailableException e) {
-                SoundFactory.log.log(Level.WARNING, "音频资源不足无音效", e);
-                this.curSound = null;
+                localSource = new SoundSource();
+                localSource.setBuffer(sound);
+                localSource.setPosition(0.0F, 0.0F, 0.0F);
+                localSource.setLooping(false);
+                this.done = false;
+            } catch (Throwable e) {
+                this.done = true;
             }
+            this.cmd = cmd;
+        }
+
+        final void start() {
+            localSource.play();
         }
 
         final void updateLine() {
-            final int len;
-            if (null != curSound && (len = line.available()) >= SoundFactory.defaultWriteThreshold) {
-                final Sound curSound = this.curSound;
-                final int curPos = this.curPos;
-                final int left = curSound.bytes.length - curPos;
-                final int size = len > left ? left : len;
-                if (!line.isActive())
-                    line.start();
-                line.write(curSound.bytes, curPos, size);
-                this.curPos += size;
-                if (this.curPos >= curSound.bytes.length) {
-                    this.curSound = null;
-                }
-            }
+            this.done = localSource == null || !localSource.isPlaying();
+        }
+
+        final void release() {
+            localSource.delete();
         }
     }
 
     QueList<Task> tasks = new QueList<Task>();
 
-    void Invoke(Sound sound, Runnable cmd) {
-        tasks.offer(new Task(sound, cmd));
+    void Invoke(SoundBuffer sound, Runnable cmd) {
+        final Task task = new Task(sound, cmd);
+        tasks.offer(task);
+        task.start();
     }
 
     @Override
@@ -71,14 +62,17 @@ final class ActionWithSoundInvoker extends Thread {
                     e.printStackTrace();
                 }
             } else {
-                if (!SoundFactory.voiceOn || null == task.curSound) {
+                if (!SoundFactory.voiceOn || task.done) {
                     try {
                         task.cmd.run();
-                        task.line.close();
                     } catch (Throwable e) {
                         SoundFactory.log.log(Level.WARNING, "执行命令时异常", e);
                     } finally {
                         iterator.remove();
+                        try {
+                            task.release();
+                        } catch (Throwable ignored) {
+                        }
                     }
                 } else {
                     try {
@@ -86,7 +80,7 @@ final class ActionWithSoundInvoker extends Thread {
                     } catch (Throwable e) {
                         SoundFactory.log.log(Level.WARNING, "执行声音时异常", e);
                         try {
-                            task.curSound = null;
+                            task.done = true;
                         } catch (Throwable ignored) {
                         }
                     }

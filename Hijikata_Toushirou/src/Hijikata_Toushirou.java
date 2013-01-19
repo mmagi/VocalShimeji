@@ -1,8 +1,5 @@
 import com.group_finity.mascot.Main;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -22,7 +19,6 @@ public class Hijikata_Toushirou {
 
     public static void main(String[] args) {
         LogHandler.setJTextArea(splashScreen.textArea);
-        Clip clip = null;
         splashScreen.setVisible(true);
         try {
             LogManager.getLogManager().readConfiguration(Main.class.getResourceAsStream("/conf/logging.properties"));
@@ -31,7 +27,6 @@ public class Hijikata_Toushirou {
         }
         try {
             checkJnaDll();
-            clip = initSound();
             Main.getInstance().setAboutScreen(new AboutScreen());
             Main.getInstance().run();
         } catch (final Throwable e) {
@@ -39,10 +34,6 @@ public class Hijikata_Toushirou {
             splashScreen.reportErrorAndExit(e);
         }
         splashScreen.dispose();
-        if (null != clip) {
-            clip.drain();
-            clip.close();
-        }
     }
 
     private static void checkJnaDll() {
@@ -54,20 +45,6 @@ public class Hijikata_Toushirou {
         else {
             throw new RuntimeException(jnaLib.getAbsolutePath() + "文件未找到.");
         }
-    }
-
-    private static Clip initSound() {
-        Clip clip = null;
-        // play init sound
-        try {
-            clip = AudioSystem.getClip();
-            AudioInputStream ais = AudioSystem.getAudioInputStream(Main.class.getResource("/media/init.wav"));
-            clip.open(ais);
-            clip.start();
-        } catch (final Exception e) {
-            log.log(Level.INFO, "载入欢迎语音出错");
-        }
-        return clip;
     }
 
 }

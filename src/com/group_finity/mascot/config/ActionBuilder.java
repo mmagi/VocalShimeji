@@ -8,7 +8,7 @@ import com.group_finity.mascot.exception.ConfigurationException;
 import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.Variable;
 import com.group_finity.mascot.script.VariableMap;
-import com.group_finity.mascot.sound.Sound;
+import com.group_finity.mascot.sound.SoundBuffer;
 import com.group_finity.mascot.sound.SoundFactory;
 
 import java.io.IOException;
@@ -28,7 +28,7 @@ public class ActionBuilder implements IActionBuilder {
 
     private final Integer voicePriority;
 
-    private final Sound voice;
+    private final SoundBuffer voice;
 
     private final Map<String, String> params = new LinkedHashMap<String, String>();
 
@@ -87,7 +87,7 @@ public class ActionBuilder implements IActionBuilder {
     }
 
     @SuppressWarnings("unchecked")
-    public Action buildAction(final Map<String, String> params, Sound voice, Integer voicePriority) throws ActionInstantiationException {
+    public Action buildAction(final Map<String, String> params, SoundBuffer voice, Integer voicePriority) throws ActionInstantiationException {
 
         try {
             // 変数マップを生成

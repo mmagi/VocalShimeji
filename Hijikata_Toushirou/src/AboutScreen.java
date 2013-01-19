@@ -9,7 +9,7 @@ final class AboutScreen extends JWindow {
 
     public AboutScreen() {
         JLabel imageLabel = new JLabel();
-        imageLabel.setIcon(new ImageIcon(AboutScreen.class.getResource("/media/about.png")));
+        imageLabel.setIcon(new ImageIcon(AboutScreen.class.getResource("/res/about.png")));
         setLayout(new BorderLayout());
         add(imageLabel, BorderLayout.CENTER);
         MouseListener closeListener = new MouseListener() {
