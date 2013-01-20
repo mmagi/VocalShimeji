@@ -24,6 +24,7 @@ public final class SoundFactory {
     public static boolean sfxOn = true;
     public static boolean sound3D = true;
     public static final int defaultVoicePriority = -10;
+    private static float screenZ = 0.3F;
     @SuppressWarnings("WeakerAccess")
     public static final int defaultSleepMSec = 100;
 
@@ -36,7 +37,7 @@ public final class SoundFactory {
 
         Listener localListener = AudioSystem3D.getListener();
 
-        localListener.setPosition(0F, 0F, 0.5F);
+        localListener.setPosition(0F, 0F, 0.0F);
     }
 
     public static SoundBuffer getSound(String resPath) {
@@ -103,7 +104,7 @@ public final class SoundFactory {
                         if (localSource.isPlaying()) {
                             final float x = anchor.x / (float) area.getWidth() - 0.5F;
                             final float y = anchor.y / (float) area.getHeight() - 0.5F;
-                            localSource.setPosition(x, y, 0.5F); //openal使用右手坐标系
+                            localSource.setPosition(x, y, screenZ); //openal使用右手坐标系
                         } else {
                             curLevel = -1;
                         }
@@ -156,7 +157,7 @@ public final class SoundFactory {
                     if (sfxOn) {
                         final float x = anchor.x / (float) area.getWidth() - 0.5F;
                         final float y = anchor.y / (float) area.getHeight() - 0.5F;
-                        localSource.setPosition(x, y, 0.5F);//右手坐标系
+                        localSource.setPosition(x, y, screenZ);//右手坐标系
                     } else {
                         localSource.stop();
                         buffer = null;
