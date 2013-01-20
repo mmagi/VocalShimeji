@@ -110,16 +110,16 @@ public class Main {
 
             getConfiguration().validate();
         } catch (IOException e) {
-            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("excpetion.load_config_failed"), e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("exception.load_config_failed"), e);
             exit();
         } catch (SAXException e) {
-            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("excpetion.load_config_failed"), e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("exception.load_config_failed"), e);
             exit();
         } catch (ParserConfigurationException e) {
-            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("excpetion.load_config_failed"), e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("exception.load_config_failed"), e);
             exit();
         } catch (ConfigurationException e) {
-            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("excpetion.load_config_failed"), e);
+            log.log(Level.SEVERE, PropertiseBundle.resourceBundle.getString("exception.load_config_failed"), e);
             exit();
         }
     }
