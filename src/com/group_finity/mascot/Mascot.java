@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class Mascot {
     private static final Logger log = Logger.getLogger(Mascot.class.getName());
 
-    private static AtomicInteger lastId = new AtomicInteger();
+    private static final AtomicInteger lastId = new AtomicInteger();
     private final int id;
     private final TranslucentWindow window = NativeFactory.getInstance().newTransparentWindow();
 
@@ -35,7 +35,7 @@ public class Mascot {
 
     private boolean animating = true;
 
-    private MascotEnvironment environment = new MascotEnvironment(this);
+    private final MascotEnvironment environment = new MascotEnvironment(this);
 
     public final VoiceController voiceController;
 

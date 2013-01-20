@@ -3,7 +3,12 @@ package com.group_finity.mascot.script;
 import com.group_finity.mascot.exception.VariableException;
 
 import javax.script.Bindings;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.AbstractSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class VariableMap extends AbstractMap<String, Object> implements Bindings {
 

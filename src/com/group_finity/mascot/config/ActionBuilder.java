@@ -1,6 +1,11 @@
 package com.group_finity.mascot.config;
 
-import com.group_finity.mascot.action.*;
+import com.group_finity.mascot.action.Action;
+import com.group_finity.mascot.action.Animate;
+import com.group_finity.mascot.action.Move;
+import com.group_finity.mascot.action.Select;
+import com.group_finity.mascot.action.Sequence;
+import com.group_finity.mascot.action.Stay;
 import com.group_finity.mascot.animation.Animation;
 import com.group_finity.mascot.exception.ActionInstantiationException;
 import com.group_finity.mascot.exception.AnimationInstantiationException;
@@ -12,7 +17,11 @@ import com.group_finity.mascot.sound.SoundBuffer;
 import com.group_finity.mascot.sound.SoundFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

@@ -22,8 +22,10 @@ public final class SoundFactory {
     private static final ConcurrentHashMap<String, SoundBuffer> soundCache = new ConcurrentHashMap<String, SoundBuffer>();
     public static boolean voiceOn = true;
     public static boolean sfxOn = true;
+    @SuppressWarnings("CanBeFinal")
     public static boolean sound3D = true;
     public static final int defaultVoicePriority = -10;
+    @SuppressWarnings("CanBeFinal")
     private static float screenZ = 0.3F;
     @SuppressWarnings("WeakerAccess")
     public static final int defaultSleepMSec = 100;
@@ -57,7 +59,7 @@ public final class SoundFactory {
         return sound;
     }
 
-    private static ActionWithSoundInvoker invoker = new ActionWithSoundInvoker();
+    private static final ActionWithSoundInvoker invoker = new ActionWithSoundInvoker();
 
     static {
         invoker.setName("ActionWithSoundInvoker");
@@ -173,7 +175,7 @@ public final class SoundFactory {
         };
     }
 
-    static AL al = ALFactory.getAL();
+    static final AL al = ALFactory.getAL();
 
 
 }

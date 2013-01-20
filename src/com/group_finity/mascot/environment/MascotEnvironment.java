@@ -7,9 +7,9 @@ import java.awt.*;
 
 public class MascotEnvironment {
 
-    private Environment impl = NativeFactory.getInstance().getEnvironment();
+    private final Environment impl = NativeFactory.getInstance().getEnvironment();
 
-    private Mascot mascot;
+    private final Mascot mascot;
 
     private Area currentWorkArea;
 

@@ -123,7 +123,8 @@ public abstract class ActionBase implements Action {
                 if (SoundFactory.voiceOn && null != animation.getVoice()) {
                     mascot.voiceController.speak(animation.getVoice(), animation.getVoicePriority());
                 }
-                if (SoundFactory.sfxOn) mascot.sfxController.sound(animation.getSfx());
+                if (SoundFactory.sfxOn)
+                    mascot.sfxController.sound(animation.getSfx());
                 return animation;
             }
         }

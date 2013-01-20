@@ -11,12 +11,12 @@ public class ImagePair {
     /**
      * 左を向いている画像.
      */
-    private MascotImage leftImage;
+    private final MascotImage leftImage;
 
     /**
      * 右を向いている画像.
      */
-    private MascotImage rightImage;
+    private final MascotImage rightImage;
 
     /**
      * 既存の二つの画像から画像ペアを作成する.

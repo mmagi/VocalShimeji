@@ -29,22 +29,16 @@ public final class SoundBuffer {
 
         AudioFormat localAudioFormat = paramAudioInputStream.getFormat();
 
-        if (localAudioFormat.getEncoding() != AudioFormat.Encoding.PCM_SIGNED){
-            localAudioFormat = new AudioFormat(
-                    AudioFormat.Encoding.PCM_SIGNED,
-                    localAudioFormat.getSampleRate(),
-                    16,
-                    localAudioFormat.getChannels(),
-                    localAudioFormat.getChannels() * 2,
-                    localAudioFormat.getSampleRate(),
-                    false);
-            paramAudioInputStream = AudioSystem.getAudioInputStream(localAudioFormat,paramAudioInputStream);
+        if (localAudioFormat.getEncoding() != AudioFormat.Encoding.PCM_SIGNED) {
+            localAudioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, localAudioFormat.getSampleRate(), 16, localAudioFormat.getChannels(), localAudioFormat.getChannels() * 2, localAudioFormat.getSampleRate(), false);
+            paramAudioInputStream = AudioSystem.getAudioInputStream(localAudioFormat, paramAudioInputStream);
         }
 
 
         int channels = localAudioFormat.getChannels();
         int bitdepth = localAudioFormat.getSampleSizeInBits();
-        if (bitdepth == AudioSystem.NOT_SPECIFIED) bitdepth = 16;
+        if (bitdepth == AudioSystem.NOT_SPECIFIED)
+            bitdepth = 16;
         int format = FORMAT_MONO8;
 
         if ((bitdepth == 8) && (channels == 1))
@@ -58,35 +52,35 @@ public final class SoundBuffer {
         }
         int rate = Math.round(localAudioFormat.getSampleRate());
         final ByteBuffer localByteBuffer;
-        if(paramAudioInputStream.getFrameLength() != AudioSystem.NOT_SPECIFIED) {
-        int size = paramAudioInputStream.available();
+        if (paramAudioInputStream.getFrameLength() != AudioSystem.NOT_SPECIFIED) {
+            int size = paramAudioInputStream.available();
             localByteBuffer = ByteBuffer.allocateDirect(size);
             while (localByteBuffer.remaining() > 0) {
-            ReadableByteChannel localReadableByteChannel = Channels.newChannel(paramAudioInputStream);
-            localReadableByteChannel.read(localByteBuffer);
-        }
-        localByteBuffer.rewind();
-        }else{
-            ByteArrayOutputStream baos =new ByteArrayOutputStream();
-            byte [] tmp = new byte[4096];
+                ReadableByteChannel localReadableByteChannel = Channels.newChannel(paramAudioInputStream);
+                localReadableByteChannel.read(localByteBuffer);
+            }
+            localByteBuffer.rewind();
+        } else {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] tmp = new byte[4096];
             int lenth;
-            lenth=paramAudioInputStream.read(tmp);
-            baos.write(tmp,0,lenth);
-            while (0<=(lenth=paramAudioInputStream.read(tmp))){
+            lenth = paramAudioInputStream.read(tmp);
+            baos.write(tmp, 0, lenth);
+            while (0 <= (lenth = paramAudioInputStream.read(tmp))) {
                 baos.write(tmp, 0, lenth);
             }
             localByteBuffer = ByteBuffer.wrap(baos.toByteArray());
         }
 
-//        if (bitdepth == 16 &&  localAudioFormat.isBigEndian()) { //OpenAL要求必须little-endian
-//            int i1 = localByteBuffer.remaining();
-//            for (int i2 = 0; i2 < i1; i2 += 2) {
-//                byte b1 = localByteBuffer.get(i2);
-//                byte b2 = localByteBuffer.get(i2 + 1);
-//                localByteBuffer.put(i2, b2);
-//                localByteBuffer.put(i2 + 1, b1);
-//            }
-//        }
+        //        if (bitdepth == 16 &&  localAudioFormat.isBigEndian()) { //OpenAL要求必须little-endian
+        //            int i1 = localByteBuffer.remaining();
+        //            for (int i2 = 0; i2 < i1; i2 += 2) {
+        //                byte b1 = localByteBuffer.get(i2);
+        //                byte b2 = localByteBuffer.get(i2 + 1);
+        //                localByteBuffer.put(i2, b2);
+        //                localByteBuffer.put(i2 + 1, b1);
+        //            }
+        //        }
         data = localByteBuffer;
 
         int[] arrayOfInt = new int[1];

@@ -128,8 +128,7 @@ public class QueList<T> implements Iterable<T> {
             if (next.deleted) {
                 do {
                     next = next.next;
-                }
-                while (next.deleted);
+                } while (next.deleted);
                 this.next = next;
             }
             return next;
@@ -138,7 +137,8 @@ public class QueList<T> implements Iterable<T> {
         private final T object;
 
         protected ListNode(T o) {
-            if (null == o) throw new NullPointerException();
+            if (null == o)
+                throw new NullPointerException();
             object = o;
         }
 

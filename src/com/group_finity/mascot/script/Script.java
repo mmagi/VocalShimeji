@@ -2,7 +2,11 @@ package com.group_finity.mascot.script;
 
 import com.group_finity.mascot.exception.VariableException;
 
-import javax.script.*;
+import javax.script.Compilable;
+import javax.script.CompiledScript;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 public class Script extends Variable {
 

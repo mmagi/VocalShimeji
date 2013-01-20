@@ -263,7 +263,7 @@ public class SoundSource {
      * source.
      */
     public Vec3f getPosition() {
-        Vec3f result = null;
+        Vec3f result;
         float[] pos = new float[3];
         SoundFactory.al.alGetSourcefv(sourceID, AL.AL_POSITION, pos, 0);
         result = new Vec3f(pos[0], pos[1], pos[2]);
@@ -302,7 +302,7 @@ public class SoundSource {
      * @return the velocity vector of the source
      */
     public Vec3f getVelocity() {
-        Vec3f result = null;
+        Vec3f result;
         float[] vel = new float[3];
         SoundFactory.al.alGetSourcefv(sourceID, AL.AL_VELOCITY, vel, 0);
         result = new Vec3f(vel[0], vel[1], vel[2]);
@@ -341,7 +341,7 @@ public class SoundSource {
      * @return the direction vector of the source.
      */
     public Vec3f getDirection() {
-        Vec3f result = null;
+        Vec3f result;
         float[] dir = new float[3];
         SoundFactory.al.alGetSourcefv(sourceID, AL.AL_DIRECTION, dir, 0);
         result = new Vec3f(dir[0], dir[1], dir[2]);
@@ -391,7 +391,6 @@ public class SoundSource {
      * @return true-looping is on, false-looping is off
      */
     public boolean getLooping() {
-        boolean result = false;
         int[] tmp = new int[1];
         SoundFactory.al.alGetSourcei(sourceID, AL.AL_LOOPING, tmp, 0);
         return tmp[0] == AL.AL_TRUE;

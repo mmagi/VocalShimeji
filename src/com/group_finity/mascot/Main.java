@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 public class Main {
     static final Logger log = Logger.getLogger(Main.class.getName());
     static final String BEHAVIOR_GATHER = PropertiseBundle.resourceBundle.getString("action.BEHAVIOR_GATHER");
-    private static Main instance = new Main();
+    private static final Main instance = new Main();
 
     public static Main getInstance() {
         return instance;
@@ -124,7 +124,7 @@ public class Main {
         }
     }
 
-    PopupMenu mainMenu = new PopupMenu();
+    final PopupMenu mainMenu = new PopupMenu();
 
     private void createTrayIcon() {
         log.log(Level.INFO, PropertiseBundle.resourceBundle.getString("message.create_tray_icon"));
