@@ -9,6 +9,7 @@ import com.group_finity.mascot.exception.ConfigurationException;
 import com.group_finity.mascot.exception.VariableException;
 import com.group_finity.mascot.script.VariableMap;
 import com.group_finity.mascot.sound.SoundBuffer;
+import com.group_finity.mascot.util.PropertiseBundle;
 
 import java.awt.*;
 import java.io.IOException;
@@ -22,6 +23,7 @@ import java.util.logging.Logger;
 public class Configuration {
 
     private static final Logger log = Logger.getLogger(Configuration.class.getName());
+    private static final String defaultBehavior = PropertiseBundle.resourceBundle.getString("action.BEHAVIOR_DEFAULT");
 
     private final Map<String, String> constants = new LinkedHashMap<String, String>();
 
@@ -144,7 +146,7 @@ public class Configuration {
 
         if (totalFrequency == 0) {
             mascot.setAnchor(new Point((int) (Math.random() * (mascot.getEnvironment().getScreen().getRight() - mascot.getEnvironment().getScreen().getLeft())) + mascot.getEnvironment().getScreen().getLeft(), mascot.getEnvironment().getScreen().getTop() - 256));
-            return buildBehavior("落下する");
+            return buildBehavior(defaultBehavior);
         }
 
         double random = Math.random() * totalFrequency;
