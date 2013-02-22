@@ -33,7 +33,7 @@ public class MascotEventHandler implements MouseListener {
 
     public JPopupMenu getPopup() {
         if (null == popup) {
-            popup = MascotPopupMenu.createJPopupMenu(mascot);
+            popup = mascot.getManager().main.mascotPopupMenu.createJPopupMenu(mascot);
         }
         return popup;
     }

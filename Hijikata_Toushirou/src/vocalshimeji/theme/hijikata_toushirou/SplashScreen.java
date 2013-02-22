@@ -1,3 +1,5 @@
+package vocalshimeji.theme.hijikata_toushirou;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -17,7 +19,7 @@ public class SplashScreen extends JWindow {
     static boolean closed = false;
 
     public SplashScreen() {
-        ImageIcon logo = new ImageIcon(SplashScreen.class.getResource("/res/splash.png"));
+        ImageIcon logo = new ImageIcon(SplashScreen.class.getResource("res/splash.png"));
         imageLabel.setIcon(logo);
         setLayout(new BorderLayout());
         add(imageLabel, BorderLayout.CENTER);

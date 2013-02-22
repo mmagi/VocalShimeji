@@ -1,5 +1,7 @@
 package com.group_finity.mascot.image;
 
+import com.group_finity.mascot.Main;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -11,6 +13,12 @@ import java.io.IOException;
  */
 public class ImagePairLoader {
 
+    private final Main main;
+
+    public ImagePairLoader(Main main) {
+        this.main = main;
+    }
+
     /**
      * 画像ペアを読み込む.
      * <p/>
@@ -20,20 +28,20 @@ public class ImagePairLoader {
      * @param center 画像の中央座標.
      * @return 読み込んだ画像ペア.
      */
-    public static ImagePair load(final String name, final Point center) throws IOException {
+    public ImagePair load(final String name, final Point center) throws IOException {
 
         // flip では半透明にならない画像があるらしいので
         // shime1.png に対して shime1-r.png を反転画像として使用するようにして回避。
         String rightName = name.replaceAll("\\.[a-zA-Z]+$", "-r$0");
 
-        final BufferedImage leftImage = ImageIO.read(ImagePairLoader.class.getResource("/image/" + name));
+        final BufferedImage leftImage = ImageIO.read(main.getImageResource(name));
 
 
         final BufferedImage rightImage;
-        if (ImagePairLoader.class.getResource("/image/" + rightName) == null) {
+        if (main.getImageResource(rightName) == null) {
             rightImage = flip(leftImage);
         } else {
-            rightImage = ImageIO.read(ImagePairLoader.class.getResource("/image/" + rightName));
+            rightImage = ImageIO.read(main.getImageResource(rightName));
         }
 
         return new ImagePair(new MascotImage(leftImage, center), new MascotImage(rightImage, new Point(rightImage.getWidth() - center.x, center.y)));

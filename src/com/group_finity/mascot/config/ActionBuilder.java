@@ -1,27 +1,19 @@
 package com.group_finity.mascot.config;
 
-import com.group_finity.mascot.action.Action;
-import com.group_finity.mascot.action.Animate;
-import com.group_finity.mascot.action.Move;
-import com.group_finity.mascot.action.Select;
-import com.group_finity.mascot.action.Sequence;
-import com.group_finity.mascot.action.Stay;
+import com.group_finity.mascot.action.*;
 import com.group_finity.mascot.animation.Animation;
 import com.group_finity.mascot.exception.ActionInstantiationException;
 import com.group_finity.mascot.exception.AnimationInstantiationException;
 import com.group_finity.mascot.exception.ConfigurationException;
 import com.group_finity.mascot.exception.VariableException;
+import com.group_finity.mascot.image.ImagePairLoader;
 import com.group_finity.mascot.script.Variable;
 import com.group_finity.mascot.script.VariableMap;
 import com.group_finity.mascot.sound.SoundBuffer;
 import com.group_finity.mascot.sound.SoundFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,7 +37,7 @@ public class ActionBuilder implements IActionBuilder {
 
     private final List<IActionBuilder> actionRefs = new ArrayList<IActionBuilder>();
 
-    public ActionBuilder(final Configuration configuration, final Entry actionNode) throws IOException {
+    public ActionBuilder(final ImagePairLoader imagePairLoader, final SoundFactory soundFactory, final Configuration configuration, final Entry actionNode) throws IOException {
         this.name = actionNode.getAttribute("名前");
         this.type = actionNode.getAttribute("種類");
         this.className = actionNode.getAttribute("クラス");
@@ -53,7 +45,7 @@ public class ActionBuilder implements IActionBuilder {
 
         String voice = actionNode.getAttribute("voice");
         if (null != voice && voice.length() > 0) {
-            this.voice = SoundFactory.getSound(voice);
+            this.voice = soundFactory.getSound(voice);
         } else {
             this.voice = null;
         }
@@ -72,14 +64,14 @@ public class ActionBuilder implements IActionBuilder {
 
         this.getParams().putAll(actionNode.getAttributes());
         for (final Entry node : actionNode.selectChildren("アニメーション")) {
-            this.getAnimationBuilders().add(new AnimationBuilder(node));
+            this.getAnimationBuilders().add(new AnimationBuilder(imagePairLoader, soundFactory, node));
         }
 
         for (final Entry node : actionNode.getChildren()) {
             if (node.getName().equals("動作参照")) {
-                this.getActionRefs().add(new ActionRef(configuration, node));
+                this.getActionRefs().add(new ActionRef(imagePairLoader, soundFactory, configuration, node));
             } else if (node.getName().equals("動作")) {
-                this.getActionRefs().add(new ActionBuilder(configuration, node));
+                this.getActionRefs().add(new ActionBuilder(imagePairLoader, soundFactory, configuration, node));
             }
         }
 

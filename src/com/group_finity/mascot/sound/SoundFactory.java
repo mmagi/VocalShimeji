@@ -1,5 +1,6 @@
 package com.group_finity.mascot.sound;
 
+import com.group_finity.mascot.Main;
 import com.group_finity.mascot.Manager;
 import com.group_finity.mascot.Mascot;
 import com.group_finity.mascot.environment.Area;
@@ -29,6 +30,7 @@ public final class SoundFactory {
     private static float screenZ = 0.3F;
     @SuppressWarnings("WeakerAccess")
     public static final int defaultSleepMSec = 100;
+    public final Main main;
 
     static {
         AudioSystem3D.init();
@@ -42,18 +44,22 @@ public final class SoundFactory {
         localListener.setPosition(0F, 0F, 0.0F);
     }
 
-    public static SoundBuffer getSound(String resPath) {
-        if (null == resPath)
+    public SoundFactory(Main main) {
+        this.main = main;
+    }
+
+    public SoundBuffer getSound(String resName) {
+        if (null == resName)
             return null;
-        SoundBuffer sound = soundCache.get(resPath);
+        SoundBuffer sound = soundCache.get(resName);
         if (null == sound) {
             try {
-                sound = new SoundBuffer(AudioSystem.getAudioInputStream(SoundFactory.class.getResource("/media/" + resPath)));
-                soundCache.put(resPath, sound);
+                sound = new SoundBuffer(AudioSystem.getAudioInputStream(main.getSoundResource(resName)));
+                soundCache.put(resName, sound);
             } catch (UnsupportedAudioFileException e) {
-                log.log(Level.WARNING, "音频文件{0}的格式不支持", resPath);
+                log.log(Level.WARNING, "音频文件{0}的格式不支持", resName);
             } catch (Exception e) {
-                log.log(Level.WARNING, "载入音频文件{0}时出错", resPath);
+                log.log(Level.WARNING, "载入音频文件{0}时出错", resName);
             }
         }
         return sound;

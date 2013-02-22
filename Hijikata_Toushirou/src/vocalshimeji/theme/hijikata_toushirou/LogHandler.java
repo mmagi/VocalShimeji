@@ -1,3 +1,5 @@
+package vocalshimeji.theme.hijikata_toushirou;
+
 import javax.swing.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -97,7 +99,7 @@ public class LogHandler extends java.util.logging.Handler {
             // However the cost is 14% higher, so we cheaply check for
             // 1 of the first 4 parameters
             if (format.contains("{0") || format.contains("{1") ||
-                        format.contains("{2") || format.contains("{3")) {
+                    format.contains("{2") || format.contains("{3")) {
                 return java.text.MessageFormat.format(format, parameters);
             }
             return format;

@@ -28,10 +28,10 @@ public class AnimationBuilder {
     private final int voicePriority;
     private final SoundBuffer sfx;
 
-    public AnimationBuilder(final Entry animationNode) throws IOException {
+    public AnimationBuilder(final ImagePairLoader imagePairLoader, final SoundFactory soundFactory, final Entry animationNode) throws IOException {
         this.condition = animationNode.getAttribute("条件") == null ? "true" : animationNode.getAttribute("条件");
         String voice = animationNode.getAttribute("voice");
-        this.voice = SoundFactory.getSound(voice);
+        this.voice = soundFactory.getSound(voice);
         int vp = SoundFactory.defaultVoicePriority;
         String priority = animationNode.getAttribute("priority");
         if (null != priority && priority.length() > 0)
@@ -42,18 +42,18 @@ public class AnimationBuilder {
             }
         this.voicePriority = vp;
         String sfx = animationNode.getAttribute("sfx");
-        this.sfx = SoundFactory.getSound(sfx);
+        this.sfx = soundFactory.getSound(sfx);
         log.log(Level.INFO, "アニメーション読み込み開始");
 
         for (final Entry frameNode : animationNode.getChildren()) {
 
-            this.getPoses().add(loadPose(frameNode));
+            this.getPoses().add(loadPose(imagePairLoader, frameNode));
         }
 
         log.log(Level.INFO, "アニメーション読み込み完了");
     }
 
-    private Pose loadPose(final Entry frameNode) throws IOException {
+    private Pose loadPose(final ImagePairLoader imagePairLoader, final Entry frameNode) throws IOException {
 
         final String imageText = frameNode.getAttribute("画像");
         final String anchorText = frameNode.getAttribute("基準座標");
@@ -62,7 +62,7 @@ public class AnimationBuilder {
         final String[] anchorCoordinates = anchorText.split(",");
         final Point anchor = new Point(Integer.parseInt(anchorCoordinates[0]), Integer.parseInt(anchorCoordinates[1]));
 
-        final ImagePair image = ImagePairLoader.load(imageText, anchor);
+        final ImagePair image = imagePairLoader.load(imageText, anchor);
 
         final String[] moveCoordinates = moveText.split(",");
         final Point move = new Point(Integer.parseInt(moveCoordinates[0]), Integer.parseInt(moveCoordinates[1]));

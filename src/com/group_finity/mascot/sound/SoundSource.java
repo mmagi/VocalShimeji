@@ -13,7 +13,7 @@ public class SoundSource {
     private final int sourceID;
     private SoundBuffer buffer;
 
-    SoundSource(){
+    SoundSource() {
         int[] arrayOfInt = new int[1];
         SoundFactory.al.alGenSources(1, arrayOfInt, 0);
         sourceID = arrayOfInt[0];
@@ -51,7 +51,7 @@ public class SoundSource {
      * Delete this source, freeing its resources.
      */
     public void delete() {
-        SoundFactory.al.alDeleteSources(1, new int[] { sourceID }, 0);
+        SoundFactory.al.alDeleteSources(1, new int[]{sourceID}, 0);
     }
 
     /**
@@ -234,15 +234,15 @@ public class SoundSource {
      * Sets the x,y,z position of the source.
      *
      * @param position a Vec3f object containing the x,y,z position of the
-     * source.
+     *                 source.
      */
     public void setPosition(Vec3f position) {
         SoundFactory.al.alSource3f(
-                             sourceID,
-                             AL.AL_POSITION,
-                             position.v1,
-                             position.v2,
-                             position.v3);
+                sourceID,
+                AL.AL_POSITION,
+                position.v1,
+                position.v2,
+                position.v3);
     }
 
     /**
@@ -260,7 +260,7 @@ public class SoundSource {
      * Gets the x,y,z position of the source.
      *
      * @return a Vec3f object containing the x,y,z position of the
-     * source.
+     *         source.
      */
     public Vec3f getPosition() {
         Vec3f result;
@@ -278,11 +278,11 @@ public class SoundSource {
      */
     public void setVelocity(Vec3f velocity) {
         SoundFactory.al.alSource3f(
-                             sourceID,
-                             AL.AL_VELOCITY,
-                             velocity.v1,
-                             velocity.v2,
-                             velocity.v3);
+                sourceID,
+                AL.AL_VELOCITY,
+                velocity.v1,
+                velocity.v2,
+                velocity.v3);
     }
 
     /**
@@ -317,11 +317,11 @@ public class SoundSource {
      */
     public void setDirection(Vec3f direction) {
         SoundFactory.al.alSource3f(
-                             sourceID,
-                             AL.AL_DIRECTION,
-                             direction.v1,
-                             direction.v2,
-                             direction.v3);
+                sourceID,
+                AL.AL_DIRECTION,
+                direction.v1,
+                direction.v2,
+                direction.v3);
     }
 
     /**
@@ -350,11 +350,12 @@ public class SoundSource {
     }
 
     /**
-     * Determines if the position of the source is relative to the listener. 
+     * Determines if the position of the source is relative to the listener.
      * The default is false.
+     *
      * @param isRelative true if the position of the source is relative
-     * to the listener, false if the position of the source is relative to the 
-     * world.
+     *                   to the listener, false if the position of the source is relative to the
+     *                   world.
      */
     public void setSourceRelative(boolean isRelative) {
         int rel = isRelative ? 1 : 0;
@@ -362,11 +363,12 @@ public class SoundSource {
     }
 
     /**
-     * Determines if the position of the source is relative to the listener. 
+     * Determines if the position of the source is relative to the listener.
      * The default is false.
+     *
      * @return true if the position of the source is relative
-     * to the listener, false if the position of the source is relative to the 
-     * world.
+     *         to the listener, false if the position of the source is relative to the
+     *         world.
      */
     public boolean isSourceRelative() {
         int[] result = new int[1];
@@ -376,7 +378,7 @@ public class SoundSource {
     }
 
     /**
-     * turns looping on or off. 
+     * turns looping on or off.
      *
      * @param isLooping true-looping is on, false-looping is off
      */
@@ -386,7 +388,7 @@ public class SoundSource {
     }
 
     /**
-     * indicates whether looping is turned on or off. 
+     * indicates whether looping is turned on or off.
      *
      * @return true-looping is on, false-looping is off
      */
@@ -398,7 +400,8 @@ public class SoundSource {
 
 
     /**
-     * Gets the number of buffers currently queued on this source. 
+     * Gets the number of buffers currently queued on this source.
+     *
      * @return the number of buffers currently queued on this source.
      */
     public int getBuffersQueued() {
@@ -409,7 +412,8 @@ public class SoundSource {
     }
 
     /**
-     * Gets the number of buffers already processed on this source. 
+     * Gets the number of buffers already processed on this source.
+     *
      * @return the number of buffers already processed on this source.
      */
     public int getBuffersProcessed() {
@@ -439,7 +443,7 @@ public class SoundSource {
     }
 
     /**
-     * Queues one or more buffers on a source. Useful for streaming audio, 
+     * Queues one or more buffers on a source. Useful for streaming audio,
      * buffers will be played in the order they are queued.
      *
      * @param buffers a set of initialized (loaded) buffers.
@@ -473,9 +477,10 @@ public class SoundSource {
 
     /**
      * 查询声源的当前状态
+     *
      * @return 声源的当前状态 (AL_STOPPED, AL_PLAYING, …)
      */
-    public int getState(){
+    public int getState() {
         int[] result = new int[1];
         SoundFactory.al.alGetSourcei(sourceID, AL.AL_SOURCE_STATE, result, 0);
         return result[0];
@@ -483,16 +488,19 @@ public class SoundSource {
 
     /**
      * 查询声源当前状态
+     *
      * @return 声源当前状态是否为AL_PLAYING
      */
-    public boolean isPlaying(){
+    public boolean isPlaying() {
         return getState() == AL.AL_PLAYING;
     }
+
     /**
      * 查询声源当前状态
+     *
      * @return 声源当前状态是否为AL_STOPPED
      */
-    public boolean isStopped(){
+    public boolean isStopped() {
         return getState() == AL.AL_STOPPED;
     }
 }

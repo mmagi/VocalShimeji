@@ -6,6 +6,7 @@ import com.group_finity.mascot.exception.CantBeAliveException;
 import com.group_finity.mascot.util.QueList;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -16,8 +17,10 @@ public class Manager {
     private final AtomicInteger mascotCount = new AtomicInteger(0);
     private final QueList<Mascot> mascotList = new QueList<Mascot>();
     private boolean alive = true;
+    public final Main main;
 
-    public Manager() {
+    public Manager(Main main) {
+        this.main = main;
     }
 
     public void start() {
@@ -48,7 +51,7 @@ public class Manager {
                             }
                         }
                     }
-                    Main.getInstance().exit();
+                    main.exit();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -139,4 +142,21 @@ public class Manager {
         return this.alive;
     }
 
+    public void createMascot() {
+        Mascot mascot = new Mascot();
+        mascot.setAnchor(new Point(-1000, -1000));
+        mascot.getWindow().asJWindow().setCursor(main.cursor);
+        mascot.setLookRight(Math.random() < 0.5D);
+        try {
+            mascot.setBehavior(main.getConfiguration().buildBehavior(null, mascot));
+            add(mascot);
+            System.out.println(getCount());
+        } catch (BehaviorInstantiationException e) {
+            log.log(Level.SEVERE, main.resourceBundle.getString("exception.mascot.build_behavior_failed"), e);
+            mascot.dispose();
+        } catch (CantBeAliveException e) {
+            log.log(Level.SEVERE, main.resourceBundle.getString("exception.mascot.apply_behavior_failed"), e);
+            mascot.dispose();
+        }
+    }
 }

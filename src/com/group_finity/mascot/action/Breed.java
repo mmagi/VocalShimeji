@@ -1,6 +1,5 @@
 package com.group_finity.mascot.action;
 
-import com.group_finity.mascot.Main;
 import com.group_finity.mascot.Mascot;
 import com.group_finity.mascot.animation.Animation;
 import com.group_finity.mascot.exception.BehaviorInstantiationException;
@@ -66,7 +65,7 @@ public class Breed extends Animate {
         mascot.setLookRight(getMascot().isLookRight());
 
         try {
-            mascot.setBehavior(Main.getInstance().getConfiguration().buildBehavior(getBornBehavior()));
+            mascot.setBehavior(mascot.getManager().main.getConfiguration().buildBehavior(getBornBehavior()));
 
             getMascot().getManager().add(mascot);
 

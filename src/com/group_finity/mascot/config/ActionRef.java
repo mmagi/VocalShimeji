@@ -3,6 +3,7 @@ package com.group_finity.mascot.config;
 import com.group_finity.mascot.action.Action;
 import com.group_finity.mascot.exception.ActionInstantiationException;
 import com.group_finity.mascot.exception.ConfigurationException;
+import com.group_finity.mascot.image.ImagePairLoader;
 import com.group_finity.mascot.sound.SoundBuffer;
 import com.group_finity.mascot.sound.SoundFactory;
 
@@ -25,7 +26,7 @@ public class ActionRef implements IActionBuilder {
 
     private final SoundBuffer voice;
 
-    public ActionRef(final Configuration configuration, final Entry refNode) {
+    public ActionRef(final ImagePairLoader imagePairLoader, final SoundFactory soundFactory, final Configuration configuration, final Entry refNode) {
         this.configuration = configuration;
 
         this.name = refNode.getAttribute("名前");
@@ -33,7 +34,7 @@ public class ActionRef implements IActionBuilder {
 
         Object voice = refNode.getAttribute("voice");
         if (null != voice && voice.toString().length() > 0) {
-            this.voice = SoundFactory.getSound(voice.toString());
+            this.voice = soundFactory.getSound(voice.toString());
         } else {
             this.voice = null;
         }

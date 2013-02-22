@@ -1,5 +1,6 @@
 package com.group_finity.mascot.config;
 
+import com.group_finity.mascot.Main;
 import com.group_finity.mascot.Mascot;
 import com.group_finity.mascot.action.Action;
 import com.group_finity.mascot.behavior.Behavior;
@@ -7,9 +8,10 @@ import com.group_finity.mascot.exception.ActionInstantiationException;
 import com.group_finity.mascot.exception.BehaviorInstantiationException;
 import com.group_finity.mascot.exception.ConfigurationException;
 import com.group_finity.mascot.exception.VariableException;
+import com.group_finity.mascot.image.ImagePairLoader;
 import com.group_finity.mascot.script.VariableMap;
 import com.group_finity.mascot.sound.SoundBuffer;
-import com.group_finity.mascot.util.PropertiseBundle;
+import com.group_finity.mascot.sound.SoundFactory;
 
 import java.awt.*;
 import java.io.IOException;
@@ -23,7 +25,15 @@ import java.util.logging.Logger;
 public class Configuration {
 
     private static final Logger log = Logger.getLogger(Configuration.class.getName());
-    private static final String defaultBehavior = PropertiseBundle.resourceBundle.getString("action.BEHAVIOR_DEFAULT");
+
+    private final Main main;
+
+    public Configuration(Main main) {
+        this.main = main;
+        defaultBehavior = main.resourceBundle.getString("action.BEHAVIOR_DEFAULT");
+    }
+
+    private final String defaultBehavior;
 
     private final Map<String, String> constants = new LinkedHashMap<String, String>();
 
@@ -31,7 +41,8 @@ public class Configuration {
 
     private final Map<String, BehaviorBuilder> behaviorBuilders = new LinkedHashMap<String, BehaviorBuilder>();
 
-    public void load(final Entry configurationNode) throws IOException, ConfigurationException {
+
+    public void load(final ImagePairLoader imagePairLoader, final SoundFactory soundFactory, final Entry configurationNode) throws IOException, ConfigurationException {
 
         for (final Entry constant : configurationNode.selectChildren("定数")) {
 
@@ -44,7 +55,7 @@ public class Configuration {
 
             for (final Entry node : list.selectChildren("動作")) {
 
-                final ActionBuilder action = new ActionBuilder(this, node);
+                final ActionBuilder action = new ActionBuilder(imagePairLoader, soundFactory, this, node);
 
                 if (this.getActionBuilders().containsKey(action.getName())) {
                     throw new ConfigurationException("動作の名前が重複しています:" + action.getName());

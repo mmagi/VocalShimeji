@@ -16,8 +16,8 @@ import java.util.logging.Logger;
 
 public class Mascot {
     private static final Logger log = Logger.getLogger(Mascot.class.getName());
-
     private static final AtomicInteger lastId = new AtomicInteger();
+
     private final int id;
     private final TranslucentWindow window = NativeFactory.getInstance().newTransparentWindow();
 
@@ -94,6 +94,7 @@ public class Mascot {
     }
 
     private boolean disposed = false;
+
     public boolean isDisposed() {
         return disposed;
     }

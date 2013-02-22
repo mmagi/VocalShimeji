@@ -1,3 +1,5 @@
+package vocalshimeji.theme.hijikata_toushirou;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -9,7 +11,7 @@ final class AboutScreen extends JWindow {
 
     public AboutScreen() {
         JLabel imageLabel = new JLabel();
-        imageLabel.setIcon(new ImageIcon(AboutScreen.class.getResource("/res/about.png")));
+        imageLabel.setIcon(new ImageIcon(AboutScreen.class.getResource("res/about.png")));
         setLayout(new BorderLayout());
         add(imageLabel, BorderLayout.CENTER);
         MouseListener closeListener = new MouseListener() {
@@ -27,7 +29,7 @@ final class AboutScreen extends JWindow {
                         try {
                             Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + href[i]);
                         } catch (IOException e1) {
-                            Hijikata_Toushirou.log.log(Level.INFO, "跳转网址失败", e1);
+                            VocalShimeji.log.log(Level.INFO, "跳转网址失败", e1);
                         }
                     }
                 }
