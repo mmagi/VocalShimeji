@@ -65,7 +65,7 @@ public class Breed extends Animate {
         mascot.setLookRight(getMascot().isLookRight());
 
         try {
-            mascot.setBehavior(mascot.getManager().main.getConfiguration().buildBehavior(getBornBehavior()));
+            mascot.setBehavior(getMascot().getManager().main.getConfiguration().buildBehavior(getBornBehavior()));
 
             getMascot().getManager().add(mascot);
 
