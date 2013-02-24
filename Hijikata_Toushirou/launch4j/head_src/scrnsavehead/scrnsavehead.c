@@ -22,7 +22,7 @@ BOOL stayAlive = FALSE;
 BOOL splash = FALSE;
 BOOL splashTimeoutErr;
 BOOL waitForWindow;
-
+BOOL quitOnInput = FALSE;
 RECT rc;
 HINSTANCE	hMainInstance;
 char szVersion[] = TEXT("VocalShimeji\r\nScreen Saver Mode\r\n(build 20120220)");
@@ -145,8 +145,7 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
         case 'S':
         case 's':
             /* start screen saver */
-            splash = FALSE;
-            stayAlive = TRUE;
+            quitOnInput = TRUE;
             return l4j_WinMain(hInst,hPrevInst,"--ScrnSave",nCmdShow);
         case 'P':
         case 'p':
@@ -164,8 +163,6 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
         case 'C':
         case 'c':
             /* display configure dialog */
-            splash = FALSE;
-            stayAlive = FALSE;
             return l4j_WinMain(hInst,hPrevInst,"--ShowConfig",nCmdShow);
         case 'A':
         case 'a':
@@ -179,13 +176,10 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
         case '/':
         case ' ':
         default:
-            return 0;
+            break;
         }
     }
-    //show config
-
-    splash = FALSE;
-    stayAlive = FALSE;
+    //
     return l4j_WinMain(hInst,hPrevInst,"--ShowConfig",nCmdShow);
 }
 
@@ -208,11 +202,11 @@ int l4j_WinMain(HINSTANCE hInstance,
         signalError();
         return 1;
     }
-    //splash = FALSE;
+    splash = FALSE;
     /* splash = loadBool(SHOW_SPLASH)
      *		&& strstr(lpCmdLine, "--l4j-no-splash") == NULL;
      */
-    //stayAlive = TRUE;
+    stayAlive = TRUE;
     /* stayAlive = loadBool(GUI_HEADER_STAYS_ALIVE)
      *		&& strstr(lpCmdLine, "--l4j-dont-wait") == NULL;
      */
@@ -308,6 +302,7 @@ VOID CALLBACK TimerProc(
         KillTimer(hWnd, ID_TIMER);
         PostQuitMessage(0);
     }
+    if(quitOnInput){
     LASTINPUTINFO lpi;
     lpi.cbSize = sizeof(lpi);
     GetLastInputInfo(&lpi);
@@ -315,4 +310,5 @@ VOID CALLBACK TimerProc(
         TerminateProcess(pi.hProcess,0);
     }
     lastInputTime = lpi.dwTime;
+    }
 }
