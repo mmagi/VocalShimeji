@@ -26,7 +26,6 @@ public class VocalShimeji extends Main {
     }
 
     public static void main(String[] args) {
-        LoadDlls();
         int mode = 0;
         if (args.length > 0) {
             if (args[0].equals("--ScrnSave")) mode = 1;
@@ -41,6 +40,7 @@ public class VocalShimeji extends Main {
             } catch (IOException ignored) {
             }
             try {
+                LoadDlls();
                 if (mode == 1) {
                     new VocalShimeji().scrnSaveRun();
                 } else {
