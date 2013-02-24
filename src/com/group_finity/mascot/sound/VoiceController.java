@@ -16,4 +16,6 @@ public interface VoiceController {
     public void updatePosition(final Point anchor, final Area area);
 
     public void release();
+
+    public void onGainChanged();
 }
