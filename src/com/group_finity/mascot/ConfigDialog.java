@@ -1,6 +1,8 @@
 package com.group_finity.mascot;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.event.*;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -16,6 +18,8 @@ public class ConfigDialog extends JDialog {
     private JSlider voiceSlider;
     private JCheckBox sfxCheckBox;
     private JSlider sfxSlider;
+    private JLabel voiceGainLabel;
+    private JLabel sfxGainLabel;
     private final UserConfig config;
 
     public ConfigDialog(UserConfig conf, ResourceBundle resourceBundle) {
@@ -30,9 +34,24 @@ public class ConfigDialog extends JDialog {
         } catch (Exception ignored) {
         }
         voiceCheckBox.setSelected(config.voiceOn);
-        voiceSlider.setValue((int) (config.voiceGain * 100));
+        voiceSlider.setValue((int) (20 * Math.log10(config.voiceGain)));
+        voiceGainLabel.setText(voiceSlider.getValue() + "db");
+        voiceSlider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                voiceGainLabel.setText(String.format("%3ddb",voiceSlider.getValue()));
+            }
+        });
         sfxCheckBox.setSelected(config.sfxOn);
-        sfxSlider.setValue((int) (config.sfxGain * 100));
+        sfxSlider.setValue((int) (int) (20 * Math.log10(config.sfxGain)));
+        sfxGainLabel.setText(sfxSlider.getValue() + "db");
+        sfxSlider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+
+                sfxGainLabel.setText(String.format("%3ddb",sfxSlider.getValue()));
+            }
+        });
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onOK();
@@ -66,8 +85,8 @@ public class ConfigDialog extends JDialog {
         dispose();
         config.voiceOn = voiceCheckBox.isSelected();
         config.sfxOn = sfxCheckBox.isSelected();
-        config.voiceGain = voiceSlider.getValue() / 100f;
-        config.sfxGain = sfxSlider.getValue() / 100f;
+        config.voiceGain = (float) (Math.pow(10,voiceSlider.getValue()/20.0));
+        config.sfxGain = (float) (Math.pow(10,sfxSlider.getValue()/20.0));
         for (UserConfig.Callback callback : config.onConfigUpdated)
             try {
                 callback.onConfigUpdated(config);
