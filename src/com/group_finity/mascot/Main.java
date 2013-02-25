@@ -77,7 +77,7 @@ public abstract class Main {
                     config = (UserConfig) unmarshal;
                 }
             } catch (JAXBException e) {
-                log.log(Level.WARNING, "Read UserConfig Failed, Using default.");
+                log.log(Level.INFO, resourceBundle.getString("message.using_default_userconfig"));
             }
         if (null == config) config = new UserConfig();
         if (null != context){
