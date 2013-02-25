@@ -6,7 +6,7 @@ VocalShimeji 是在桌宠软件 [しめじ2.2.2](http://www.group-finity.com/Shi
 
 目前可用的主题文件只有 Hijikata_Toshirou ，其他人物的主题文件尚在计划中。
 
-# 关于 Hijikata_Toushirou `土方十四郎/银魂人物` 主题 
+# 关于 Hijikata_Toushirou `土方十四郎/《银魂》人物` 主题
 * 策划 [Aki](http://weibo.com/akitang0531)
 * 画师 [无肉不欢的壳](http://weibo.com/feiqiuxuan)
 * 配音`[冷泉夜月](http://weibo.com/lengquanyeyue)
@@ -16,35 +16,27 @@ VocalShimeji 是在桌宠软件 [しめじ2.2.2](http://www.group-finity.com/Shi
  * [Bitbucket](https://bitbucket.org/magi/vocalshimeji/downloads)
 
 # 最近更新
-## VocalShimeji `version 1.6`
+## VocalShimeji `version 1.8RC`
 
 更新日期
 
-* 2013/01/20
+* 2013/02/25
 
 更新说明
 
 * 新增特性
-    * 声音系统3D效果
-    * 音效文件支持ogg或wav格式
-    * 菜单项文字及对应音频改由配置文件指定
-* 修正问题
-    * 声音在某些情况下可能无限循环某一小段，
-      需要停用再启用音效才能恢复的问题
-* 优化调整
-    * 内存及CPU占用过高的问题
-    * 优化调整音效类声音采用循环方式实现，减少资源开销
-    * 调整资源打包结构，相应调整配置文件格式要求
+    * 支持屏幕保护程序模式
+    * 支持设置音效、语音音量增益
 
-## Hijikata_Toushirou `release 0.9`
+## Hijikata_Toushirou `release 0.94`
 
 更新日期
 
-* 2013/01/20
+* 2013/02/25
 
 更新说明
 
-* 修正问题
-    * 宠物面向某些方向时可能出现左右颠倒的文字的问题
+* 新增特性
+    * 配合VocalShimeji调整支持屏幕保护程序模式
 * 优化问题
-    * 音效文件改为Ogg(q10.0)压缩格式，在保证音质的前提下缩小打包体积
+    * 调整主题包类路径，明确打包结构
