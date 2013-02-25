@@ -25,10 +25,8 @@ public final class SoundFactory {
     static final AL al = ALFactory.getAL();
     public static boolean voiceOn = true;
     public static float voiceGain = 1.0f;
-    protected static final ConcurrentLinkedQueue<VoiceController> voiceControllers = new ConcurrentLinkedQueue<VoiceController>();
     public static boolean sfxOn = true;
     public static float sfxGain = 1.0f;
-    protected static final ConcurrentLinkedQueue<SfxController> sfxControllers = new ConcurrentLinkedQueue<SfxController>();
     @SuppressWarnings("CanBeFinal")
     public static boolean sound3D = true;
     public static final int defaultVoicePriority = -10;
@@ -38,24 +36,12 @@ public final class SoundFactory {
     public static final int defaultSleepMSec = 100;
     public final Main main;
 
-    /**
-     * 无论是否有变化都再次更新音量设置
-     * @param gain
-     */
     public void setSfxGain(float gain) {
         sfxGain = gain;
-        for (SfxController sfxController:sfxControllers)
-            sfxController.onGainChanged();
     }
 
-    /**
-     * 无论是否有变化都再次更新音量设置
-     * @param gain
-     */
     public void setVoiceGain(float gain) {
         voiceGain = gain;
-        for (VoiceController voiceController:voiceControllers)
-            voiceController.onGainChanged();
     }
     static {
         AudioSystem3D.init();
@@ -109,7 +95,6 @@ public final class SoundFactory {
                 localSource.setPosition(0.0F, 0.0F, 0.0F);
                 localSource.setLooping(false);
                 localSource.setGain(voiceGain);
-                voiceControllers.add(this);
             }
 
             volatile SoundBuffer lastPlayed;
@@ -127,6 +112,7 @@ public final class SoundFactory {
                         }
                     curLevel = priority;
                     lastPlayed = voice;
+                    localSource.setGain(voiceGain);
                     localSource.setBuffer(voice);
                     localSource.play();
                 }
@@ -157,13 +143,7 @@ public final class SoundFactory {
             public void release() {
                 if (null != localSource){
                     localSource.delete();
-                    voiceControllers.remove(this);
                 }
-            }
-
-            @Override
-            public void onGainChanged() {
-                localSource.setGain(sfxGain);
             }
 
         };
@@ -178,7 +158,6 @@ public final class SoundFactory {
                 localSource.setPosition(0.0F, 0.0F, 0.0F);
                 localSource.setLooping(true);
                 localSource.setGain(sfxGain);
-                sfxControllers.add(this);
             }
 
             SoundBuffer buffer;
@@ -189,6 +168,7 @@ public final class SoundFactory {
                     localSource.stop();
                     buffer = sound;
                     if (null != sound) {
+                        localSource.setGain(sfxGain);
                         localSource.setBuffer(sound);
                         localSource.play();
                     }
@@ -213,14 +193,9 @@ public final class SoundFactory {
             public void release() {
                 if (null != localSource){
                     localSource.delete();
-                    sfxControllers.remove(this);
                 }
             }
 
-            @Override
-            public void onGainChanged() {
-                localSource.setGain(sfxGain);
-            }
         };
     }
 

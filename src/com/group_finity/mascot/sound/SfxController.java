@@ -17,5 +17,4 @@ public interface SfxController {
 
     public void release();
 
-    public void onGainChanged();
 }

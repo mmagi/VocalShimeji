@@ -17,5 +17,4 @@ public interface VoiceController {
 
     public void release();
 
-    public void onGainChanged();
 }
