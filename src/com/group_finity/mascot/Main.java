@@ -142,6 +142,7 @@ public abstract class Main {
     protected abstract URL getMouseIcon();
 
     public void run() {
+        applyUserConfig(userConfig);
         initSound();
         loadConfiguration();
         BufferedImage cursorImage = null;
@@ -173,7 +174,6 @@ public abstract class Main {
         } catch (InvocationTargetException e) {
             log.log(Level.WARNING, resourceBundle.getString("exception.init_tray_icon_failed"), e);
         }
-        applyUserConfig(userConfig);
         manager.createMascot();
         manager.start();
     }
