@@ -22,6 +22,7 @@ final class ActionWithSoundInvoker extends Thread {
                 localSource = new SoundSource();
                 localSource.setBuffer(sound);
                 localSource.setPosition(0.0F, 0.0F, 0.0F);
+                localSource.setGain(SoundFactory.voiceGain);
                 localSource.setLooping(false);
                 this.done = false;
             } catch (Throwable e) {
