@@ -11,6 +11,10 @@ import org.xml.sax.SAXException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
@@ -42,6 +46,7 @@ public abstract class Main {
     final ImagePairLoader imagePairLoader;
     Cursor cursor;
     final MascotPopupMenu mascotPopupMenu;
+    final UserConfig userConfig;
 
     protected Main(ResourceBundle resourceBundle) {
         this.resourceBundle = resourceBundle;
@@ -51,7 +56,41 @@ public abstract class Main {
         soundFactory = new SoundFactory(this);
         imagePairLoader = new ImagePairLoader(this);
         mascotPopupMenu = new MascotPopupMenu(this);
+        userConfig = ReadUserConfig(resourceBundle);
+        userConfig.onConfigUpdated.add(new UserConfig.Callback() {
+            @Override
+            public void onConfigUpdated(final UserConfig config) {
+                applyUserConfig(config);
+            }
+        });
         BEHAVIOR_GATHER = resourceBundle.getString("action.BEHAVIOR_GATHER");
+    }
+
+    protected static UserConfig ReadUserConfig(final ResourceBundle resourceBundle) {
+        UserConfig config = null;
+        JAXBContext context=null;
+            try {
+                context = JAXBContext.newInstance(UserConfig.class);
+                final Unmarshaller unmarshaller = context.createUnmarshaller();
+                final Object unmarshal = unmarshaller.unmarshal(new File(resourceBundle.getString("configDlg.conf_file_path")));
+                if (unmarshal instanceof UserConfig) {
+                    config = (UserConfig) unmarshal;
+                }
+            } catch (JAXBException e) {
+                log.log(Level.WARNING, "Read UserConfig Failed, Using default.");
+            }
+        if (null == config) config = new UserConfig();
+        if (null != context){
+            final JAXBContext cxt = context;
+            config.onConfigUpdated.add(new UserConfig.Callback() {
+                @Override
+                public void onConfigUpdated(final UserConfig config) throws Exception {
+                    final Marshaller marshaller = cxt.createMarshaller();
+                    marshaller.marshal(config, new File(resourceBundle.getString("configDlg.conf_file_path")));
+                }
+            });
+        }
+        return config;
     }
 
     private static void checkJnaDll(String dir) {
@@ -134,19 +173,22 @@ public abstract class Main {
         } catch (InvocationTargetException e) {
             log.log(Level.WARNING, resourceBundle.getString("exception.init_tray_icon_failed"), e);
         }
+        applyUserConfig(userConfig);
         manager.createMascot();
         manager.start();
     }
 
     public void scrnSaveRun() {
+        applyUserConfig(ReadUserConfig(resourceBundle));
         initSound();
         loadConfiguration();
         manager.createMascot();
         manager.start();
     }
 
-    public static void showConfigRun() {
-        JOptionPane.showConfirmDialog(null, "目前版本没有可以设置的选项。", "设置", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);
+    public static void showConfigRun(final ResourceBundle resourceBundle) {
+        final UserConfig userConfig = ReadUserConfig(resourceBundle);
+        new ConfigDialog(userConfig,resourceBundle).setVisible(true);
         System.exit(0);
     }
 
@@ -234,6 +276,26 @@ public abstract class Main {
     public abstract URL getSoundResource(String resName);
 
     public abstract URL getImageResource(String name);
+
+    public void showConfigDlg() {
+        new ConfigDialog(userConfig,resourceBundle).setVisible(true);
+    }
+
+    private void applyUserConfig(final UserConfig userConfig) {
+        soundFactory.sfxOn = userConfig.sfxOn;
+        mascotPopupMenu.sfxMenu.setState(userConfig.sfxOn);
+        mascotPopupMenu.jSfxMenu.setState(userConfig.sfxOn);
+
+        soundFactory.voiceOn = userConfig.voiceOn;
+        mascotPopupMenu.voiceMenu.setState(userConfig.voiceOn);
+        mascotPopupMenu.jVoiceMenu.setState(userConfig.voiceOn);
+
+        if (soundFactory.sfxGain != userConfig.sfxGain)
+            soundFactory.setSfxGain(userConfig.sfxGain);
+
+        if (soundFactory.voiceGain != userConfig.voiceGain)
+            soundFactory.setVoiceGain(userConfig.voiceGain);
+    }
 
     public static class UTF8ResourceBundleControl extends ResourceBundle.Control {
         @Override

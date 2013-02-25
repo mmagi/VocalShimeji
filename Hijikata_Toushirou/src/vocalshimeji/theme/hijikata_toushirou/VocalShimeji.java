@@ -47,12 +47,12 @@ public class VocalShimeji extends Main {
                     new VocalShimeji().run();
                 }
             } catch (final Throwable e) {
-                log.log(Level.ALL, "启动时出现错误", e);
+                log.log(Level.ALL, "Loading Error", e);
                 splashScreen.reportErrorAndExit(e);
             }
             splashScreen.dispose();
         } else {
-            showConfigRun();
+            showConfigRun(ResourceBundle.getBundle(VocalShimeji.class.getName(), new UTF8ResourceBundleControl()));
         }
     }
 

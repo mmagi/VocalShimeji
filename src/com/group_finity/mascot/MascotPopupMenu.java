@@ -19,6 +19,7 @@ class MascotPopupMenu {
     final ActionListener oneMenuListener;
     final ActionListener aboutMenuListener;
     final ActionListener closeMenuListener;
+    final ActionListener configDialogMenuListener;
     final CheckboxMenuItem voiceMenu;
     final JCheckBoxMenuItem jVoiceMenu;
     final CheckboxMenuItem sfxMenu;
@@ -112,6 +113,12 @@ class MascotPopupMenu {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SoundFactory.invokeAfterSound(sound, cmd);
+            }
+        };
+        configDialogMenuListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                main.showConfigDlg();
             }
         };
 
@@ -239,6 +246,8 @@ class MascotPopupMenu {
         oneMenu.addActionListener(oneMenuListener);
         final MenuItem restoreMenu = new MenuItem(main.resourceBundle.getString("menu.cmd_restore_window"));//IEを元に戻す");
         restoreMenu.addActionListener(restoreMenuListener);
+        final MenuItem configDlgMenu = new MenuItem(main.resourceBundle.getString("menu.cmd_show_config_dlg"));
+        configDlgMenu.addActionListener(configDialogMenuListener);
         final MenuItem aboutMenu = new MenuItem(main.resourceBundle.getString("menu.cmd_show_about_win"));//"Toshimeji について");
         aboutMenu.addActionListener(aboutMenuListener);
         final MenuItem closeMenu = new MenuItem(main.resourceBundle.getString("menu.cmd_exit_app"));//ばいばい");
@@ -250,6 +259,7 @@ class MascotPopupMenu {
         mainMenu.addSeparator();
         mainMenu.add(voiceMenu);
         mainMenu.add(sfxMenu);
+        mainMenu.add(configDlgMenu);
         mainMenu.addSeparator();
         mainMenu.add(aboutMenu);
         mainMenu.add(closeMenu);
