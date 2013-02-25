@@ -35,21 +35,21 @@ public class ConfigDialog extends JDialog {
         }
         voiceCheckBox.setSelected(config.voiceOn);
         voiceSlider.setValue((int) (20 * Math.log10(config.voiceGain)));
-        voiceGainLabel.setText(voiceSlider.getValue() + "db");
+        voiceGainLabel.setText(String.format("%+03ddb",voiceSlider.getValue()));
         voiceSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                voiceGainLabel.setText(String.format("%3ddb",voiceSlider.getValue()));
+                voiceGainLabel.setText(String.format("%+03ddb",voiceSlider.getValue()));
             }
         });
         sfxCheckBox.setSelected(config.sfxOn);
         sfxSlider.setValue((int) (int) (20 * Math.log10(config.sfxGain)));
-        sfxGainLabel.setText(sfxSlider.getValue() + "db");
+        sfxGainLabel.setText(String.format("%+03ddb",sfxSlider.getValue()));
         sfxSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
 
-                sfxGainLabel.setText(String.format("%3ddb",sfxSlider.getValue()));
+                sfxGainLabel.setText(String.format("%+03ddb",sfxSlider.getValue()));
             }
         });
         buttonOK.addActionListener(new ActionListener() {
