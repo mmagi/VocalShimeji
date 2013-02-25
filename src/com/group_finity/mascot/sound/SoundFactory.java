@@ -14,7 +14,6 @@ import com.jogamp.openal.sound3d.Listener;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.awt.*;
-import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
@@ -39,12 +38,20 @@ public final class SoundFactory {
     public static final int defaultSleepMSec = 100;
     public final Main main;
 
+    /**
+     * 无论是否有变化都再次更新音量设置
+     * @param gain
+     */
     public void setSfxGain(float gain) {
         sfxGain = gain;
         for (SfxController sfxController:sfxControllers)
             sfxController.onGainChanged();
     }
 
+    /**
+     * 无论是否有变化都再次更新音量设置
+     * @param gain
+     */
     public void setVoiceGain(float gain) {
         voiceGain = gain;
         for (VoiceController voiceController:voiceControllers)
