@@ -35,7 +35,7 @@ public class Dragged extends ActionBase {
         super.init(mascot);
 
         setFootX(getEnvironment().getCursor().getX());
-        setTimeToRegist(250);
+        setTimeToRegist(45);
 
     }
 
