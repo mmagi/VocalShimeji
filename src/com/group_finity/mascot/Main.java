@@ -44,7 +44,7 @@ public abstract class Main {
     final PopupMenu mainMenu;
     final SoundFactory soundFactory;
     final ImagePairLoader imagePairLoader;
-    Cursor cursor;
+    Cursor cursor,cursorPressed;
     final MascotPopupMenu mascotPopupMenu;
     final UserConfig userConfig;
 
@@ -139,15 +139,11 @@ public abstract class Main {
      *
      * @return
      */
-    protected abstract URL getMouseIcon();
-
-    public void run() {
-        applyUserConfig(userConfig);
-        initSound();
-        loadConfiguration();
+    protected abstract URL getResResource(String name);
+    public final Cursor prepareCursor(final URL url,final int hotSpotX,final int hotSpotY){
         BufferedImage cursorImage = null;
         try {
-            cursorImage = ImageIO.read(getMouseIcon());
+            cursorImage = ImageIO.read(url);
             Dimension size = Toolkit.getDefaultToolkit().getBestCursorSize(cursorImage.getWidth(), cursorImage.getHeight());
             BufferedImage scaledImage = new BufferedImage(size.width, size.height, cursorImage.getType());
             // Paint scaled version of image to new image
@@ -159,9 +155,24 @@ public abstract class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Point hotSpot = new Point(8, 3);
         String cursorName = "VocalShimejiCursor";
-        cursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImage, hotSpot, cursorName);
+        return Toolkit.getDefaultToolkit().createCustomCursor(cursorImage, new Point(hotSpotX,hotSpotY), cursorName);
+    }
+    public void run() {
+        applyUserConfig(userConfig);
+        initSound();
+        loadConfiguration();
+
+        cursor = prepareCursor(
+                getResResource(resourceBundle.getString("shimeji.mouse_cursor_resname")),
+                Integer.parseInt(resourceBundle.getString("shimeji.mouse_cursor_hotspot_x")),
+                Integer.parseInt(resourceBundle.getString("shimeji.mouse_cursor_hotspot_y"))
+        );
+        cursorPressed = prepareCursor(
+                getResResource(resourceBundle.getString("shimeji.mouse_cursor_pressed_resname")),
+                Integer.parseInt(resourceBundle.getString("shimeji.mouse_cursor_pressed_hotspot_x")),
+                Integer.parseInt(resourceBundle.getString("shimeji.mouse_cursor_pressed_hotspot_y"))
+        );
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
                 @Override
@@ -229,11 +240,6 @@ public abstract class Main {
         }
     }
 
-    /**
-     * Main.getInstance().theme.getResource(resourceBundle.getString("image.tray_icon"))
-     * @return
-     */
-    protected abstract URL getTrayIcon();
     private void createTrayIcon() {
         log.log(Level.INFO, resourceBundle.getString("message.create_tray_icon"));
         if (SystemTray.getSystemTray() == null) {
@@ -241,7 +247,7 @@ public abstract class Main {
         }
         mascotPopupMenu.prepareMainMenu(mainMenu);
         try {
-            TrayIcon icon = new TrayIcon(ImageIO.read(getTrayIcon()), "VocalShimeji", mainMenu);
+            TrayIcon icon = new TrayIcon(ImageIO.read(getResResource(resourceBundle.getString("shimeji.tray_icon_resname"))), "VocalShimeji", mainMenu);
             mascotPopupMenu.prepareTrayIcon(icon);
             SystemTray.getSystemTray().add(icon);
         } catch (IOException e) {

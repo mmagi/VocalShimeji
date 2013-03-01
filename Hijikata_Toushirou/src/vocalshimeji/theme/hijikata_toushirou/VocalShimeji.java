@@ -62,16 +62,6 @@ public class VocalShimeji extends Main {
         return VocalShimeji.class.getResourceAsStream("conf/" + name);
     }
 
-    @Override
-    protected URL getMouseIcon() {
-        return VocalShimeji.class.getResource("res/mouse.png");
-    }
-
-    @Override
-    protected URL getTrayIcon() {
-        return VocalShimeji.class.getResource("res/icon.png");
-    }
-
     final AboutScreen aboutScreen = new AboutScreen();
 
     @Override
@@ -84,6 +74,10 @@ public class VocalShimeji extends Main {
         return VocalShimeji.class.getResource("media/" + name);
     }
 
+    @Override
+    public URL getResResource(String name) {
+        return VocalShimeji.class.getResource("res/" + name);
+    }
     @Override
     public URL getImageResource(String name) {
         return VocalShimeji.class.getResource("image/" + name);
