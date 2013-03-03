@@ -23,7 +23,7 @@ public class MascotEventHandler implements MouseListener {
         if (mascot.getBehavior() != null) {
             try {
                 mascot.getBehavior().mousePressed(event);
-                mascot.getWindow().asJWindow().setCursor(mascot.getManager().main.cursorPressed);
+                if (SwingUtilities.isLeftMouseButton(event)) mascot.getWindow().asJWindow().setCursor(mascot.getManager().main.cursorPressed);
             } catch (final CantBeAliveException e) {
                 log.log(Level.SEVERE, "生き続けることが出来ない状況", e);
                 mascot.dispose();
@@ -45,7 +45,7 @@ public class MascotEventHandler implements MouseListener {
         } else {
             if (mascot.getBehavior() != null) {
                 try {
-                    mascot.getWindow().asJWindow().setCursor(mascot.getManager().main.cursor);
+                    if (SwingUtilities.isLeftMouseButton(event)) mascot.getWindow().asJWindow().setCursor(mascot.getManager().main.cursor);
                     mascot.getBehavior().mouseReleased(event);
                 } catch (final CantBeAliveException e) {
                     log.log(Level.SEVERE, "生き続けることが出来ない状況", e);
