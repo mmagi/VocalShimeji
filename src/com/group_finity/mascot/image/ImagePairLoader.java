@@ -33,18 +33,18 @@ public class ImagePairLoader {
         // flip では半透明にならない画像があるらしいので
         // shime1.png に対して shime1-r.png を反転画像として使用するようにして回避。
         String rightName = name.replaceAll("\\.[a-zA-Z]+$", "-r$0");
-
-        final BufferedImage leftImage = ImageIO.read(main.getImageResource(name));
-
-
-        final BufferedImage rightImage;
-        if (main.getImageResource(rightName) == null) {
-            rightImage = flip(leftImage);
-        } else {
-            rightImage = ImageIO.read(main.getImageResource(rightName));
+        try {
+            final BufferedImage leftImage = ImageIO.read(main.getImageResource(name));
+            final BufferedImage rightImage;
+            if (main.getImageResource(rightName) == null) {
+                rightImage = flip(leftImage);
+            } else {
+                rightImage = ImageIO.read(main.getImageResource(rightName));
+            }
+            return new ImagePair(new MascotImage(leftImage, center), new MascotImage(rightImage, new Point(rightImage.getWidth() - center.x, center.y)));
+        } catch (IllegalArgumentException npe) {
+            throw new RuntimeException("Error Reading file:" + name, npe);
         }
-
-        return new ImagePair(new MascotImage(leftImage, center), new MascotImage(rightImage, new Point(rightImage.getWidth() - center.x, center.y)));
     }
 
     /**
