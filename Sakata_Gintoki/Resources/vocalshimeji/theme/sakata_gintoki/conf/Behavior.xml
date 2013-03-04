@@ -10,31 +10,31 @@
         <行動 名前="落下する" 頻度="0">
             <!--请用这个来测试特定动作,把14塞到屏幕最下面超过边界 着陆以后一定会出现 行動参照 指定的动作-->
 
-            <!--次の行動リスト>
-                <行動参照 名前="座ってマウスのほうを見てたら首が回った" 頻度="10"/>
+            <!--次の行動リスト  追加="false">
+                <行動参照 名前="分裂する" 頻度="10"/>
             </次の行動リスト-->
         </行動>
 
         <!-- システムが使用する -->
         <行動 名前="マウスの周りに集まる" 頻度="0">
-            <次の行動リスト 追加="false">
+            <!--次の行動リスト 追加="false">
                 <行動参照 名前="座ってマウスのほうを見る" 頻度="1"/>
-            </次の行動リスト>
+            </次の行動リスト-->
         </行動>
 
-        <行動 名前="座ってマウスのほうを見る" 頻度="0">
+        <!--行動 名前="座ってマウスのほうを見る" 頻度="0">
             <次の行動リスト 追加="false">
                 <行動参照 名前="座ってマウスのほうを見る" 頻度="100"/>
                 <行動参照 名前="座ってマウスのほうを見てたら首が回った" 頻度="10"/>
                 <行動参照 名前="座って足をぶらぶらさせる" 頻度="1"/>
             </次の行動リスト>
-        </行動>
+        </行動-->
 
-        <行動 名前="座ってマウスのほうを見てたら首が回った" 頻度="5">
+        <!--行動 名前="座ってマウスのほうを見てたら首が回った" 頻度="5">
             <次の行動リスト 追加="false">
                 <行動参照 名前="座ってマウスのほうを見る" 頻度="1"/>
             </次の行動リスト>
-        </行動>
+        </行動-->
 
 
         <!-- システムが使用する -->
@@ -43,7 +43,7 @@
         <!-- システムが使用する -->
         <行動 名前="投げられる" 頻度="0"/>
 
-        <行動 名前="引っこ抜かれる" 頻度="0"/>
+        <!--行動 名前="引っこ抜かれる" 頻度="0"/-->
         <行動 名前="分裂した" 頻度="0"/>
 
         <!-- 地面に接しているとき -->
@@ -51,11 +51,11 @@
             <行動 名前="立ってボーっとする" 頻度="200"/>
             <行動 名前="座ってボーっとする" 頻度="200">
                 <次の行動リスト 追加="true">
-                    <行動参照 名前="座って足をぶらぶらさせる" 頻度="100"/>
+                    <!--行動参照 名前="座って足をぶらぶらさせる" 頻度="100"/-->
                     <行動参照 名前="寝そべってボーっとする" 頻度="100"/>
                 </次の行動リスト>
             </行動>
-            <行動 名前="座って足をぶらぶらさせる" 頻度="0"/>
+            <!--行動 名前="座って足をぶらぶらさせる" 頻度="0"/-->
             <行動 名前="寝そべってボーっとする" 頻度="0">
                 <次の行動リスト 追加="false">
                     <行動参照 名前="座ってボーっとする" 頻度="100"/>
@@ -104,7 +104,7 @@
             <行動 名前="IEの下に飛びつく" 頻度="50" 条件="#{mascot.anchor.x &gt;= mascot.environment.activeIE.left &amp;&amp;
 				mascot.anchor.x &lt; mascot.environment.activeIE.right}"/>
 
-            <行動 名前="引っこ抜く" 頻度="50" 条件="#{mascot.totalCount &lt; 50}"/>
+            <!--行動 名前="引っこ抜く" 頻度="50" 条件="#{mascot.totalCount &lt; 50}"/-->
         </条件>
 
         <!-- ワークエリアの壁に接しているとき -->
@@ -169,14 +169,14 @@
             <行動 名前="IEの右に飛びつく" 頻度="5" 条件="#{mascot.anchor.x &gt; mascot.environment.activeIE.right &amp;&amp;
 				Math.abs(mascot.environment.activeIE.bottom-mascot.anchor.y) &lt;mascot.environment.activeIE.height/4}"/>
 
-            <行動 名前="IEを右に投げる" 頻度="20" 条件="#{mascot.environment.activeIE.bottom &lt; mascot.anchor.y-64 &amp;&amp;
+            <!--行動 名前="IEを右に投げる" 頻度="20" 条件="#{mascot.environment.activeIE.bottom &lt; mascot.anchor.y-64 &amp;&amp;
 				mascot.anchor.x &lt; mascot.environment.activeIE.left}"/>
             <行動 名前="IEを左に投げる" 頻度="20" 条件="#{mascot.environment.activeIE.bottom &lt; mascot.anchor.y-64 &amp;&amp;
 				mascot.anchor.x &gt; mascot.environment.activeIE.right}"/>
             <行動 名前="走ってIEを右に投げる" 頻度="20" 条件="#{mascot.environment.activeIE.bottom &lt; mascot.anchor.y-64 &amp;&amp;
 				mascot.anchor.x &lt; mascot.environment.activeIE.left}"/>
             <行動 名前="走ってIEを左に投げる" 頻度="20" 条件="#{mascot.environment.activeIE.bottom &lt; mascot.anchor.y-64 &amp;&amp;
-				mascot.anchor.x &gt; mascot.environment.activeIE.right}"/>
+				mascot.anchor.x &gt; mascot.environment.activeIE.right}"/-->
         </条件>
 
 
