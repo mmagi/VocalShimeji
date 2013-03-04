@@ -28,10 +28,16 @@ final class AboutScreen extends JWindow {
                     if (dx >= 0 && dx <= areaSize && dy >= 0 && dy <= areaSize) {
                         try {
                             Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + href[i]);
+                            break;
                         } catch (IOException e1) {
                             VocalShimeji.log.log(Level.INFO, "跳转网址失败", e1);
                         }
                     }
+                }
+                if (y > 230) try {
+                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler http://bitbucket.org/magi/vocalshimeji");
+                } catch (IOException e1) {
+                    VocalShimeji.log.log(Level.INFO, "跳转网址失败", e1);
                 }
                 setVisible(false);
             }
