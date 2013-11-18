@@ -18,8 +18,8 @@ final class AboutScreen extends JWindow {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                final int[][] hotArea = {{182, 161}, {156, 181}, {128, 203}, {182, 203}, {244, 203}};
-                final String[] href = {"http://weibo.com/feiqiuxuan", "http://weibo.com/lengquanyeyue", "http://weibo.com/akitang0531", "http://weibo.com/u/1450315544", "http://weibo.com/mmagi"};
+                final int[][] hotArea = {{131,160},{144, 181}, {128, 223}, {182, 223}};
+                final String[] href = {"http://weibo.com/p/1005052097072214","http://weibo.com/hansersan", "http://weibo.com/akitang0531","http://weibo.com/mmagi"};
                 final int x = e.getX();
                 final int y = e.getY();
                 final int areaSize = 16;

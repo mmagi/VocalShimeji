@@ -67,7 +67,7 @@
 
         <!--15和26是同一个图 16和27是同一个图 17和28是同一个图 26到29共4个图是一个序列青年14 重复图已剔除 11是左下的14 不同于这个序列 已剔除-->
         <!--重新调整了图片序列配合音频-->
-        <動作 名前="座って首が回る" voice="action_change1.wav" 種類="固定" 枠="地面">
+        <動作 名前="座って首が回る" voice="action_change1.ogg" 種類="固定" 枠="地面">
             <アニメーション>
                 <ポーズ 画像="shime26.png" 基準座標="64,128" 移動速度="0,0" 長さ="15"/>
                 <ポーズ 画像="shime27.png" 基準座標="64,128" 移動速度="0,0" 長さ="5"/>
@@ -98,7 +98,7 @@
             </アニメーション>
         </動作>
 
-        <動作 名前="足をぶらぶらさせる" 種類="静止" 枠="地面" voice="action_change2.wav">
+        <動作 名前="足をぶらぶらさせる" 種類="静止" 枠="地面" voice="action_change2.ogg">
             <アニメーション>
                 <ポーズ 画像="shime31.png" 基準座標="64,112" 移動速度="0,0" 長さ="5"/>
                 <ポーズ 画像="shime32.png" 基準座標="64,112" 移動速度="0,0" 長さ="15"/>
@@ -115,7 +115,7 @@
             </アニメーション>
         </動作>
 
-        <動作 名前="ずりずり" 種類="移動" 枠="地面" voice="action_play.wav">
+        <動作 名前="ずりずり" 種類="移動" 枠="地面" voice="action_play.ogg">
             <アニメーション sfx="sfx_crawl.ogg">
                 <ポーズ 画像="shime20.png" 基準座標="64,128" 移動速度="0,0" 長さ="28"/>
                 <ポーズ 画像="shime20.png" 基準座標="64,128" 移動速度="-2,0" 長さ="4"/>
@@ -213,7 +213,7 @@
         <!-- 落下系 -->
 
         <動作 名前="ジャンプ" 種類="組み込み" クラス="com.group_finity.mascot.action.Jump"
-            速度="20" voice="action_jump.wav">
+            速度="20" voice="action_jump.ogg">
             <アニメーション>
                 <ポーズ 画像="shime22.png" 基準座標="64,128" 移動速度="0,0" 長さ="250"/>
             </アニメーション>
@@ -256,19 +256,19 @@
         <!--“给我适可而止啊 混蛋（てめえ）”‘お前’好受好受有没有-->
         <!--参考台本“混账，我要以妨碍公务罪逮捕你”-->
         <動作 名前="つままれる" 種類="組み込み" クラス="com.group_finity.mascot.action.Dragged">
-            <アニメーション 条件="#{footX &lt; mascot.environment.cursor.x-100}" voice="event_drag1.wav" priority="3">
+            <アニメーション 条件="#{footX &lt; mascot.environment.cursor.x-100}" voice="event_drag1.ogg" priority="3">
                 <ポーズ 画像="shime9.png" 基準座標="64,128" 移動速度="0,0" 長さ="5"/>
             </アニメーション>
-            <アニメーション 条件="#{footX &lt; mascot.environment.cursor.x-20}" voice="event_drag2.wav" priority="2">
+            <アニメーション 条件="#{footX &lt; mascot.environment.cursor.x-20}" voice="event_drag2.ogg" priority="2">
                 <ポーズ 画像="shime7.png" 基準座標="64,128" 移動速度="0,0" 長さ="5"/>
             </アニメーション>
-            <アニメーション 条件="#{footX &lt; mascot.environment.cursor.x+20}" voice="action_drag.wav" priority="1">
+            <アニメーション 条件="#{footX &lt; mascot.environment.cursor.x+20}" voice="action_drag.ogg" priority="1">
                 <ポーズ 画像="shime1.png" 基準座標="64,128" 移動速度="0,0" 長さ="5"/>
             </アニメーション>
-            <アニメーション 条件="#{footX &lt; mascot.environment.cursor.x+100}" voice="event_drag4.wav" priority="2">
+            <アニメーション 条件="#{footX &lt; mascot.environment.cursor.x+100}" voice="event_drag4.ogg" priority="2">
                 <ポーズ 画像="shime8.png" 基準座標="64,128" 移動速度="0,0" 長さ="5"/>
             </アニメーション>
-            <アニメーション 条件="#{footX &gt;= mascot.environment.cursor.x+100}" voice="event_drag5.wav" priority="3">
+            <アニメーション 条件="#{footX &gt;= mascot.environment.cursor.x+100}" voice="event_drag5.ogg" priority="3">
                 <ポーズ 画像="shime10.png" 基準座標="64,128" 移動速度="0,0" 長さ="5"/>
             </アニメーション>
         </動作>
@@ -313,10 +313,10 @@
     <動作リスト>
 
         <!-- 出场动作、以及屏幕坐标越界动作，对应主动从高台跳下 -->
-        <動作 名前="落下する" 種類="複合" 繰り返し="false" voice="action_begindrop.wav">
+        <動作 名前="落下する" 種類="複合" 繰り返し="false" voice="action_begindrop.ogg">
             <動作参照 名前="落ちる"/>
             <動作 種類="選択">
-                <動作 種類="複合" voice="action_dropped.wav" 条件="${mascot.environment.floor.isOn(mascot.anchor) ||
+                <動作 種類="複合" voice="action_dropped.ogg" 条件="${mascot.environment.floor.isOn(mascot.anchor) ||
 					mascot.environment.activeIE.topBorder.isOn(mascot.anchor) }">
                     <動作参照 名前="跳ねる"/>
                     <動作参照 名前="立つ" 長さ="${100+Math.random()*100}"/>
@@ -328,15 +328,15 @@
         <!--以下 鼠标点到十四后的动作， 点住十四鼠标不动一段时间后十四会挣脱，这个声音缺-->
         <!-- システムが使用する -->
         <動作 名前="ドラッグされる" 種類="複合" 繰り返し="true">
-            <動作参照 名前="つままれる" voice="action_drag.wav"/>
+            <動作参照 名前="つままれる" voice="action_drag.ogg"/>
             <動作参照 名前="抵抗する"/>
         </動作>
 
         <!-- システムが使用する -->
-        <動作 名前="投げられる" 種類="複合" 繰り返し="false" voice="action_fall.wav">
+        <動作 名前="投げられる" 種類="複合" 繰り返し="false" voice="action_fall.ogg">
             <動作参照 名前="落ちる" 初速X="${mascot.environment.cursor.dx}" 初速Y="${mascot.environment.cursor.dy}"/>
             <動作 種類="選択">
-                <動作 種類="複合" voice="action_land.wav"
+                <動作 種類="複合" voice="action_land.ogg"
                     条件="${mascot.environment.floor.isOn(mascot.anchor) || mascot.environment.activeIE.topBorder.isOn(mascot.anchor) }">
                     <動作参照 名前="跳ねるforLand"/>
                     <動作参照 名前="立つ" 長さ="${100+Math.random()*100}"/>
@@ -350,7 +350,7 @@
             <動作参照 名前="立つ" 長さ="${500+Math.random()*1000}"/>
         </動作>
 
-        <動作 名前="座ってボーっとする" voice="action_beginsit.wav" 種類="複合" 繰り返し="false">
+        <動作 名前="座ってボーっとする" voice="action_beginsit.ogg" 種類="複合" 繰り返し="false">
             <動作参照 名前="座る" 長さ="${500+Math.random()*1000}"/>
         </動作>
 
@@ -384,12 +384,12 @@
             <動作参照 名前="立つ"/>
         </動作>
 
-        <動作 名前="ワークエリアの下辺を歩く" 種類="複合" 繰り返し="false" voice="action_beginwalk.wav">
+        <動作 名前="ワークエリアの下辺を歩く" 種類="複合" 繰り返し="false" voice="action_beginwalk.ogg">
             <動作参照 名前="歩く"
                   目的地X="${mascot.environment.workArea.left+64+Math.random()*(mascot.environment.workArea.width-128)}"/>
         </動作>
 
-        <動作 名前="ワークエリアの下辺を走る" 種類="複合" 繰り返し="false" voice="action_beginrun.wav">
+        <動作 名前="ワークエリアの下辺を走る" 種類="複合" 繰り返し="false" voice="action_beginrun.ogg">
             <動作参照 名前="走る"
                   目的地X="${mascot.environment.workArea.left+64+Math.random()*(mascot.environment.workArea.width-128)}"/>
         </動作>
@@ -415,12 +415,12 @@
             <動作参照 名前="座る" 長さ="${500+Math.random()*1000}"/>
         </動作>
 
-        <動作 名前="ワークエリアの下辺から左の壁によじのぼる" 種類="複合" 繰り返し="false" voice="action_walkthencrawl.wav">
+        <動作 名前="ワークエリアの下辺から左の壁によじのぼる" 種類="複合" 繰り返し="false" voice="action_walkthencrawl.ogg">
             <動作参照 名前="歩く" 目的地X="#{mascot.environment.workArea.left}"/>
             <動作参照 名前="壁を登る" 目的地Y="#{mascot.environment.workArea.bottom-64}"/>
         </動作>
 
-        <動作 名前="ワークエリアの下辺から右の壁によじのぼる" 種類="複合" 繰り返し="false" voice="action_walkthencrawl.wav">
+        <動作 名前="ワークエリアの下辺から右の壁によじのぼる" 種類="複合" 繰り返し="false" voice="action_walkthencrawl.ogg">
             <動作参照 名前="歩く" 目的地X="#{mascot.environment.workArea.right}"/>
             <動作参照 名前="壁を登る" 目的地Y="#{mascot.environment.workArea.bottom-64}"/>
         </動作>
@@ -441,12 +441,12 @@
             <動作参照 名前="座る" 長さ="${500+Math.random()*1000}"/>
         </動作>
 
-        <動作 名前="走ってワークエリアの下辺から左の壁によじのぼる" 種類="複合" 繰り返し="false" voice="action_walkthencrawl.wav">
+        <動作 名前="走ってワークエリアの下辺から左の壁によじのぼる" 種類="複合" 繰り返し="false" voice="action_walkthencrawl.ogg">
             <動作参照 名前="走る" 目的地X="#{mascot.environment.workArea.left}"/>
             <動作参照 名前="壁を登る" 目的地Y="#{mascot.environment.workArea.bottom-64}"/>
         </動作>
 
-        <動作 名前="走ってワークエリアの下辺から右の壁によじのぼる" 種類="複合" 繰り返し="false" voice="action_walkthencrawl.wav">
+        <動作 名前="走ってワークエリアの下辺から右の壁によじのぼる" 種類="複合" 繰り返し="false" voice="action_walkthencrawl.ogg">
             <動作参照 名前="走る" 目的地X="#{mascot.environment.workArea.right}"/>
             <動作参照 名前="壁を登る" 目的地Y="#{mascot.environment.workArea.bottom-64}"/>
         </動作>
@@ -463,7 +463,7 @@
                   目的地Y="${mascot.environment.workArea.top+64 + Math.random()*(mascot.environment.workArea.height-128)}"/>
         </動作>
 
-        <動作 名前="ワークエリアの壁を登る" 種類="複合" 繰り返し="false" voice="action_begincrawl.wav">
+        <動作 名前="ワークエリアの壁を登る" 種類="複合" 繰り返し="false" voice="action_begincrawl.ogg">
             <動作参照 名前="壁を登る" 目的地Y="#{mascot.environment.workArea.top+64}"/>
             <動作参照 名前="変位" Y="-64"/>
             <動作参照 名前="振り向く"/>
@@ -476,12 +476,12 @@
                   目的地X="${mascot.environment.workArea.left+64+Math.random()*(mascot.environment.workArea.width-128)}"/>
         </動作>
 
-        <動作 名前="IEの天井を歩く" 種類="複合" 繰り返し="false" voice="action_beginwalk.wav">
+        <動作 名前="IEの天井を歩く" 種類="複合" 繰り返し="false" voice="action_beginwalk.ogg">
             <動作参照 名前="歩く"
                   目的地X="${mascot.environment.activeIE.left+64+Math.random()*(mascot.environment.activeIE.width-128)}"/>
         </動作>
 
-        <動作 名前="IEの天井を走る" 種類="複合" 繰り返し="false" voice="action_beginrun.wav">
+        <動作 名前="IEの天井を走る" 種類="複合" 繰り返し="false" voice="action_beginrun.ogg">
             <動作参照 名前="走る"
                   目的地X="${mascot.environment.activeIE.left+64+Math.random()*(mascot.environment.activeIE.width-128)}"/>
         </動作>
@@ -558,7 +558,7 @@
                   目的地Y="${mascot.environment.activeIE.top+64 + Math.random()*(mascot.environment.activeIE.height-128)}"/>
         </動作>
 
-        <動作 名前="IEの壁を登る" 種類="複合" 繰り返し="false" voice="action_begincrawl.wav">
+        <動作 名前="IEの壁を登る" 種類="複合" 繰り返し="false" voice="action_begincrawl.ogg">
             <動作参照 名前="壁を登る" 目的地Y="#{mascot.environment.activeIE.top+64}"/>
             <動作参照 名前="変位" Y="-64"/>
             <動作参照 名前="座る" 長さ="5"/>
@@ -572,13 +572,13 @@
                   目的地X="${mascot.environment.activeIE.left+64+(Math.random()*mascot.environment.activeIE.width-128)}"/>
         </動作>
 
-        <動作 名前="IEの下辺から左の壁によじのぼる" 種類="複合" 繰り返し="false" voice="action_walkthencrawl.wav">
+        <動作 名前="IEの下辺から左の壁によじのぼる" 種類="複合" 繰り返し="false" voice="action_walkthencrawl.ogg">
             <動作参照 名前="天井を伝う" 目的地X="#{mascot.environment.activeIE.left}"/>
             <動作参照 名前="振り向く"/>
             <動作参照 名前="壁を登る" 目的地Y="#{mascot.environment.activeIE.bottom-64}"/>
         </動作>
 
-        <動作 名前="IEの下辺から右の壁によじのぼる" 種類="複合" 繰り返し="false" voice="action_walkthencrawl.wav">
+        <動作 名前="IEの下辺から右の壁によじのぼる" 種類="複合" 繰り返し="false" voice="action_walkthencrawl.ogg">
             <動作参照 名前="天井を伝う" 目的地X="#{mascot.environment.activeIE.right}"/>
             <動作参照 名前="振り向く"/>
             <動作参照 名前="壁を登る" 目的地Y="#{mascot.environment.activeIE.bottom-64}"/>
@@ -647,7 +647,7 @@
             <動作参照 名前="立つ" 長さ="${50+Math.random()*50}"/>
         </動作>
 
-        <動作 名前="マウスの周りに集まる" 種類="複合" 繰り返し="false" voice="action_yes.wav" priority="100">
+        <動作 名前="マウスの周りに集まる" 種類="複合" 繰り返し="false" voice="action_yes.ogg" priority="100">
             <動作 種類="複合"
                 条件="${mascot.environment.ceiling.isOn(mascot.anchor) || mascot.environment.activeIE.bottomBorder.isOn(mascot.anchor)}">
                 <動作参照 名前="変位" Y="1"/>
@@ -739,7 +739,7 @@
         克隆十四一只
         -->
         <動作 名前="引っこ抜く1" 種類="組み込み" クラス="com.group_finity.mascot.action.Breed"
-            生まれる場所X="-32" 生まれる場所Y="96" 生まれた時の行動="引っこ抜かれる" voice="action_findmayo.wav">
+            生まれる場所X="-32" 生まれる場所Y="96" 生まれた時の行動="引っこ抜かれる" voice="action_find.ogg">
             <アニメーション>
                 <ポーズ 画像="shime37.png" 基準座標="64,128" 移動速度="0,0" 長さ="3"/>
                 <ポーズ 画像="shime38.png" 基準座標="64,128" 移動速度="0,0" 長さ="8"/>
@@ -765,15 +765,15 @@
             <動作参照 名前="分裂1"/>
             <動作参照 名前="変位" X="16"/>
             <動作参照 名前="振り向く"/>
-            <動作参照 名前="分裂した" voice="action_twin.wav"/>
+            <動作参照 名前="分裂した" voice="action_twin.ogg"/>
         </動作>
         <!--新十四完整动作 调整了分身后动作，不需要摔倒bia在地上，直接随机散步一段时间-->
-        <動作 名前="分裂した" voice="action_forked.wav" 種類="複合">
+        <動作 名前="分裂した" voice="action_forked.ogg" 種類="複合">
             <!--動作参照 名前="落ちる" 初速X="${mascot.lookRight ? 10 : -10}" 初速Y="-5"/>
             <動作参照 名前="跳ねる"/-->
             <動作参照 名前="歩く" 長さ="${50+Math.random()*50}"/>
         </動作>
-        <動作 名前="分裂1" voice="action_fork.wav" 種類="組み込み" クラス="com.group_finity.mascot.action.Breed"
+        <動作 名前="分裂1" voice="action_fork.ogg" 種類="組み込み" クラス="com.group_finity.mascot.action.Breed"
             生まれる場所X="-16" 生まれる場所Y="0" 生まれた時の行動="分裂した">
             <アニメーション>
                 <ポーズ 画像="shime42.png" 基準座標="64,128" 移動速度="0,0" 長さ="3"/>
