@@ -12,7 +12,7 @@ VocalShimeji 是在桌宠软件 [しめじ2.2.2](http://www.group-finity.com/Shi
 * 配音`[冷泉夜月](http://weibo.com/lengquanyeyue)
 
 # VocalShimeji (含 Hijikata_Toushirou 主题) 下载
- * [百度网盘](http://pan.baidu.com/share/link?shareid=182150&uk=1476694032)
+ * [百度网盘](http://pan.baidu.com/share/link?shareid=391726&uk=1476694032)
  * [Bitbucket](https://bitbucket.org/magi/vocalshimeji/downloads)
 
 # 最近更新
