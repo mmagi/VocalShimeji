@@ -102,6 +102,16 @@ public abstract class Main {
         }
     }
 
+    private static void checkJoalLib(String dir) {
+        System.setProperty("jogamp.gluegen.UseTempJarCache", "false");
+        JNILibLoaderBase.addLoaded("gluegen-rt");
+        System.load(new File(dir + "/libgluegen-rt.jnilib").getAbsolutePath());
+        JNILibLoaderBase.addLoaded("joal");
+        System.load(new File(dir + "/libjoal.jnilib").getAbsolutePath());
+        JNILibLoaderBase.addLoaded("OpenAL32");
+        System.load(new File(dir + "/libopenal.dylib").getAbsolutePath());
+    }
+
     private static void checkJoalDll(String dir) {
         System.setProperty("jogamp.gluegen.UseTempJarCache", "false");
         JNILibLoaderBase.addLoaded("gluegen-rt");
@@ -113,12 +123,18 @@ public abstract class Main {
         JNILibLoaderBase.addLoaded("wrap_oal");
         System.load(new File(dir + "/wrap_oal.dll").getAbsolutePath());
     }
-
     public static void LoadDlls() {
-        String arc = System.getProperty("os.arch").endsWith("64") ? "x86_64" : "x86";
-        String dllPath = "lib/win32-" + arc;
-        checkJnaDll(dllPath);
-        checkJoalDll(dllPath);
+        String dllPath = null;
+        String osname = System.getProperty("os.name");
+        if(osname.startsWith("Mac")){
+            dllPath = "lib/macosx";
+            checkJoalLib(dllPath);
+        }else{ //windows
+            String arc = System.getProperty("os.arch").endsWith("64") ? "x86_64" : "x86";
+            dllPath = "lib/win32-" + arc;
+            checkJnaDll(dllPath);
+            checkJoalDll(dllPath);
+        }
     }
 
     private void initSound() {
