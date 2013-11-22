@@ -20,16 +20,18 @@ public class MascotEventHandler implements MouseListener {
     }
 
     public void mousePressed(final MouseEvent event) {
-        if (mascot.getBehavior() != null) {
-            try {
-                mascot.getBehavior().mousePressed(event);
-                if (SwingUtilities.isLeftMouseButton(event)) mascot.getWindow().asJWindow().setCursor(mascot.getManager().main.cursorPressed);
-            } catch (final CantBeAliveException e) {
-                log.log(Level.SEVERE, "生き続けることが出来ない状況", e);
-                mascot.dispose();
+        if (event.isPopupTrigger()){
+            getPopup().show(event.getComponent(), event.getX(), event.getY());
+        } else {    if (mascot.getBehavior() != null) {
+                try {
+                    mascot.getBehavior().mousePressed(event);
+                    if (SwingUtilities.isLeftMouseButton(event)) mascot.getWindow().asJWindow().setCursor(mascot.getManager().main.cursorPressed);
+                } catch (final CantBeAliveException e) {
+                    log.log(Level.SEVERE, "生き続けることが出来ない状況", e);
+                    mascot.dispose();
+                }
             }
         }
-
     }
 
     public JPopupMenu getPopup() {
@@ -40,7 +42,7 @@ public class MascotEventHandler implements MouseListener {
     }
 
     public void mouseReleased(final MouseEvent event) {
-        if (SwingUtilities.isRightMouseButton(event) || (SwingUtilities.isLeftMouseButton(event) && event.isControlDown())) {
+        if (event.isPopupTrigger()){
             getPopup().show(event.getComponent(), event.getX(), event.getY());
         } else {
             if (mascot.getBehavior() != null) {
