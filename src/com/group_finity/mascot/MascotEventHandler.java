@@ -40,7 +40,7 @@ public class MascotEventHandler implements MouseListener {
     }
 
     public void mouseReleased(final MouseEvent event) {
-        if (event.isPopupTrigger()) {
+        if (SwingUtilities.isRightMouseButton(event) || (SwingUtilities.isLeftMouseButton(event) && event.isControlDown())) {
             getPopup().show(event.getComponent(), event.getX(), event.getY());
         } else {
             if (mascot.getBehavior() != null) {
