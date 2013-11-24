@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Hijikata_Toushirou">
+    <output-path>$PROJECT_DIR$/root</output-path>
+    <root id="archive" name="Hijikata_Toushirou.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/Hijikata_Toushirou/src/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="Hijikata_Toushirou" />
+    </root>
+  </artifact>
+</component>
