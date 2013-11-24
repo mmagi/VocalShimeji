@@ -53,7 +53,7 @@ public class ImageEdgeRepair {
 
 
         repair(new File("..\\Hijikata_Toushirou\\raw\\image"),
-               new File("..\\Hijikata_Toshirou\\Resources\\vocalshimeji\\theme\\hijikata_toshirou\\image"));
+               new File("..\\Hijikata_Toushirou\\Resources\\vocalshimeji\\theme\\hijikata_toushirou\\image"));
 
         repair(new File("..\\Kagura\\raw\\image"),
                new File("..\\Kagura\\Resources\\vocalshimeji\\theme\\kagura\\image"));
