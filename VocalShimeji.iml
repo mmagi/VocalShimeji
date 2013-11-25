@@ -13,15 +13,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/root/lib/platform-lite.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/root/lib/gluegen-rt.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -40,7 +31,16 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/root/lib/jna-lite.jar!/" />
+          <root url="jar://$MODULE_DIR$/root/lib/jna-4.0.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/root/lib/jna-platform-4.0.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
-Class-Path: lib/jna-lite.jar lib/platform-lite.jar lib/VocalShimeji.ja
- r lib/gluegen-rt.jar lib/joal.jar lib/spi/vorbisspi1.0.3-all.jar lib/
- spi/tritonus_share.jar
+Class-Path: lib/jna-4.0.0.jar lib/jna-platform-4.0.0.jar lib/VocalShim
+ eji.jar lib/gluegen-rt.jar lib/joal.jar lib/spi/vorbisspi1.0.3-all.ja
+ r lib/spi/tritonus_share.jar
 Main-Class: vocalshimeji.theme.hijikata_toushirou.VocalShimeji
 

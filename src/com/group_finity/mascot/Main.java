@@ -93,50 +93,10 @@ public abstract class Main {
         return config;
     }
 
-    private static void checkJnaDll(String dir) {
-        File jnaLib = new File(new File(dir), System.mapLibraryName("jnidispatch"));
-        if (jnaLib.exists()) {
-            System.setProperty("jna.boot.library.path", dir);
-        } else {
-            throw new RuntimeException(jnaLib.getAbsolutePath() + "文件未找到.");
-        }
-    }
-
-    private static void checkJoalLib(String dir) {
-        System.setProperty("jogamp.gluegen.UseTempJarCache", "false");
-        JNILibLoaderBase.addLoaded("gluegen-rt");
-        System.load(new File(dir + "/libgluegen-rt.jnilib").getAbsolutePath());
-        JNILibLoaderBase.addLoaded("joal");
-        System.load(new File(dir + "/libjoal.jnilib").getAbsolutePath());
-        JNILibLoaderBase.addLoaded("OpenAL32");
-        System.load(new File(dir + "/libopenal.dylib").getAbsolutePath());
-    }
-
-    private static void checkJoalDll(String dir) {
-        System.setProperty("jogamp.gluegen.UseTempJarCache", "false");
-        JNILibLoaderBase.addLoaded("gluegen-rt");
-        System.load(new File(dir + "/gluegen-rt.dll").getAbsolutePath());
-        JNILibLoaderBase.addLoaded("joal");
-        System.load(new File(dir + "/joal.dll").getAbsolutePath());
-        JNILibLoaderBase.addLoaded("OpenAL32");
-        System.load(new File(dir + "/OpenAL32.dll").getAbsolutePath());
-        JNILibLoaderBase.addLoaded("wrap_oal");
-        System.load(new File(dir + "/wrap_oal.dll").getAbsolutePath());
-    }
     public static void LoadDlls() {
-        String dllPath = null;
-        String osname = System.getProperty("os.name");
-        if(osname.startsWith("Mac")){
-            dllPath = "lib/macosx";
-            checkJoalLib(dllPath);
-        }else{ //windows
-            String arc = System.getProperty("os.arch").endsWith("64") ? "x86_64" : "x86";
-            dllPath = "lib/win32-" + arc;
-            checkJnaDll(dllPath);
-            checkJoalDll(dllPath);
-        }
+        NativeFactory.LoadNativeLib();
     }
-
+    //TODO: Mac 听不到这个声音，但不知道为什么
     private void initSound() {
         try {
             SoundFactory.invokeAfterSound(soundFactory.getSound(resourceBundle.getString("sound.init")), new Runnable() {
