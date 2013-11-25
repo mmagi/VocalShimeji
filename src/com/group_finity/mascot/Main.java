@@ -94,7 +94,7 @@ public abstract class Main {
     }
 
     public static void LoadDlls() {
-        NativeFactory.LoadNativeLib();
+        NativeFactory.getInstance();
     }
     //TODO: Mac 听不到这个声音，但不知道为什么
     private void initSound() {

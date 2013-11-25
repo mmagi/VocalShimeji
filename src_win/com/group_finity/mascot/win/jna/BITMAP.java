@@ -4,6 +4,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BITMAP extends Structure {
@@ -14,9 +15,8 @@ public class BITMAP extends Structure {
     public short bmPlanes;
     public short bmBitsPixel;
     public Pointer bmBits;
-
     @Override
     protected List getFieldOrder() {
-        return null;
+        return Arrays.asList(new String[]{"bmType", "bmWidth", "bmHeight", "bmWidthBytes", "bmPlanes", "bmBitsPixel", "bmBits"});
     }
 }

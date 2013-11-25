@@ -24,6 +24,9 @@ public abstract class NativeFactory {
      */
     static {
 
+        if (Platform.isWindows()) LoadWinNativeLib(Platform.is64Bit());
+        else if (Platform.isMac()) LoadMacNativeLib();
+
         final String basePackage = NativeFactory.class.getName().substring(0, NativeFactory.class.getName().lastIndexOf('.'));
 
         final String subPackage = Platform.isWindows() ? "win" : "mac";
@@ -42,10 +45,6 @@ public abstract class NativeFactory {
             throw new RuntimeException(e);
         }
     }
-    public static void LoadNativeLib(){
-        if (Platform.isWindows()) LoadWinNativeLib(Platform.is64Bit());
-        else if (Platform.isMac()) LoadMacNativeLib();
-    }
     private static void LoadWinNativeLib(boolean x64) {
         //全部从外部加载，否则某些操作系统下释放到临时文件夹里的dll不允许加载
         String dir = x64 ? "lib/win32-x86_64" : "lib/win32-x86";
@@ -57,11 +56,13 @@ public abstract class NativeFactory {
         }
         System.setProperty("jogamp.gluegen.UseTempJarCache", "false");
         JNILibLoaderBase.addLoaded("gluegen-rt");
-        System.load(new File(dir + "/libgluegen-rt.jnilib").getAbsolutePath());
+        System.load(new File(dir + "/gluegen-rt.dll").getAbsolutePath());
         JNILibLoaderBase.addLoaded("joal");
-        System.load(new File(dir + "/libjoal.jnilib").getAbsolutePath());
+        System.load(new File(dir + "/joal.dll").getAbsolutePath());
         JNILibLoaderBase.addLoaded("OpenAL32");
-        System.load(new File(dir + "/libopenal.dylib").getAbsolutePath());
+        System.load(new File(dir + "/OpenAL32.dll").getAbsolutePath());
+        JNILibLoaderBase.addLoaded("wrap_oal");
+        System.load(new File(dir + "/wrap_oal.dll").getAbsolutePath());
     }
 
     private static final void LoadMacNativeLib() {
