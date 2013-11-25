@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+  <artifact name="Kagura_dev">
+    <output-path>$PROJECT_DIR$/root</output-path>
+    <root id="root">
+      <element id="directory" name="Kagura_dev">
+        <element id="module-output" name="Kagura" />
+      </element>
+      <element id="archive" name="Kagura_dev.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/Kagura/META-INF/MANIFEST.MF" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

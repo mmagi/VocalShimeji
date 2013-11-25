@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Hijikata_Toushirou/Hijikata_Toushirou.iml" filepath="$PROJECT_DIR$/Hijikata_Toushirou/Hijikata_Toushirou.iml" group="Gintama" />
+      <module fileurl="file://$PROJECT_DIR$/Kagura/Kagura.iml" filepath="$PROJECT_DIR$/Kagura/Kagura.iml" group="Gintama" />
+      <module fileurl="file://$PROJECT_DIR$/Sakata_Gintoki/Sakata_Gintoki.iml" filepath="$PROJECT_DIR$/Sakata_Gintoki/Sakata_Gintoki.iml" group="Gintama" />
+      <module fileurl="file://$PROJECT_DIR$/VocalShimeji.iml" filepath="$PROJECT_DIR$/VocalShimeji.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tools/tools.iml" filepath="$PROJECT_DIR$/tools/tools.iml" />
+    </modules>
+  </component>
+</project>
+
