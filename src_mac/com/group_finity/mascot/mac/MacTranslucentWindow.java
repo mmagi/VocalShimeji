@@ -16,7 +16,9 @@ import java.awt.image.BufferedImage;
  * To change this template use File | Settings | File Templates.
  */
 public class MacTranslucentWindow extends JWindow implements TranslucentWindow {
-    private BufferedImage image;
+    private volatile MacNativeImage image;
+    private volatile int x,y;
+    private volatile boolean imageoutOfDate = false,posoutOfDate=false;
     MacTranslucentWindow(){
         super(WindowUtils.getAlphaCompatibleGraphicsConfiguration());
         this.getRootPane().putClientProperty("Window.shadow",Boolean.FALSE);
@@ -29,25 +31,34 @@ public class MacTranslucentWindow extends JWindow implements TranslucentWindow {
 
     @Override
     public void setImage(NativeImage image) {
-        this.image = ((MacNativeImage)image).getImage();
+        if(image != this.image && image instanceof MacNativeImage){
+            if (((MacNativeImage) image).difsize(this.image)) posoutOfDate = true;
+            this.image = (MacNativeImage) image;
+            imageoutOfDate = true;
+        }
     }
 
     @Override
     public void setPosition(int x, int y) {
-        //x=100;y=100;
-        if(null!=this.image) this.setBounds(x,y,image.getWidth(),image.getHeight());
+        if (this.x != x || this.y != y){
+            this.x = x;
+            this.y = y;
+            posoutOfDate = true;
+        }
     }
 
 
     @Override
     public void updateWindow() {
-        repaint();
+        if (posoutOfDate) this.setBounds(x,y,image.image.getWidth(),image.image.getHeight());
+        if (imageoutOfDate) repaint();
     }
 
     @Override
-    public void paint(Graphics graphics) {
-        final Rectangle clipBounds = graphics.getClipBounds();
-        graphics.clearRect(clipBounds.x,clipBounds.y,clipBounds.width,clipBounds.height);
-        graphics.drawImage(this.image, 0, 0, null);
+    public void paint(Graphics gg) {
+        if (gg instanceof Graphics2D) {
+            gg.clearRect(0, 0, getWidth(), getHeight());
+            gg.drawImage(image.image, 0, 0, null);
+        }
     }
 }

@@ -14,12 +14,15 @@ import java.awt.image.BufferedImage;
  * To change this template use File | Settings | File Templates.
  */
 public class MacNativeImage implements NativeImage {
-    private final BufferedImage image;
+    final BufferedImage image;
     public MacNativeImage(BufferedImage src) {
         image=src;
     }
 
     public BufferedImage getImage() {
         return this.image;
+    }
+    public boolean difsize(MacNativeImage image){
+        return null == image || image.image.getWidth() != this.image.getWidth() || image.image.getHeight() != this.image.getHeight();
     }
 }

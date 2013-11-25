@@ -13,6 +13,9 @@ import java.awt.*;
  * To change this template use File | Settings | File Templates.
  */
 public class MacEnvironment extends Environment {
+    private final static Area workArea = new Area();
+
+    final public static Area activeIE = new Area();
     @Override
     protected Area getWorkArea() {
         return getScreen();
@@ -20,7 +23,7 @@ public class MacEnvironment extends Environment {
 
     @Override
     public Area getActiveIE() {
-        return getScreen();  //To change body of implemented methods use File | Settings | File Templates.
+        return activeIE;
     }
 
     @Override

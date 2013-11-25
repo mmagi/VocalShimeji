@@ -23,11 +23,11 @@ public class NativeFactoryImpl extends NativeFactory {
 
     @Override
     public NativeImage newNativeImage(BufferedImage src) {
-        return new MacNativeImage(src);  //To change body of implemented methods use File | Settings | File Templates.
+        return new MacNativeImage(src);
     }
 
     @Override
     public TranslucentWindow newTransparentWindow() {
-        return new MacTranslucentWindow();  //To change body of implemented methods use File | Settings | File Templates.
+        return new MacTranslucentWindow();
     }
 }
