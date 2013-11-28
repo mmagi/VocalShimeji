@@ -69,6 +69,7 @@ public class MacEnvironment extends Environment {
         if(getSafariArea(safariA)==1){
             safariR.setBounds(safariA[0],safariA[1],safariA[2],safariA[3]);
             safariArea.set(safariR);
+            safariArea.setVisible(true);
         }else {
             safariArea.setVisible(false);
         }
