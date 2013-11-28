@@ -65,7 +65,7 @@ final class ActionWithSoundInvoker extends Thread {
             } else {
                 if (!SoundFactory.voiceOn || task.done) {
                     try {
-                        task.cmd.run();
+                        if (null!=task.cmd) task.cmd.run();
                     } catch (Throwable e) {
                         SoundFactory.log.log(Level.WARNING, "执行命令时异常", e);
                     } finally {

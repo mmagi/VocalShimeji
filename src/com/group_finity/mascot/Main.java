@@ -99,12 +99,7 @@ public abstract class Main {
     //TODO: Mac 听不到这个声音，但不知道为什么
     private void initSound() {
         try {
-            SoundFactory.invokeAfterSound(soundFactory.getSound(resourceBundle.getString("sound.init")), new Runnable() {
-                @Override
-                public void run() {
-                    //nothing to do, just play a sound
-                }
-            });
+            SoundFactory.invokeAfterSound(soundFactory.getSound(resourceBundle.getString("sound.init")), null);
         } catch (final Exception e) {
             Main.log.log(Level.WARNING, resourceBundle.getString("exception.init_sound_failed"));
         }
