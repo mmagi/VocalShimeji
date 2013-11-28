@@ -2,11 +2,11 @@ package com.group_finity.mascot.mac;
 
 import com.group_finity.mascot.environment.Area;
 import com.group_finity.mascot.environment.Environment;
+import com.sun.jna.Native;
+import com.sun.jna.NativeLibrary;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import java.awt.*;
-import java.util.ArrayList;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,48 +16,62 @@ import java.util.ArrayList;
  * To change this template use File | Settings | File Templates.
  */
 public class MacEnvironment extends Environment {
-    private final static Area workArea = new Area();
+    final private static Area desktopArea = new Area();
+    final private static Area safariArea = new Area();
 
-    final public static Area activeIE = new Area();
-    final public static ScriptEngine appleScript = new ScriptEngineManager().getEngineByName("AppleScript");;
+    static {
+        NativeLibrary.addSearchPath("vocalshimejibridge", "lib/macosx/");
+        Native.register("vocalshimejibridge");
+        initShimejiBridge();
+    }
+
+    public static native int initShimejiBridge();
+    public static native int resetSafariPos();
+    public static native int getSafariArea(int area []);
+    public static native int getDesktopArea(int area []);
+    public static native int moveSafariTo(final int x,final int y,int area[]);
     @Override
     protected Area getWorkArea() {
-        return getScreen();
+        //return getScreen();
+        return desktopArea;
     }
 
     @Override
     public Area getActiveIE() {
-        return activeIE;
+        return safariArea;
     }
 
+    private static final Rectangle safariR = new Rectangle();
+    private static final Rectangle desktopR = new Rectangle();
+    private static final int safariA [] = new int [4];
+    private static final int desktopA [] = new int [4];
     @Override
     public void moveActiveIE(Point point) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        if(moveSafariTo(point.x, point.y, safariA)==1){
+            safariR.setBounds(safariA[0],safariA[1],safariA[2],safariA[3]);
+            safariArea.set(safariR);
+        }else {
+            safariArea.setVisible(false);
+        }
     }
 
     @Override
     public boolean restoreIE() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-    private static Rectangle getActiveRect(){
-        try {
-            Object eval = appleScript.eval("try\n" +
-                    "\ttell application (path to frontmost application as text) to get the bounds of the front window\n" +
-                    "on error msg\n" +
-                    "\tnull\n" +
-                    "end try");
-            if ((null != eval) && (eval instanceof ArrayList)){//ArrayList(Long)
-                ArrayList<Long> list = (ArrayList) eval;
-                return new Rectangle(list.get(0).intValue(),list.get(1).intValue(),(int)(list.get(2)-list.get(0)),(int)(list.get(3)-list.get(1)));
-            }
-        } catch (Exception e) {
-        }
-        return null;
+       return resetSafariPos()==1;
     }
     @Override
     public void tick() {
         super.tick();
-        final Rectangle rect = getActiveRect();
-        if (null != rect) {activeIE.setVisible(rect.intersects(getScreen().toRectangle()));activeIE.set(rect);}
+        if(getDesktopArea(desktopA)==1){
+            desktopR.setBounds(desktopA[0],desktopA[1],desktopA[2],desktopA[3]);
+            desktopArea.set(desktopR);
+        }
+        if(getSafariArea(safariA)==1){
+            safariR.setBounds(safariA[0],safariA[1],safariA[2],safariA[3]);
+            safariArea.set(safariR);
+        }else {
+            safariArea.setVisible(false);
+        }
+
     }
 }
