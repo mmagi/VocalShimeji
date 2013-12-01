@@ -17,13 +17,15 @@ import java.awt.image.BufferedImage;
  */
 public class MacTranslucentWindow extends JWindow implements TranslucentWindow {
     private volatile MacNativeImage image;
-    private volatile int x,y;
-    private volatile boolean imageoutOfDate = false,posoutOfDate=false;
-    MacTranslucentWindow(){
+    private volatile int x, y;
+    private volatile boolean imageoutOfDate = false, posoutOfDate = false;
+
+    MacTranslucentWindow() {
         super(WindowUtils.getAlphaCompatibleGraphicsConfiguration());
-        this.getRootPane().putClientProperty("Window.shadow",Boolean.FALSE);
-        WindowUtils.setWindowTransparent(this,true);
+        this.getRootPane().putClientProperty("Window.shadow", Boolean.FALSE);
+        WindowUtils.setWindowTransparent(this, true);
     }
+
     @Override
     public JWindow asJWindow() {
         return this;
@@ -31,7 +33,7 @@ public class MacTranslucentWindow extends JWindow implements TranslucentWindow {
 
     @Override
     public void setImage(NativeImage image) {
-        if(image != this.image && image instanceof MacNativeImage){
+        if (image != this.image && image instanceof MacNativeImage) {
             if (((MacNativeImage) image).difsize(this.image)) posoutOfDate = true;
             this.image = (MacNativeImage) image;
             imageoutOfDate = true;
@@ -40,18 +42,23 @@ public class MacTranslucentWindow extends JWindow implements TranslucentWindow {
 
     @Override
     public void setPosition(int x, int y) {
-        if (this.x != x || this.y != y){
+        if (this.x != x || this.y != y) {
             this.x = x;
             this.y = y;
             posoutOfDate = true;
         }
     }
 
-
     @Override
     public void updateWindow() {
-        if (posoutOfDate) this.setBounds(x,y,image.image.getWidth(),image.image.getHeight());
-        if (imageoutOfDate) repaint();
+        if (posoutOfDate) {
+            this.setBounds(x, y, image.image.getWidth(), image.image.getHeight());
+            posoutOfDate = false;
+        }
+        if (imageoutOfDate) {
+            repaint();
+            imageoutOfDate = false;
+        }
     }
 
     @Override
