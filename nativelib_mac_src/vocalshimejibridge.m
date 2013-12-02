@@ -11,11 +11,12 @@
 
 
 SafariApplication *safari;
-int initShimejiBridge(){
+int initShimejiBridge(){@autoreleasepool{
     safari = [SBApplication applicationWithBundleIdentifier:@"com.apple.Safari"];
     return 0;
-}
-int resetSafariPos(){
+}}
+
+int resetSafariPos() {@autoreleasepool{
     int ret = 0;
     if ([safari isRunning]){
         NSRect vframe = [[NSScreen mainScreen] visibleFrame];
@@ -39,8 +40,8 @@ int resetSafariPos(){
         }
     }
     return ret;
-}
-int getDesktopArea(int area []){
+}}
+int getDesktopArea(int area []){@autoreleasepool{
     NSRect vframe = [[NSScreen mainScreen] visibleFrame];
     NSRect fframe = [[NSScreen mainScreen] frame];
     area[0]=vframe.origin.x;
@@ -48,8 +49,8 @@ int getDesktopArea(int area []){
     area[2]=vframe.size.width;
     area[3]=vframe.size.height;
     return 1;
-}
-int getSafariArea(int area []){
+}}
+int getSafariArea(int area []){@autoreleasepool{
     if ([safari isRunning]){
         SafariWindow * win = [[safari windows] firstObject];
         if([win visible]){
@@ -62,8 +63,8 @@ int getSafariArea(int area []){
         }
     }
     return 0;
-}
-int moveSafariTo(const int x,const int y,int area []){
+}}
+int moveSafariTo(const int x,const int y,int area []){@autoreleasepool{
     if ([safari isRunning]){
         NSRect vframe = [[NSScreen mainScreen] visibleFrame];
         NSRect fframe = [[NSScreen mainScreen] frame];
@@ -86,4 +87,4 @@ int moveSafariTo(const int x,const int y,int area []){
         }
     }
     return 0;
-}
+}}
