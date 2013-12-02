@@ -56,16 +56,16 @@ public class MacTranslucentWindow extends JWindow implements TranslucentWindow {
             posoutOfDate = false;
         }
         if (imageoutOfDate) {
-            repaint();
+            final Graphics gg = getGraphics();
+            if (gg instanceof Graphics2D) {
+                gg.clearRect(0, 0, getWidth(), getHeight());
+                gg.drawImage(image.image, 0, 0, null);
+            }
             imageoutOfDate = false;
         }
     }
 
     @Override
     public void paint(Graphics gg) {
-        if (gg instanceof Graphics2D) {
-            gg.clearRect(0, 0, getWidth(), getHeight());
-            gg.drawImage(image.image, 0, 0, null);
-        }
     }
 }
