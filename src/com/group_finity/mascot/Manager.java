@@ -85,10 +85,6 @@ public class Manager {
         mascot.setManager(this);
         mascotList.offer(mascot);
         mascotCount.getAndIncrement();
-        //        if (!Gintama.disable) {
-        //                if (!Gintama.active && mascotCount.get() == 52)
-        //                    Gintama.active(mascotList);
-        //        }
     }
 
     public void remove(Mascot mascot) {

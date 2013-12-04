@@ -5,7 +5,6 @@ import com.group_finity.mascot.config.Entry;
 import com.group_finity.mascot.exception.ConfigurationException;
 import com.group_finity.mascot.image.ImagePairLoader;
 import com.group_finity.mascot.sound.SoundFactory;
-import com.jogamp.common.jvm.JNILibLoaderBase;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -221,12 +220,13 @@ public abstract class Main {
             TrayIcon icon = new TrayIcon(ImageIO.read(getResResource(resourceBundle.getString("shimeji.tray_icon_resname"))), "VocalShimeji", mainMenu);
             mascotPopupMenu.prepareTrayIcon(icon);
             SystemTray.getSystemTray().add(icon);
+            mascotPopupMenu.prepareMascottMenu(false);
         } catch (IOException e) {
             log.log(Level.SEVERE, resourceBundle.getString("exception.create_tray_icon_failed"), e);
             exit();
         } catch (AWTException e) {
             log.log(Level.SEVERE, resourceBundle.getString("exception.create_tray_icon_failed"), e);
-            mascotPopupMenu.setShowSystemTrayMenu(true);
+            mascotPopupMenu.prepareMascottMenu(true);
             manager.setExitOnLastRemoved(true);
         }
     }

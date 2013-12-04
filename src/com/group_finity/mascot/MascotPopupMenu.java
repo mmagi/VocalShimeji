@@ -1,5 +1,7 @@
 package com.group_finity.mascot;
 
+import com.group_finity.mascot.exception.BehaviorInstantiationException;
+import com.group_finity.mascot.exception.CantBeAliveException;
 import com.group_finity.mascot.sound.SoundBuffer;
 import com.group_finity.mascot.sound.SoundFactory;
 
@@ -8,10 +10,11 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import java.awt.*;
 import java.awt.event.*;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class MascotPopupMenu {
-    private boolean showSystemTrayMenu = false;
+    private static final Logger log = Logger.getLogger(MascotEventHandler.class.getName());
     final Main main;
     final ActionListener restoreMenuListener;
     final ActionListener increaseMenuListener;
@@ -24,6 +27,9 @@ class MascotPopupMenu {
     final JCheckBoxMenuItem jVoiceMenu;
     final CheckboxMenuItem sfxMenu;
     final JCheckBoxMenuItem jSfxMenu;
+    final JMenuItem disposeMenu;
+    final JPopupMenu popupMenu;
+    volatile Mascot targetmascot;
 
     MascotPopupMenu(Main obj) {
         this.main = obj;
@@ -147,40 +153,25 @@ class MascotPopupMenu {
         sfxMenu.addItemListener(sfxMenuListener2);
         jSfxMenu = new JCheckBoxMenuItem(main.resourceBundle.getString("menu.checkbox_sfx"), SoundFactory.sfxOn);
         jSfxMenu.addItemListener(sfxMenuListener2);
-    }
+        final ActionListener disposeMenuListener = new ActionListener() {
+            final SoundBuffer sound = main.soundFactory.getSound(main.resourceBundle.getString("sound.cmd_dispose_mascot"));
 
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final Runnable cmd = new Runnable() {
+                    final Mascot mascot = targetmascot;
 
-    private class disposrMenuListener implements ActionListener {
-        final SoundBuffer sound = main.soundFactory.getSound(main.resourceBundle.getString("sound.cmd_dispose_mascot"));
-        final Mascot mascot;
-
-        public disposrMenuListener(Mascot mascot) {
-            this.mascot = mascot;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            final Runnable cmd = new Runnable() {
-                @Override
-                public void run() {
-                    mascot.dispose();
-                }
-            };
-            SoundFactory.invokeAfterSound(sound, cmd);
-        }
-    }
-
-
-    public JPopupMenu createJPopupMenu(final Mascot mascot) {
-        final JPopupMenu popupMenu = new JPopupMenu();
-        if (showSystemTrayMenu) {
-            prepareMainMenu(popupMenu);
-            popupMenu.addSeparator();
-        }
-        final JMenuItem disposeMenu = new JMenuItem(main.resourceBundle.getString("menu.cmd_dispose_mascot"));//"ばいばい");
-        disposeMenu.addActionListener(new disposrMenuListener(mascot));
-        popupMenu.add(disposeMenu);
-        mascot.getWindow().asJWindow().add(popupMenu);
+                    @Override
+                    public void run() {
+                        mascot.dispose();
+                    }
+                };
+                SoundFactory.invokeAfterSound(sound, cmd);//To change body of implemented methods use File | Settings | File Templates.
+            }
+        };
+        disposeMenu = new JMenuItem(main.resourceBundle.getString("menu.cmd_dispose_mascot"));
+        disposeMenu.addActionListener(disposeMenuListener);
+        popupMenu = new JPopupMenu();
         popupMenu.addPopupMenuListener(new PopupMenuListener() {
             @Override
             public void popupMenuCanceled(final PopupMenuEvent e) {
@@ -188,15 +179,22 @@ class MascotPopupMenu {
 
             @Override
             public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) {
-                mascot.setAnimating(true);
+                if (null != targetmascot) targetmascot.setAnimating(true);
             }
 
             @Override
             public void popupMenuWillBecomeVisible(final PopupMenuEvent e) {
-                mascot.setAnimating(false);
+                if (null != targetmascot) targetmascot.setAnimating(false);
             }
         });
-        return popupMenu;
+    }
+
+    public void showPopupMenu(final Mascot mascot, final Component invoker, final int x, final int y) {
+        if (null != targetmascot) {
+            targetmascot.setAnimating(true);
+        }
+        targetmascot = mascot;
+        popupMenu.show(invoker, x, y);
     }
 
     public void prepareTrayIcon(final TrayIcon icon) {
@@ -290,7 +288,50 @@ class MascotPopupMenu {
         mainMenu.add(closeMenu);
     }
 
-    public void setShowSystemTrayMenu(boolean showSystemTrayMenu) {
-        this.showSystemTrayMenu = showSystemTrayMenu;
+
+    public void prepareMascottMenu(boolean includeMainMenu) {
+        popupMenu.add(disposeMenu);
+        popupMenu.add(new JSeparator());
+        JMenu submenu = new JMenu(main.resourceBundle.getString("menu.cmd_behaviors"));
+        popupMenu.add(submenu);
+        int count = 16;
+        for (String behavior : main.getConfiguration().getBehaviorBuilders().keySet()) {
+            if(count--<0) {
+                count=15;
+                JMenu parentmenu = submenu;
+                submenu = new JMenu(main.resourceBundle.getString("menu.cmd_behaviors_submenu"));
+                parentmenu.add(submenu);
+            };
+            submenu.add(new BehaviourMenuItem(behavior));
+        }
+        if (includeMainMenu) {
+            popupMenu.add(new JSeparator());
+            prepareMainMenu(popupMenu);
+        }
+    }
+
+    private class BehaviourMenuItem extends JMenuItem {
+        final String behaviour;
+
+        private BehaviourMenuItem(String name) throws HeadlessException {
+            super(name);
+            behaviour = name;
+            this.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent event) {
+                    Mascot mascot = targetmascot;
+                    if (null != mascot) try {
+                        mascot.setBehavior(main.configuration.buildBehavior(behaviour));
+                    } catch (BehaviorInstantiationException e) {
+                        log.log(Level.SEVERE, "次の行動の初期化に失敗しました", e);
+                        mascot.dispose();
+                    } catch (CantBeAliveException e) {
+                        log.log(Level.SEVERE, "生き続けることが出来ない状況", e);
+                        mascot.dispose();
+                    }
+                }
+            });
+        }
+
     }
 }
