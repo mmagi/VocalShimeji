@@ -33,6 +33,11 @@ public class FallWithIE extends Fall {
     }
 
     @Override
+    public Boolean isEffective() throws VariableException {
+        return !FORBID_PUSH_IE && super.isEffective();
+    }
+
+    @Override
     protected void tick() throws LostGroundException, VariableException {
 
         final Area activeIE = getEnvironment().getActiveIE();

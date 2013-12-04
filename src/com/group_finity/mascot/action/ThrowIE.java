@@ -37,6 +37,11 @@ public class ThrowIE extends Animate {
     }
 
     @Override
+    public Boolean isEffective() throws VariableException {
+        return !FORBID_PUSH_IE && super.isEffective();
+    }
+
+    @Override
     public boolean hasNext() throws VariableException {
 
         final boolean ieVisible = getEnvironment().getActiveIE().isVisible();

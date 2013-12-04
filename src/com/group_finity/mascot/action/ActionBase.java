@@ -27,6 +27,9 @@ public abstract class ActionBase implements Action {
     private List<Animation> animations;
     private VariableMap variables;
 
+    public static boolean FORBID_PUSH_IE = false;
+    public static boolean FORBID_FORK = false;
+
     public ActionBase(List<Animation> animations, VariableMap context) {
         this.animations = animations;
         this.variables = context;
@@ -46,7 +49,7 @@ public abstract class ActionBase implements Action {
         log.log(Level.INFO, "動作開始({0},{1})", new Object[]{getMascot(), this});
         getVariables().put("mascot", mascot);
         getVariables().put("action", this);
-        if (SoundFactory.voiceOn) {
+        if (SoundFactory.voiceOn && isEffective()) {
             Object voiceI = getVariables().get("voiceI");
             if (null != voiceI && voiceI instanceof SoundBuffer) {
                 SoundBuffer voice = (SoundBuffer) voiceI;
@@ -89,7 +92,7 @@ public abstract class ActionBase implements Action {
         return (effective) && (intime);
     }
 
-    private Boolean isEffective() throws VariableException {
+    protected Boolean isEffective() throws VariableException {
         return eval(PARAMETER_CONDITION, Boolean.class, DEFAULT_CONDITION);
     }
 

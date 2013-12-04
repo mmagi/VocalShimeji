@@ -20,6 +20,8 @@ public class ConfigDialog extends JDialog {
     private JSlider sfxSlider;
     private JLabel voiceGainLabel;
     private JLabel sfxGainLabel;
+    private JCheckBox forbidPushIE;
+    private JCheckBox forbidFork;
     private final UserConfig config;
 
     public ConfigDialog(UserConfig conf, ResourceBundle resourceBundle) {
@@ -31,6 +33,8 @@ public class ConfigDialog extends JDialog {
             setTitle(resourceBundle.getString("configDlg.title"));
             voiceCheckBox.setText(resourceBundle.getString("configDlg.voice"));
             sfxCheckBox.setText(resourceBundle.getString("configDlg.sfx"));
+            forbidFork.setText(resourceBundle.getString("configDlg.forbid_fork"));
+            forbidPushIE.setText(resourceBundle.getString("configDlg.forbid_pushie"));
         } catch (Exception ignored) {
         }
         voiceCheckBox.setSelected(config.voiceOn);
@@ -52,6 +56,8 @@ public class ConfigDialog extends JDialog {
                 sfxGainLabel.setText(String.format("%+03ddb",sfxSlider.getValue()));
             }
         });
+        forbidFork.setSelected(config.forbidFork);
+        forbidPushIE.setSelected(config.forbidPushIE);
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onOK();
@@ -87,6 +93,8 @@ public class ConfigDialog extends JDialog {
         config.sfxOn = sfxCheckBox.isSelected();
         config.voiceGain = (float) (Math.pow(10,voiceSlider.getValue()/20.0));
         config.sfxGain = (float) (Math.pow(10,sfxSlider.getValue()/20.0));
+        config.forbidFork = forbidFork.isSelected();
+        config.forbidPushIE = forbidPushIE.isSelected();
         for (UserConfig.Callback callback : config.onConfigUpdated)
             try {
                 callback.onConfigUpdated(config);

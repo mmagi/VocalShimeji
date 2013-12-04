@@ -1,5 +1,6 @@
 package com.group_finity.mascot;
 
+import com.group_finity.mascot.action.ActionBase;
 import com.group_finity.mascot.config.Configuration;
 import com.group_finity.mascot.config.Entry;
 import com.group_finity.mascot.exception.ConfigurationException;
@@ -272,6 +273,9 @@ public abstract class Main {
 
         if (soundFactory.voiceGain != userConfig.voiceGain)
             soundFactory.setVoiceGain(userConfig.voiceGain);
+
+        ActionBase.FORBID_FORK = userConfig.forbidFork;
+        ActionBase.FORBID_PUSH_IE = userConfig.forbidPushIE;
     }
 
     public static class UTF8ResourceBundleControl extends ResourceBundle.Control {

@@ -17,6 +17,8 @@ public class UserConfig {
     public float sfxGain = 1.0f;
     public boolean voiceOn = true;
     public float voiceGain = 1.0f;
+    public boolean forbidPushIE = false;
+    public boolean forbidFork = false;
     @XmlTransient
     public final ArrayList<Callback> onConfigUpdated = new ArrayList<Callback>();
     public static interface Callback{

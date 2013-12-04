@@ -49,6 +49,11 @@ public class Breed extends Animate {
         }
     }
 
+    @Override
+    public Boolean isEffective() throws VariableException {
+        return !FORBID_FORK && super.isEffective();
+    }
+
     private void breed() throws VariableException {
 
         // マスコットを1個作成
